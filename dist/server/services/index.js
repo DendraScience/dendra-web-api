@@ -9,7 +9,7 @@ module.exports = function () {
     // 'authentication',
     'datapoint_lookup', // Route must precede datapoint
     'datapoint', 'datastream_lookup', // Route must precede datastream
-    'datastream', 'legacy_datavalue', 'membership', 'organization', 'person', 'place', 'scheme', 'som', 'station', 'system_schema', 'system_time', 'thing', 'uom', 'vocabulary'];
+    'datastream', 'influx_select', 'legacy_datavalue', 'membership', 'organization', 'person', 'place', 'scheme', 'som', 'station', 'system_schema', 'system_time', 'thing', 'uom', 'vocabulary'];
 
     // Feathers configuration is synchronous, so use promises to wait for
     // async stuff like database connections, etc.

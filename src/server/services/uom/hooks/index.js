@@ -1,29 +1,29 @@
-const commonHooks = require('feathers-hooks-common')
+const apiHooks = require('@dendra-science/api-hooks-common')
 const globalHooks = require('../../../hooks')
+const hooks = require('feathers-hooks-common')
+// const {errors} = require('feathers-errors')
 
 const SCHEMA_NAME = 'uom.json'
 
 exports.before = {
   // all: [],
 
-  find: [
-    globalHooks.coerceQuery()
-  ],
+  find: apiHooks.coerceQuery(),
 
   // get: [],
 
   create: [
     globalHooks.validate(SCHEMA_NAME),
-    globalHooks.timestamp(),
-    globalHooks.coerce(),
-    globalHooks.uniqueArray('data.unit_tags')
+    apiHooks.timestamp(),
+    apiHooks.coerce(),
+    apiHooks.uniqueArray('data.unit_tags')
   ],
 
   update: [
     globalHooks.validate(SCHEMA_NAME),
-    globalHooks.timestamp(),
-    globalHooks.coerce(),
-    globalHooks.uniqueArray('data.unit_tags'),
+    apiHooks.timestamp(),
+    apiHooks.coerce(),
+    apiHooks.uniqueArray('data.unit_tags'),
 
     (hook) => {
       // TODO: Optimize with find/$select to return fewer fields?
@@ -34,7 +34,7 @@ exports.before = {
     }
   ],
 
-  patch: commonHooks.disallow('rest')
+  patch: hooks.disallow('rest')
 
   // remove: []
 }

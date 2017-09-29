@@ -3,3 +3,4 @@ compost/*
 config/*
 dist/*
 examples/*
+test/*

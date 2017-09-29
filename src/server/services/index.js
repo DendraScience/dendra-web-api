@@ -9,6 +9,7 @@ module.exports = (function () {
       'datapoint',
       'datastream_lookup', // Route must precede datastream
       'datastream',
+      'influx_select',
       'legacy_datavalue',
       'membership',
       'organization',

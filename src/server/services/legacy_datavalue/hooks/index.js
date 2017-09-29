@@ -1,12 +1,14 @@
-const commonHooks = require('feathers-hooks-common')
-const globalHooks = require('../../../hooks')
-const {treeMap} = require('../../../lib/utils')
+const apiHooks = require('@dendra-science/api-hooks-common')
+// const globalHooks = require('../../../hooks')
+const hooks = require('feathers-hooks-common')
+// const {errors} = require('feathers-errors')
+const {treeMap} = require('@dendra-science/utils')
 
 exports.before = {
   // all: [],
 
   find: [
-    globalHooks.coerceQuery(),
+    apiHooks.coerceQuery(),
 
     (hook) => {
       /*
@@ -24,7 +26,7 @@ exports.before = {
       if (typeof query.time === 'object') {
         query.local_date_time = treeMap(query.time, (obj) => {
           // Only map values that were coerced, i.e. in the correct format
-          if (obj instanceof Date) return new Date(obj.getTime() + query.time_adjust * 1000)
+          if (obj instanceof Date) return new Date(obj.getTime() + (query.time_adjust | 0) * 1000)
           return null
         })
       }
@@ -35,14 +37,14 @@ exports.before = {
       }
     },
 
-    commonHooks.removeQuery('compact', 'time', 'time_adjust')
+    hooks.removeQuery('compact', 'time', 'time_adjust')
   ],
 
-  get: commonHooks.disallow(),
-  create: commonHooks.disallow(),
-  update: commonHooks.disallow(),
-  patch: commonHooks.disallow(),
-  remove: commonHooks.disallow()
+  get: hooks.disallow(),
+  create: hooks.disallow(),
+  update: hooks.disallow(),
+  patch: hooks.disallow(),
+  remove: hooks.disallow()
 }
 
 exports.after = {

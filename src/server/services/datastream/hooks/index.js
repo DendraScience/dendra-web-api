@@ -1,5 +1,6 @@
-const commonHooks = require('feathers-hooks-common')
+const apiHooks = require('@dendra-science/api-hooks-common')
 const globalHooks = require('../../../hooks')
+const hooks = require('feathers-hooks-common')
 const {asyncHashDigest} = require('../../../lib/utils')
 const {errors} = require('feathers-errors')
 
@@ -319,16 +320,16 @@ exports.computeHashes = computeHashes // For testing
 exports.before = {
   // all: [],
 
-  find: globalHooks.coerceQuery(),
+  find: apiHooks.coerceQuery(),
 
   // get: [],
 
   create: [
-    commonHooks.discard('_computed', '_elapsed', '_include'),
+    hooks.discard('_computed', '_elapsed', '_include'),
     globalHooks.validate(SCHEMA_NAME),
-    globalHooks.timestamp(),
-    globalHooks.coerce(),
-    globalHooks.uniqueArray('data.tags'),
+    apiHooks.timestamp(),
+    apiHooks.coerce(),
+    apiHooks.uniqueArray('data.tags'),
 
     computeAttributesInfo(),
     computeTagsInfo(),
@@ -336,11 +337,11 @@ exports.before = {
   ],
 
   update: [
-    commonHooks.discard('_computed', '_elapsed', '_include'),
+    hooks.discard('_computed', '_elapsed', '_include'),
     globalHooks.validate(SCHEMA_NAME),
-    globalHooks.timestamp(),
-    globalHooks.coerce(),
-    globalHooks.uniqueArray('data.tags'),
+    apiHooks.timestamp(),
+    apiHooks.coerce(),
+    apiHooks.uniqueArray('data.tags'),
 
     computeAttributesInfo(),
     computeTagsInfo(),
@@ -355,7 +356,7 @@ exports.before = {
     }
   ],
 
-  patch: commonHooks.disallow('rest')
+  patch: hooks.disallow('rest')
 
   // remove: []
 }
@@ -391,9 +392,9 @@ const preferredUomsSchema = {
 
 exports.after = {
   all: [
-    commonHooks.populate({schema: uomSchema}),
-    commonHooks.populate({schema: convertibleToUomsSchema}),
-    commonHooks.populate({schema: preferredUomsSchema})
+    hooks.populate({schema: uomSchema}),
+    hooks.populate({schema: convertibleToUomsSchema}),
+    hooks.populate({schema: preferredUomsSchema})
   ]
 
   // find: [],

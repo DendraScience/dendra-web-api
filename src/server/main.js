@@ -6,10 +6,8 @@
  * @module server/main
  */
 
-// TODO: Code and test all CRUD methods!
 // TODO: Define hooks to prevent updating!
 // TODO: Ensure that we have indexes for all queries
-// TODO: Wrap service calls inside setImmediate?
 
 const feathers = require('feathers')
 const compress = require('compression')
@@ -24,12 +22,12 @@ const databases = require('./databases')
 const schemas = require('./schemas')
 const services = require('./services')
 const middleware = require('./middleware')
+const winston = require('winston')
 
 const app = feathers()
 
-// TODO: Winston is configured in middleware; deal with this
-// TODO: Replace logger with winston
-const log = console
+// TODO: Configure Winston
+const log = app.logger = winston
 
 // Configure
 app.configure(configuration())

@@ -1,16 +1,17 @@
-import math from '../../../lib/math'
+import math from '@dendra-science/math'
 
-const commonHooks = require('feathers-hooks-common')
-const globalHooks = require('../../../hooks')
+const apiHooks = require('@dendra-science/api-hooks-common')
+// const globalHooks = require('../../../hooks')
+const hooks = require('feathers-hooks-common')
 const {errors} = require('feathers-errors')
 const {getByDot} = require('feathers-hooks-common')
-const {treeMap} = require('../../../lib/utils')
+const {treeMap} = require('@dendra-science/utils')
 
 exports.before = {
   // all: [],
 
   find: [
-    globalHooks.coerceQuery(),
+    apiHooks.coerceQuery(),
 
     (hook) => {
       if (typeof hook.params.query !== 'object') throw new errors.BadRequest('Expected query')
@@ -130,11 +131,11 @@ exports.before = {
     }
   ],
 
-  get: commonHooks.disallow(),
-  create: commonHooks.disallow(),
-  update: commonHooks.disallow(),
-  patch: commonHooks.disallow(),
-  remove: commonHooks.disallow()
+  get: hooks.disallow(),
+  create: hooks.disallow(),
+  update: hooks.disallow(),
+  patch: hooks.disallow(),
+  remove: hooks.disallow()
 }
 
 exports.after = {

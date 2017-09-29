@@ -1,5 +1,6 @@
-const commonHooks = require('feathers-hooks-common')
+// const apiHooks = require('@dendra-science/api-hooks-common')
 // const globalHooks = require('../../../hooks')
+const hooks = require('feathers-hooks-common')
 const {errors} = require('feathers-errors')
 
 // TODO: Allow POST request for longer query params?
@@ -25,11 +26,11 @@ exports.before = {
     }
   ],
 
-  get: commonHooks.disallow(),
-  create: commonHooks.disallow(),
-  update: commonHooks.disallow(),
-  patch: commonHooks.disallow(),
-  remove: commonHooks.disallow()
+  get: hooks.disallow(),
+  create: hooks.disallow(),
+  update: hooks.disallow(),
+  patch: hooks.disallow(),
+  remove: hooks.disallow()
 }
 
 exports.after = {

@@ -2,7 +2,7 @@
 
 const feathersQueryFilters = require('feathers-query-filters');
 const hooks = require('./hooks');
-const { Interval } = require('../../lib/utils');
+const { Interval } = require('@dendra-science/utils');
 
 // Reasonable min and max dates to perform low-level querying
 // NOTE: Didn't use min/max integer since db date conversion could choke

@@ -7,16 +7,17 @@
     }
   },
   "connections": {
-    "noaa": {
+    "noaaGOES": {
       "url": "http://localhost:3031"
+    },
+    "noaaNWS": {
+      "url": "http://localhost:3032"
+    },
+    "noaa": {
+      "url": "http://localhost:3032"
     }
   },
   "databases": {
-    "influx": {
-      "readings": {
-        "url": "http://192.168.1.111:8086/dendro_readings"
-      }
-    },
     "mongodb": {
       "defaultLogger": {
         "level": "info"
@@ -51,6 +52,17 @@
     },
     "datastream_lookup": {
       "limit": 100
+    },
+    "influx_select": {
+      "apis": {
+        "default": {
+          "url": "http://localhost:8086"
+        }
+      },
+      "paginate": {
+        "default": 20,
+        "max": 2000
+      }
     }
   }
 }

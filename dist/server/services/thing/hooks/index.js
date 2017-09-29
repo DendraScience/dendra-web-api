@@ -1,20 +1,22 @@
 'use strict';
 
-const commonHooks = require('feathers-hooks-common');
+const apiHooks = require('@dendra-science/api-hooks-common');
 const globalHooks = require('../../../hooks');
+const hooks = require('feathers-hooks-common');
+// const {errors} = require('feathers-errors')
 
 const SCHEMA_NAME = 'thing.json';
 
 exports.before = {
   // all: [],
 
-  find: globalHooks.coerceQuery(),
+  find: apiHooks.coerceQuery(),
 
   // get: [],
 
-  create: [globalHooks.validate(SCHEMA_NAME), globalHooks.timestamp(), globalHooks.coerce()],
+  create: [globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce()],
 
-  update: [globalHooks.validate(SCHEMA_NAME), globalHooks.timestamp(), globalHooks.coerce(), hook => {
+  update: [globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), hook => {
     // TODO: Optimize with find/$select to return fewer fields?
     return hook.app.service('/things').get(hook.id).then(doc => {
       hook.data.created_at = doc.created_at;
@@ -22,7 +24,7 @@ exports.before = {
     });
   }],
 
-  patch: commonHooks.disallow('rest')
+  patch: hooks.disallow('rest')
 
   // remove: []
 };

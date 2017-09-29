@@ -1,7 +1,8 @@
 'use strict';
 
-const commonHooks = require('feathers-hooks-common');
+const apiHooks = require('@dendra-science/api-hooks-common');
 const globalHooks = require('../../../hooks');
+const hooks = require('feathers-hooks-common');
 const { asyncHashDigest } = require('../../../lib/utils');
 const { errors } = require('feathers-errors');
 
@@ -300,13 +301,13 @@ exports.computeHashes = computeHashes; // For testing
 exports.before = {
   // all: [],
 
-  find: globalHooks.coerceQuery(),
+  find: apiHooks.coerceQuery(),
 
   // get: [],
 
-  create: [commonHooks.discard('_computed', '_elapsed', '_include'), globalHooks.validate(SCHEMA_NAME), globalHooks.timestamp(), globalHooks.coerce(), globalHooks.uniqueArray('data.tags'), computeAttributesInfo(), computeTagsInfo(), computeHashes()],
+  create: [hooks.discard('_computed', '_elapsed', '_include'), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), apiHooks.uniqueArray('data.tags'), computeAttributesInfo(), computeTagsInfo(), computeHashes()],
 
-  update: [commonHooks.discard('_computed', '_elapsed', '_include'), globalHooks.validate(SCHEMA_NAME), globalHooks.timestamp(), globalHooks.coerce(), globalHooks.uniqueArray('data.tags'), computeAttributesInfo(), computeTagsInfo(), computeHashes(), hook => {
+  update: [hooks.discard('_computed', '_elapsed', '_include'), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), apiHooks.uniqueArray('data.tags'), computeAttributesInfo(), computeTagsInfo(), computeHashes(), hook => {
     // TODO: Optimize with find/$select to return fewer fields?
     return hook.app.service('/datastreams').get(hook.id).then(doc => {
       hook.data.created_at = doc.created_at;
@@ -314,7 +315,7 @@ exports.before = {
     });
   }],
 
-  patch: commonHooks.disallow('rest')
+  patch: hooks.disallow('rest')
 
   // remove: []
 };
@@ -349,7 +350,7 @@ const preferredUomsSchema = {
 };
 
 exports.after = {
-  all: [commonHooks.populate({ schema: uomSchema }), commonHooks.populate({ schema: convertibleToUomsSchema }), commonHooks.populate({ schema: preferredUomsSchema })]
+  all: [hooks.populate({ schema: uomSchema }), hooks.populate({ schema: convertibleToUomsSchema }), hooks.populate({ schema: preferredUomsSchema })]
 
   // find: [],
   // get: [],
