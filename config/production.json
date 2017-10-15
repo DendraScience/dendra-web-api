@@ -1,8 +1,6 @@
 {
-  "apis": {
-    "influxDB": {
-      "url": "INFLUXDB_API_URL"
-    }
+  "authentication": {
+    "secret": "WEB_API_SECRET"
   },
   "connections": {
      "noaaGOES": {
@@ -30,5 +28,14 @@
       }
     }
   },
-  "port": 8080
+  "port": 8080,
+  "services": {
+    "influx_select": {
+      "apis": {
+        "default": {
+          "url": "INFLUXDB_API_URL"
+        }
+      }
+    }
+  }
 }

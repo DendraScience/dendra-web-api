@@ -1,19 +1,16 @@
-// const apiHooks = require('@dendra-science/api-hooks-common')
-// const globalHooks = require('../../../hooks')
-const hooks = require('feathers-hooks-common')
-// const {errors} = require('feathers-errors')
+const commonHooks = require('feathers-hooks-common')
 
 exports.before = {
   // all: [],
 
-  find: hooks.disallow(),
+  find: commonHooks.disallow(),
 
   // get: [],
 
-  create: hooks.disallow(),
-  update: hooks.disallow(),
-  patch: hooks.disallow(),
-  remove: hooks.disallow()
+  create: commonHooks.disallow(),
+  update: commonHooks.disallow(),
+  patch: commonHooks.disallow(),
+  remove: commonHooks.disallow()
 }
 
 exports.after = {

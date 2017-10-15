@@ -1,10 +1,8 @@
 import math from '@dendra-science/math'
 
 const apiHooks = require('@dendra-science/api-hooks-common')
-// const globalHooks = require('../../../hooks')
-const hooks = require('feathers-hooks-common')
+const commonHooks = require('feathers-hooks-common')
 const {errors} = require('feathers-errors')
-const {getByDot} = require('feathers-hooks-common')
 const {treeMap} = require('@dendra-science/utils')
 
 exports.before = {
@@ -131,19 +129,19 @@ exports.before = {
     }
   ],
 
-  get: hooks.disallow(),
-  create: hooks.disallow(),
-  update: hooks.disallow(),
-  patch: hooks.disallow(),
-  remove: hooks.disallow()
+  get: commonHooks.disallow(),
+  create: commonHooks.disallow(),
+  update: commonHooks.disallow(),
+  patch: commonHooks.disallow(),
+  remove: commonHooks.disallow()
 }
 
 exports.after = {
   // all: [],
 
   find (hook) {
-    const sourceUnitName = getByDot(hook, 'params.sourceUom.library_config.mathjs.unit_name')
-    const targetUnitName = getByDot(hook, 'params.targetUom.library_config.mathjs.unit_name')
+    const sourceUnitName = commonHooks.getByDot(hook, 'params.sourceUom.library_config.mathjs.unit_name')
+    const targetUnitName = commonHooks.getByDot(hook, 'params.targetUom.library_config.mathjs.unit_name')
 
     if (!sourceUnitName || !targetUnitName) return
 

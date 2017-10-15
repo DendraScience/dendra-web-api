@@ -1,8 +1,10 @@
 'use strict';
 
 const apiHooks = require('@dendra-science/api-hooks-common');
+const auth = require('feathers-authentication');
+const authHooks = require('feathers-authentication-hooks');
+const commonHooks = require('feathers-hooks-common');
 const globalHooks = require('../../../hooks');
-const hooks = require('feathers-hooks-common');
 const { asyncHashDigest } = require('../../../lib/utils');
 const { errors } = require('feathers-errors');
 
@@ -301,13 +303,17 @@ exports.computeHashes = computeHashes; // For testing
 exports.before = {
   // all: [],
 
-  find: apiHooks.coerceQuery(),
+  find: [apiHooks.coerceQuery()],
 
   // get: [],
 
-  create: [hooks.discard('_computed', '_elapsed', '_include'), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), apiHooks.uniqueArray('data.tags'), computeAttributesInfo(), computeTagsInfo(), computeHashes()],
+  create: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
+    roles: ['sys-admin']
+  }), commonHooks.discard('_computed', '_elapsed', '_include'), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), apiHooks.uniqueArray('data.tags'), computeAttributesInfo(), computeTagsInfo(), computeHashes()],
 
-  update: [hooks.discard('_computed', '_elapsed', '_include'), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), apiHooks.uniqueArray('data.tags'), computeAttributesInfo(), computeTagsInfo(), computeHashes(), hook => {
+  update: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
+    roles: ['sys-admin']
+  }), commonHooks.discard('_computed', '_elapsed', '_include'), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), apiHooks.uniqueArray('data.tags'), computeAttributesInfo(), computeTagsInfo(), computeHashes(), hook => {
     // TODO: Optimize with find/$select to return fewer fields?
     return hook.app.service('/datastreams').get(hook.id).then(doc => {
       hook.data.created_at = doc.created_at;
@@ -315,9 +321,11 @@ exports.before = {
     });
   }],
 
-  patch: hooks.disallow('rest')
+  patch: [commonHooks.disallow('rest')],
 
-  // remove: []
+  remove: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
+    roles: ['sys-admin']
+  })]
 };
 
 const uomSchema = {
@@ -350,7 +358,7 @@ const preferredUomsSchema = {
 };
 
 exports.after = {
-  all: [hooks.populate({ schema: uomSchema }), hooks.populate({ schema: convertibleToUomsSchema }), hooks.populate({ schema: preferredUomsSchema })]
+  all: [commonHooks.populate({ schema: uomSchema }), commonHooks.populate({ schema: convertibleToUomsSchema }), commonHooks.populate({ schema: preferredUomsSchema })]
 
   // find: [],
   // get: [],

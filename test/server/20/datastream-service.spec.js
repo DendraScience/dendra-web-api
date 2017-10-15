@@ -78,19 +78,19 @@ describe('Service /datastreams', function () {
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/scheme_ts2003.json'))
       }).then(doc => {
-        return main.app.service('/schemes').create(doc)
+        return sysAdmin.service('/schemes').create(doc)
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/vocabulary_ts2003-class.json'))
       }).then(doc => {
-        return main.app.service('/vocabularies').create(doc)
+        return sysAdmin.service('/vocabularies').create(doc)
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/vocabulary_ts2003-unit.json'))
       }).then(doc => {
-        return main.app.service('/vocabularies').create(doc)
+        return sysAdmin.service('/vocabularies').create(doc)
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/uom_imp2003-a.json'))
       }).then(doc => {
-        return main.app.service('/uoms').create(doc)
+        return sysAdmin.service('/uoms').create(doc)
       })
     }
   })
@@ -113,7 +113,7 @@ describe('Service /datastreams', function () {
   describe('#create()', function () {
     it('should create without error', function () {
       return helper.loadJSON(path.join(__dirname, 'data/datastream_ts2003.json')).then(doc => {
-        return main.app.service('/datastreams').create(doc)
+        return sysAdmin.service('/datastreams').create(doc)
       }).then(doc => {
         expect(doc).to.have.property('_id')
         expect(doc).to.have.property('uom')
@@ -149,7 +149,7 @@ describe('Service /datastreams', function () {
 
   describe('#get()', function () {
     it('should get without error', function () {
-      return main.app.service('/datastreams').get(_id).then(doc => {
+      return guest.service('/datastreams').get(_id).then(doc => {
         expect(doc).to.have.property('_id')
       })
     })
@@ -157,7 +157,7 @@ describe('Service /datastreams', function () {
 
   describe('#find()', function () {
     it('should find without error', function () {
-      return main.app.service('/datastreams').find({query: {source: 'science.dendra.test.ts2003'}}).then(res => {
+      return guest.service('/datastreams').find({query: {source: 'science.dendra.test.ts2003'}}).then(res => {
         expect(res).to.have.property('data').lengthOf(1)
       })
     })
@@ -166,7 +166,7 @@ describe('Service /datastreams', function () {
   describe('#update()', function () {
     it('should update without error', function () {
       return helper.loadJSON(path.join(__dirname, 'data/datastream_ts2003.update.json')).then(doc => {
-        return main.app.service('/datastreams').update(_id, doc)
+        return sysAdmin.service('/datastreams').update(_id, doc)
       }).then(doc => {
         expect(doc).to.have.property('name', 'TS2003 Datastream - Updated')
         expect(doc).to.have.property('tags').lengthOf(2)
@@ -201,7 +201,7 @@ describe('Service /datastreams', function () {
 
   describe('#remove()', function () {
     it('should remove without error', function () {
-      return main.app.service('/datastreams').remove(_id).then(doc => {
+      return sysAdmin.service('/datastreams').remove(_id).then(doc => {
         expect(doc).to.have.property('_id')
       })
     })

@@ -9,31 +9,31 @@ describe('Service /datapoints and /datapoints/lookup', function () {
   const databases = main.app.get('databases')
 
   const impDataMembers = [{
-    t: new Date('2017-06-02T00:30:00.000Z'),
+    t: '2017-06-02T00:30:00.000Z',
     o: -28800,
     v: 13.2,
     uv: 43.30708661417322
   }]
   const metDataMembers = [{
-    t: new Date('2017-06-02T00:30:00.000Z'),
+    t: '2017-06-02T00:30:00.000Z',
     o: -28800,
     v: 13.2,
     uv: 13.2
   }]
   const metPrefDataMembers = [{
-    t: new Date('2017-06-02T00:30:00.000Z'),
+    t: '2017-06-02T00:30:00.000Z',
     o: -28800,
     v: 13.2,
     uv: 1320
   }]
 
   const ascDataMembers = [{
-    t: new Date('2017-06-01T00:10:00.000Z'),
+    t: '2017-06-01T00:10:00.000Z',
     o: -28800,
     v: 11.1
   }]
   const descDataMembers = [{
-    t: new Date('2017-06-02T00:30:00.000Z'),
+    t: '2017-06-02T00:30:00.000Z',
     o: -28800,
     v: 13.2
   }]
@@ -151,53 +151,53 @@ describe('Service /datapoints and /datapoints/lookup', function () {
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/scheme_ts2008.json'))
       }).then(doc => {
-        return main.app.service('/schemes').create(doc)
+        return sysAdmin.service('/schemes').create(doc)
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/vocabulary_ts2008-class.json'))
       }).then(doc => {
-        return main.app.service('/vocabularies').create(doc)
+        return sysAdmin.service('/vocabularies').create(doc)
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/vocabulary_ts2008-unit.json'))
       }).then(doc => {
-        return main.app.service('/vocabularies').create(doc)
+        return sysAdmin.service('/vocabularies').create(doc)
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/som_imp2008.json'))
       }).then(doc => {
-        return main.app.service('/soms').create(doc)
+        return sysAdmin.service('/soms').create(doc)
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/som_met2008.json'))
       }).then(doc => {
-        return main.app.service('/soms').create(doc)
+        return sysAdmin.service('/soms').create(doc)
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/uom_imp2008-foot.json'))
       }).then(doc => {
-        return main.app.service('/uoms').create(doc)
+        return sysAdmin.service('/uoms').create(doc)
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/uom_met2008-centimeter.json'))
       }).then(doc => {
-        return main.app.service('/uoms').create(doc)
+        return sysAdmin.service('/uoms').create(doc)
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/uom_met2008-meter.json'))
       }).then(doc => {
-        return main.app.service('/uoms').create(doc)
+        return sysAdmin.service('/uoms').create(doc)
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/station_ts2008.json'))
       }).then(doc => {
-        return main.app.service('/stations').create(doc)
+        return sysAdmin.service('/stations').create(doc)
       }).then(doc => {
         _idStation = doc._id
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/datastream_ts2008.json'))
       }).then(doc => {
         doc.station_id = `${_idStation}`
-        return main.app.service('/datastreams').create(doc)
+        return sysAdmin.service('/datastreams').create(doc)
       }).then(doc => {
         _idDatastream = doc._id
       }).then(() => {
         return helper.loadJSON(path.join(__dirname, 'data/datastream_ts2008-pref.json'))
       }).then(doc => {
         doc.station_id = `${_idStation}`
-        return main.app.service('/datastreams').create(doc)
+        return sysAdmin.service('/datastreams').create(doc)
       }).then(doc => {
         _idDatastreamPref = doc._id
       })
@@ -221,7 +221,7 @@ describe('Service /datapoints and /datapoints/lookup', function () {
 
   describe('/datapoints #find()', function () {
     it('should find using datastream_id', function () {
-      return main.app.service('/datapoints').find({query: {
+      return guest.service('/datapoints').find({query: {
         datastream_id: _idDatastream
       }}).then(res => {
         expect(res).to.have.property('data').lengthOf(6).and.deep.include.ordered.members(descDataMembers)
@@ -229,7 +229,7 @@ describe('Service /datapoints and /datapoints/lookup', function () {
     })
 
     it('should find using datastream_id and time filter', function () {
-      return main.app.service('/datapoints').find({query: {
+      return guest.service('/datapoints').find({query: {
         datastream_id: _idDatastream,
         time: {
           $gt: '2017-06-01T00:20:00.000Z',
@@ -241,7 +241,7 @@ describe('Service /datapoints and /datapoints/lookup', function () {
     })
 
     it('should find using datastream_id and local time filter', function () {
-      return main.app.service('/datapoints').find({query: {
+      return guest.service('/datapoints').find({query: {
         datastream_id: _idDatastream,
         time: {
           $gt: '2017-05-31T16:20:00.000Z',
@@ -254,7 +254,7 @@ describe('Service /datapoints and /datapoints/lookup', function () {
     })
 
     it('should find using datastream_id and $sort[time] ascending', function () {
-      return main.app.service('/datapoints').find({query: {
+      return guest.service('/datapoints').find({query: {
         datastream_id: _idDatastream,
         $sort: {
           time: 1
@@ -265,7 +265,7 @@ describe('Service /datapoints and /datapoints/lookup', function () {
     })
 
     it('should find using datastream_id and $sort[time] descending', function () {
-      return main.app.service('/datapoints').find({query: {
+      return guest.service('/datapoints').find({query: {
         datastream_id: _idDatastream,
         $sort: {
           time: -1
@@ -276,7 +276,7 @@ describe('Service /datapoints and /datapoints/lookup', function () {
     })
 
     it('should find and convert using datastream_id and imperial som_id', function () {
-      return main.app.service('/datapoints').find({query: {
+      return guest.service('/datapoints').find({query: {
         datastream_id: _idDatastream,
         som_id: 'imp2008'
       }}).then(res => {
@@ -285,7 +285,7 @@ describe('Service /datapoints and /datapoints/lookup', function () {
     })
 
     it('should find and convert using datastream_id and metric som_id', function () {
-      return main.app.service('/datapoints').find({query: {
+      return guest.service('/datapoints').find({query: {
         datastream_id: _idDatastream,
         som_id: 'met2008'
       }}).then(res => {
@@ -294,7 +294,7 @@ describe('Service /datapoints and /datapoints/lookup', function () {
     })
 
     it('should find and convert using datastream_id and imperial som_id, with preference', function () {
-      return main.app.service('/datapoints').find({query: {
+      return guest.service('/datapoints').find({query: {
         datastream_id: _idDatastreamPref,
         som_id: 'imp2008'
       }}).then(res => {
@@ -303,7 +303,7 @@ describe('Service /datapoints and /datapoints/lookup', function () {
     })
 
     it('should find and convert using datastream_id and metric som_id, with preference', function () {
-      return main.app.service('/datapoints').find({query: {
+      return guest.service('/datapoints').find({query: {
         datastream_id: _idDatastreamPref,
         som_id: 'met2008'
       }}).then(res => {
@@ -312,7 +312,7 @@ describe('Service /datapoints and /datapoints/lookup', function () {
     })
 
     it('should find and convert using datastream_id and imperial uom_id', function () {
-      return main.app.service('/datapoints').find({query: {
+      return guest.service('/datapoints').find({query: {
         datastream_id: _idDatastream,
         uom_id: 'imp2008-foot'
       }}).then(res => {
@@ -321,7 +321,7 @@ describe('Service /datapoints and /datapoints/lookup', function () {
     })
 
     it('should find and convert using datastream_id and metric uom_id', function () {
-      return main.app.service('/datapoints').find({query: {
+      return guest.service('/datapoints').find({query: {
         datastream_id: _idDatastream,
         uom_id: 'met2008-meter'
       }}).then(res => {
@@ -332,70 +332,70 @@ describe('Service /datapoints and /datapoints/lookup', function () {
 
   describe('/datapoints/lookup #find()', function () {
     it('should find using _id, passing one identifier string', function () {
-      return main.app.service('/datapoints/lookup').find({query: {
+      return guest.service('/datapoints/lookup').find({query: {
         _id: `${_idDatastream}`
       }}).then(res => {
         expect(res).to.have.lengthOf(1)
 
-        const datastream = res.find(ds => ds._id.equals(_idDatastream))
+        const datastream = res.find(ds => ds._id === _idDatastream)
         expect(datastream).to.have.nested.property('datapoints.data').lengthOf(6).and.deep.include.ordered.members(descDataMembers)
       })
     })
 
     it('should find using _id, passing multiple identifier strings', function () {
-      return main.app.service('/datapoints/lookup').find({query: {
+      return guest.service('/datapoints/lookup').find({query: {
         _id: `${_idDatastream},${_idDatastreamPref}`
       }}).then(res => {
         expect(res).to.have.lengthOf(2)
 
-        const datastream = res.find(ds => ds._id.equals(_idDatastream))
+        const datastream = res.find(ds => ds._id === _idDatastream)
         expect(datastream).to.have.nested.property('datapoints.data').lengthOf(6).and.deep.include.ordered.members(descDataMembers)
 
-        const datastreamPref = res.find(ds => ds._id.equals(_idDatastreamPref))
+        const datastreamPref = res.find(ds => ds._id === _idDatastreamPref)
         expect(datastreamPref).to.have.nested.property('datapoints.data').lengthOf(6).and.deep.include.ordered.members(descDataMembers)
       })
     })
 
     it('should find using station_id, passing one identifier string', function () {
-      return main.app.service('/datapoints/lookup').find({query: {
+      return guest.service('/datapoints/lookup').find({query: {
         station_id: `${_idStation}`
       }}).then(res => {
         expect(res).to.have.lengthOf(2)
 
-        const datastream = res.find(ds => ds._id.equals(_idDatastream))
+        const datastream = res.find(ds => ds._id === _idDatastream)
         expect(datastream).to.have.nested.property('datapoints.data').lengthOf(6).and.deep.include.ordered.members(descDataMembers)
 
-        const datastreamPref = res.find(ds => ds._id.equals(_idDatastreamPref))
+        const datastreamPref = res.find(ds => ds._id === _idDatastreamPref)
         expect(datastreamPref).to.have.nested.property('datapoints.data').lengthOf(6).and.deep.include.ordered.members(descDataMembers)
       })
     })
 
     it('should find using imperial som_id and station_id, passing one identifier string', function () {
-      return main.app.service('/datapoints/lookup').find({query: {
+      return guest.service('/datapoints/lookup').find({query: {
         som_id: 'imp2008',
         station_id: `${_idStation}`
       }}).then(res => {
         expect(res).to.have.lengthOf(2)
 
-        const datastream = res.find(ds => ds._id.equals(_idDatastream))
+        const datastream = res.find(ds => ds._id === _idDatastream)
         expect(datastream).to.have.nested.property('datapoints.data').lengthOf(6).and.deep.include.ordered.members(impDataMembers)
 
-        const datastreamPref = res.find(ds => ds._id.equals(_idDatastreamPref))
+        const datastreamPref = res.find(ds => ds._id === _idDatastreamPref)
         expect(datastreamPref).to.have.nested.property('datapoints.data').lengthOf(6).and.deep.include.ordered.members(impDataMembers)
       })
     })
 
     it('should find using metric som_id and station_id, passing one identifier string', function () {
-      return main.app.service('/datapoints/lookup').find({query: {
+      return guest.service('/datapoints/lookup').find({query: {
         som_id: 'met2008',
         station_id: `${_idStation}`
       }}).then(res => {
         expect(res).to.have.lengthOf(2)
 
-        const datastream = res.find(ds => ds._id.equals(_idDatastream))
+        const datastream = res.find(ds => ds._id === _idDatastream)
         expect(datastream).to.have.nested.property('datapoints.data').lengthOf(6).and.deep.include.ordered.members(metDataMembers)
 
-        const datastreamPref = res.find(ds => ds._id.equals(_idDatastreamPref))
+        const datastreamPref = res.find(ds => ds._id === _idDatastreamPref)
         expect(datastreamPref).to.have.nested.property('datapoints.data').lengthOf(6).and.deep.include.ordered.members(metPrefDataMembers)
       })
     })

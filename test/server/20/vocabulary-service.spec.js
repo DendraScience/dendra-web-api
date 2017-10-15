@@ -24,7 +24,7 @@ describe('Service /vocabularies', function () {
   describe('#create()', function () {
     it('should create without error', function () {
       return helper.loadJSON(path.join(__dirname, 'data/vocabulary_ts2002-vocabulary.json')).then(doc => {
-        return main.app.service('/vocabularies').create(doc)
+        return sysAdmin.service('/vocabularies').create(doc)
       }).then(doc => {
         expect(doc).to.have.property('_id')
       })
@@ -33,7 +33,7 @@ describe('Service /vocabularies', function () {
 
   describe('#get()', function () {
     it('should get without error', function () {
-      return main.app.service('/vocabularies').get('ts2002-vocabulary').then(doc => {
+      return guest.service('/vocabularies').get('ts2002-vocabulary').then(doc => {
         expect(doc).to.have.property('_id')
       })
     })
@@ -41,7 +41,7 @@ describe('Service /vocabularies', function () {
 
   describe('#find()', function () {
     it('should find without error', function () {
-      return main.app.service('/vocabularies').find({query: {label: 'Vocabulary', scheme_id: 'ts2002'}}).then(res => {
+      return guest.service('/vocabularies').find({query: {label: 'Vocabulary', scheme_id: 'ts2002'}}).then(res => {
         expect(res).to.have.property('data').lengthOf(1)
       })
     })
@@ -50,7 +50,7 @@ describe('Service /vocabularies', function () {
   describe('#update()', function () {
     it('should update without error', function () {
       return helper.loadJSON(path.join(__dirname, 'data/vocabulary_ts2002-vocabulary.update.json')).then(doc => {
-        return main.app.service('/vocabularies').update('ts2002-vocabulary', doc)
+        return sysAdmin.service('/vocabularies').update('ts2002-vocabulary', doc)
       }).then(doc => {
         expect(doc).to.have.property('label', 'VocabularyUpdated')
       })
@@ -59,7 +59,7 @@ describe('Service /vocabularies', function () {
 
   describe('#remove()', function () {
     it('should remove without error', function () {
-      return main.app.service('/vocabularies').remove('ts2002-vocabulary').then(doc => {
+      return sysAdmin.service('/vocabularies').remove('ts2002-vocabulary').then(doc => {
         expect(doc).to.have.property('_id')
       })
     })

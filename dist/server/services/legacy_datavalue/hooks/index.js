@@ -1,9 +1,7 @@
 'use strict';
 
 const apiHooks = require('@dendra-science/api-hooks-common');
-// const globalHooks = require('../../../hooks')
-const hooks = require('feathers-hooks-common');
-// const {errors} = require('feathers-errors')
+const commonHooks = require('feathers-hooks-common');
 const { treeMap } = require('@dendra-science/utils');
 
 exports.before = {
@@ -34,13 +32,13 @@ exports.before = {
     if (typeof query.$sort === 'object' && typeof query.$sort.time !== 'undefined') {
       query.$sort = { local_date_time: query.$sort.time };
     }
-  }, hooks.removeQuery('compact', 'time', 'time_adjust')],
+  }, commonHooks.removeQuery('compact', 'time', 'time_adjust')],
 
-  get: hooks.disallow(),
-  create: hooks.disallow(),
-  update: hooks.disallow(),
-  patch: hooks.disallow(),
-  remove: hooks.disallow()
+  get: commonHooks.disallow(),
+  create: commonHooks.disallow(),
+  update: commonHooks.disallow(),
+  patch: commonHooks.disallow(),
+  remove: commonHooks.disallow()
 };
 
 exports.after = {

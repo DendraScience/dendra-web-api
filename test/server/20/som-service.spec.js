@@ -24,7 +24,7 @@ describe('Service /soms', function () {
   describe('#create()', function () {
     it('should create without error', function () {
       return helper.loadJSON(path.join(__dirname, 'data/som_imp2004.json')).then(doc => {
-        return main.app.service('/soms').create(doc)
+        return sysAdmin.service('/soms').create(doc)
       }).then(doc => {
         expect(doc).to.have.property('_id')
       })
@@ -33,7 +33,7 @@ describe('Service /soms', function () {
 
   describe('#get()', function () {
     it('should get without error', function () {
-      return main.app.service('/soms').get('imp2004').then(doc => {
+      return guest.service('/soms').get('imp2004').then(doc => {
         expect(doc).to.have.property('_id')
       })
     })
@@ -41,7 +41,7 @@ describe('Service /soms', function () {
 
   describe('#find()', function () {
     it('should find without error', function () {
-      return main.app.service('/soms').find({query: {name: 'IMP2004 System of Measurement'}}).then(res => {
+      return guest.service('/soms').find({query: {name: 'IMP2004 System of Measurement'}}).then(res => {
         expect(res).to.have.property('data').lengthOf(1)
       })
     })
@@ -50,7 +50,7 @@ describe('Service /soms', function () {
   describe('#update()', function () {
     it('should update without error', function () {
       return helper.loadJSON(path.join(__dirname, 'data/som_imp2004.update.json')).then(doc => {
-        return main.app.service('/soms').update('imp2004', doc)
+        return sysAdmin.service('/soms').update('imp2004', doc)
       }).then(doc => {
         expect(doc).to.have.property('name', 'IMP2004 System of Measurement - Updated')
       })
@@ -59,7 +59,7 @@ describe('Service /soms', function () {
 
   describe('#remove()', function () {
     it('should remove without error', function () {
-      return main.app.service('/soms').remove('imp2004').then(doc => {
+      return sysAdmin.service('/soms').remove('imp2004').then(doc => {
         expect(doc).to.have.property('_id')
       })
     })

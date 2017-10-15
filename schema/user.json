@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "user.json",
+  "title": "User",
+  "description": "A user account with credentials for authentication.",
+  "type": "object",
+  "definitions": {
+    "_id": {
+      "$ref": "types.json#/definitions/userId"
+    },
+    "email": {
+      "$ref": "types.json#/definitions/email",
+      "example": "collin@berkeley.edu"
+    },
+    "full_name": {
+      "type": "string",
+      "example": "Collin Bode"
+    },
+    "name": {
+      "type": "string",
+      "example": "Collin"
+    },
+    "password": {
+      "type": "string",
+      "description": "A password for local authentication"
+    },
+    "person_id": {
+      "$ref": "types.json#/definitions/personId",
+      "description": "The person affiliated with this user account"
+    },
+    "roles": {
+      "type": "array",
+      "description": "The user's roles within the system (e.g. 'sys-admin')",
+      "items": {
+        "type": "string",
+        "example": "sys-admin"
+      }
+    }
+  },
+  "properties": {
+    "_id": {"$ref": "#/definitions/_id"},
+    "created_at": {"$ref": "types.json#/definitions/createdAt"},
+    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "email": {"$ref": "#/definitions/email"},
+    "full_name": {"$ref": "#/definitions/full_name"},
+    "name": {"$ref": "#/definitions/name"},
+    "password": {"$ref": "#/definitions/password"},
+    "person_id": {"$ref": "#/definitions/person_id"},
+    "roles": {"$ref": "#/definitions/roles"}
+  },
+  "required": [
+    "name"
+  ],
+  "additionalProperties": false,
+  "links": [
+    {
+      "title": "Create user",
+      "description": "Create a new user.",
+      "rel": "self",
+      "href": "users",
+      "method": "POST",
+      "required": [
+        "name",
+        "password"
+      ],
+      "schema": {
+        "type": "object",
+        "properties": {
+          "email": {"$ref": "#/definitions/email"},
+          "full_name": {"$ref": "#/definitions/full_name"},
+          "password": {"$ref": "#/definitions/password"},
+          "name": {"$ref": "#/definitions/name"}
+        }
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Update user",
+      "description": "Update an existing user.",
+      "rel": "self",
+      "href": "users/{#/definitions/_id}",
+      "method": "PUT",
+      "required": [
+        "name",
+        "password"
+      ],
+      "schema": {
+        "type": "object",
+        "properties": {
+          "email": {"$ref": "#/definitions/email"},
+          "full_name": {"$ref": "#/definitions/full_name"},
+          "password": {"$ref": "#/definitions/password"},
+          "name": {"$ref": "#/definitions/name"}
+        }
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Remove user",
+      "description": "Remove an existing user.",
+      "rel": "self",
+      "href": "users/{#/definitions/_id}",
+      "method": "DELETE",
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "User info",
+      "description": "Return a specific user.",
+      "rel": "self",
+      "href": "users/{#/definitions/_id}",
+      "method": "GET",
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "List users",
+      "description": "Find one or more users based on the query parameters.",
+      "rel": "instances",
+      "href": "users",
+      "method": "GET",
+      "schema": {
+        "$ref": "types.json#/definitions/queryParameters"
+      },
+      "targetSchema": {
+        "allOf": [
+          {"$ref": "types.json#/definitions/paginationMeta"},
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {"rel": "self"}
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

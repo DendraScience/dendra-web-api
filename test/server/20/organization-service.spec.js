@@ -26,7 +26,7 @@ describe('Service /organizations', function () {
   describe('#create()', function () {
     it('should create without error', function () {
       return helper.loadJSON(path.join(__dirname, 'data/organization_test_one.json')).then(doc => {
-        return main.app.service('/organizations').create(doc)
+        return sysAdmin.service('/organizations').create(doc)
       }).then(doc => {
         expect(doc).to.have.property('_id')
 
@@ -37,7 +37,7 @@ describe('Service /organizations', function () {
 
   describe('#get()', function () {
     it('should get without error', function () {
-      return main.app.service('/organizations').get(_id).then(doc => {
+      return guest.service('/organizations').get(_id).then(doc => {
         expect(doc).to.have.property('_id')
       })
     })
@@ -45,7 +45,7 @@ describe('Service /organizations', function () {
 
   describe('#find()', function () {
     it('should find without error', function () {
-      return main.app.service('/organizations').find({query: {email: 'org_test_one@test.dendra.science'}}).then(res => {
+      return guest.service('/organizations').find({query: {email: 'org_test_one@test.dendra.science'}}).then(res => {
         expect(res).to.have.property('data').lengthOf(1)
       })
     })
@@ -54,7 +54,7 @@ describe('Service /organizations', function () {
   describe('#update()', function () {
     it('should update without error', function () {
       return helper.loadJSON(path.join(__dirname, 'data/organization_test_one.update.json')).then(doc => {
-        return main.app.service('/organizations').update(_id, doc)
+        return sysAdmin.service('/organizations').update(_id, doc)
       }).then(doc => {
         expect(doc).to.have.property('name', 'Test One Org - Updated')
       })
@@ -63,7 +63,7 @@ describe('Service /organizations', function () {
 
   describe('#remove()', function () {
     it('should remove without error', function () {
-      return main.app.service('/organizations').remove(_id).then(doc => {
+      return sysAdmin.service('/organizations').remove(_id).then(doc => {
         expect(doc).to.have.property('_id')
       })
     })

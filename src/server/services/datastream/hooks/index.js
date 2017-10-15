@@ -1,6 +1,8 @@
 const apiHooks = require('@dendra-science/api-hooks-common')
+const auth = require('feathers-authentication')
+const authHooks = require('feathers-authentication-hooks')
+const commonHooks = require('feathers-hooks-common')
 const globalHooks = require('../../../hooks')
-const hooks = require('feathers-hooks-common')
 const {asyncHashDigest} = require('../../../lib/utils')
 const {errors} = require('feathers-errors')
 
@@ -320,12 +322,18 @@ exports.computeHashes = computeHashes // For testing
 exports.before = {
   // all: [],
 
-  find: apiHooks.coerceQuery(),
+  find: [
+    apiHooks.coerceQuery()
+  ],
 
   // get: [],
 
   create: [
-    hooks.discard('_computed', '_elapsed', '_include'),
+    auth.hooks.authenticate('jwt'),
+    authHooks.restrictToRoles({
+      roles: ['sys-admin']
+    }),
+    commonHooks.discard('_computed', '_elapsed', '_include'),
     globalHooks.validate(SCHEMA_NAME),
     apiHooks.timestamp(),
     apiHooks.coerce(),
@@ -337,7 +345,11 @@ exports.before = {
   ],
 
   update: [
-    hooks.discard('_computed', '_elapsed', '_include'),
+    auth.hooks.authenticate('jwt'),
+    authHooks.restrictToRoles({
+      roles: ['sys-admin']
+    }),
+    commonHooks.discard('_computed', '_elapsed', '_include'),
     globalHooks.validate(SCHEMA_NAME),
     apiHooks.timestamp(),
     apiHooks.coerce(),
@@ -356,9 +368,16 @@ exports.before = {
     }
   ],
 
-  patch: hooks.disallow('rest')
+  patch: [
+    commonHooks.disallow('rest')
+  ],
 
-  // remove: []
+  remove: [
+    auth.hooks.authenticate('jwt'),
+    authHooks.restrictToRoles({
+      roles: ['sys-admin']
+    })
+  ]
 }
 
 const uomSchema = {
@@ -392,9 +411,9 @@ const preferredUomsSchema = {
 
 exports.after = {
   all: [
-    hooks.populate({schema: uomSchema}),
-    hooks.populate({schema: convertibleToUomsSchema}),
-    hooks.populate({schema: preferredUomsSchema})
+    commonHooks.populate({schema: uomSchema}),
+    commonHooks.populate({schema: convertibleToUomsSchema}),
+    commonHooks.populate({schema: preferredUomsSchema})
   ]
 
   // find: [],

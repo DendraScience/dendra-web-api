@@ -523,6 +523,10 @@
         ]
       }
     },
+    "userId": {
+      "$ref": "types.json#/definitions/objectId",
+      "example": "592f155746a1b867a114e040"
+    },
     "utcOffset": {
       "type": "integer",
       "description": "An offset in seconds between the time zone and UTC",

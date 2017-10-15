@@ -1,13 +1,20 @@
 'use strict';
 
-const authentication = require('feathers-authentication');
+const auth = require('feathers-authentication');
+const jwt = require('feathers-authentication-jwt');
+const local = require('feathers-authentication-local');
 
 module.exports = function () {
   return function () {
     const app = this;
 
-    let config = app.get('auth');
+    app.configure(auth(app.get('authentication'))).configure(jwt()).configure(local());
 
-    app.configure(authentication(config));
+    app.service('/authentication').hooks({
+      before: {
+        create: [auth.hooks.authenticate(['jwt', 'local'])],
+        remove: [auth.hooks.authenticate('jwt')]
+      }
+    });
   };
 }();

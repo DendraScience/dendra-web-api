@@ -1,18 +1,25 @@
 const apiHooks = require('@dendra-science/api-hooks-common')
+const auth = require('feathers-authentication')
+const authHooks = require('feathers-authentication-hooks')
+const commonHooks = require('feathers-hooks-common')
 const globalHooks = require('../../../hooks')
-const hooks = require('feathers-hooks-common')
-// const {errors} = require('feathers-errors')
 
 const SCHEMA_NAME = 'uom.json'
 
 exports.before = {
   // all: [],
 
-  find: apiHooks.coerceQuery(),
+  find: [
+    apiHooks.coerceQuery()
+  ],
 
   // get: [],
 
   create: [
+    auth.hooks.authenticate('jwt'),
+    authHooks.restrictToRoles({
+      roles: ['sys-admin']
+    }),
     globalHooks.validate(SCHEMA_NAME),
     apiHooks.timestamp(),
     apiHooks.coerce(),
@@ -20,6 +27,10 @@ exports.before = {
   ],
 
   update: [
+    auth.hooks.authenticate('jwt'),
+    authHooks.restrictToRoles({
+      roles: ['sys-admin']
+    }),
     globalHooks.validate(SCHEMA_NAME),
     apiHooks.timestamp(),
     apiHooks.coerce(),
@@ -34,9 +45,16 @@ exports.before = {
     }
   ],
 
-  patch: hooks.disallow('rest')
+  patch: [
+    commonHooks.disallow('rest')
+  ],
 
-  // remove: []
+  remove: [
+    auth.hooks.authenticate('jwt'),
+    authHooks.restrictToRoles({
+      roles: ['sys-admin']
+    })
+  ]
 }
 
 exports.after = {

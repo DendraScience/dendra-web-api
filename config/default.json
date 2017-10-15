@@ -1,9 +1,22 @@
 {
-  "auth": {
-    "idField": "id",
-    "local": {},
-    "token": {
-      "secret": "ThYncCxLbjhin7YZBtZgda7nm0KSeT4rM0UsvpCnJXPA6sTVq6NKvsDoHjzyjkMKnB4gKDqsUx8Gg7mYsRbV9Q=="
+  "authentication": {
+    "secret": "ThYncCxLbjhin7YZBtZgda7nm0KSeT4rM0UsvpCnJXPA6sTVq6NKvsDoHjzyjkMKnB4gKDqsUx8Gg7mYsRbV9Q==",
+    "path": "/authentication",
+    "service": "users",
+    "jwt": {
+      "header": {
+        "type": "access"
+      },
+      "audience": "https://dendra.science",
+      "issuer": "feathers",
+      "algorithm": "HS256",
+      "expiresIn": "1d"
+    },
+    "local": {
+      "entity": "user",
+      "service": "users",
+      "usernameField": "email",
+      "passwordField": "password"
     }
   },
   "connections": {
