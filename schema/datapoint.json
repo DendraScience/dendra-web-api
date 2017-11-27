@@ -43,7 +43,7 @@
       "$ref": "types.json#/definitions/geoObject"
     },
     "gc": {
-      "$ref": "types.json#/definitions/geoCoordinate"
+      "$ref": "types.json#/definitions/geoPosition"
     },
     "lt": {
       "$ref": "types.json#/definitions/isoDate",
