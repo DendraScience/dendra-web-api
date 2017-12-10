@@ -326,7 +326,25 @@ exports.before = {
   remove: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
     roles: ['sys-admin']
   })]
-};
+
+  /**
+   * HACK: Ensure uom is not null since populate({schema: convertibleToUomsSchema}) blows chunks.
+   */
+};function discardIfFalse(field) {
+  return hook => {
+    const items = commonHooks.getItems(hook);
+
+    if (Array.isArray(items)) {
+      items.forEach(item => {
+        if (!item[field]) delete item[field];
+      });
+    } else if (typeof items === 'object') {
+      if (!items[field]) delete items[field];
+    }
+
+    return hook;
+  };
+}
 
 const uomSchema = {
   include: {
@@ -358,7 +376,7 @@ const preferredUomsSchema = {
 };
 
 exports.after = {
-  all: [commonHooks.populate({ schema: uomSchema }), commonHooks.populate({ schema: convertibleToUomsSchema }), commonHooks.populate({ schema: preferredUomsSchema })]
+  all: [commonHooks.populate({ schema: uomSchema }), discardIfFalse('uom'), commonHooks.populate({ schema: convertibleToUomsSchema }), commonHooks.populate({ schema: preferredUomsSchema })]
 
   // find: [],
   // get: [],
