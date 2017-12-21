@@ -8,13 +8,25 @@
     "_id": {
       "$ref": "types.json#/definitions/organizationId"
     },
+    "description": {
+      "$ref": "types.json#/definitions/description",
+      "example": "The UC Natural Reserve System is a network of protected natural areas throughout California used for monitoring, education, and research. As part of a climate change monitoring grant, each reserve has a weather station on site."
+    },
     "email": {
       "$ref": "types.json#/definitions/email",
       "example": "infomgr@ucnrs.org"
     },
-    "name": {
+    "full_name": {
       "type": "string",
       "example": "University of California Natural Reserve System"
+    },
+    "name": {
+      "type": "string",
+      "example": "UC Natural Reserve System"
+    },
+    "slug": {
+      "$ref": "types.json#/definitions/slug",
+      "example": "ucnrs"
     },
     "url": {
       "$ref": "types.json#/definitions/url",
@@ -25,8 +37,11 @@
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "description": {"$ref": "#/definitions/description"},
     "email": {"$ref": "#/definitions/email"},
+    "full_name": {"$ref": "#/definitions/full_name"},
     "name": {"$ref": "#/definitions/name"},
+    "slug": {"$ref": "#/definitions/slug"},
     "url": {"$ref": "#/definitions/url"}
   },
   "required": [
@@ -46,8 +61,11 @@
       "schema": {
         "type": "object",
         "properties": {
+          "description": {"$ref": "#/definitions/description"},
           "email": {"$ref": "#/definitions/email"},
+          "full_name": {"$ref": "#/definitions/full_name"},
           "name": {"$ref": "#/definitions/name"},
+          "slug": {"$ref": "#/definitions/slug"},
           "url": {"$ref": "#/definitions/url"}
         }
       },
@@ -65,8 +83,11 @@
       "schema": {
         "type": "object",
         "properties": {
+          "description": {"$ref": "#/definitions/description"},
           "email": {"$ref": "#/definitions/email"},
+          "full_name": {"$ref": "#/definitions/full_name"},
           "name": {"$ref": "#/definitions/name"},
+          "slug": {"$ref": "#/definitions/slug"},
           "url": {"$ref": "#/definitions/url"}
         }
       },

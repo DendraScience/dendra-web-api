@@ -129,9 +129,9 @@
     "externalLinks": {
       "type": "array",
       "description": "A list of external site links to display in any user interface",
+      "minItems": 1,
       "items": {
         "type": "object",
-        "minItems": 1,
         "properties": {
           "title": {
             "type": "string"
@@ -147,9 +147,9 @@
     "externalRefs": {
       "type": "array",
       "description": "A list of external or foreign keys associated with this document",
+      "minItems": 1,
       "items": {
         "type": "object",
-        "minItems": 1,
         "properties": {
           "identifier": {
             "type": "string"
@@ -161,33 +161,49 @@
         }
       }
     },
-    "geoObject": {
-      "oneOf": [
-        {"$ref": "types.json#/definitions/geoPoint"},
-        {"$ref": "types.json#/definitions/geoPolygon"}
-      ]
+    "geoPosition": {
+      "type": "array",
+      "description": "A GeoJSON position (i.e. longitude, latitude, altitude)",
+      "example": [
+        -121.73638,
+        37.381666,
+        574.548
+      ],
+      "minItems": 2,
+      "maxItems": 3,
+      "items": {"type": "number"}
+    },
+    "geoLinearRing": {
+      "type": "array",
+      "description": "An array of four or more GeoJSON positions where the first equals the last",
+      "minItems": 4,
+      "items": {"$ref": "#/definitions/geoPosition"}
+    },
+    "geoLinearRingArray": {
+      "type": "array",
+      "description": "An array of GeoJSON linear rings",
+      "minItems": 1,
+      "items": {"$ref": "#/definitions/geoLinearRing"}
     },
     "geoPoint": {
       "type": "object",
-      "description": "A GeoJSON point with one position (i.e. longitude, latitude, altitude)",
+      "description": "A GeoJSON point having one position (i.e. longitude, latitude, altitude)",
       "properties": {
-        "coordinates": {
-          "$ref": "#/definitions/geoPosition"
-        },
         "type": {
           "type": "string",
           "example": "Point",
           "const": "Point"
-        }
+        },
+        "coordinates": {"$ref": "#/definitions/geoPosition"}
       },
       "required": [
-        "coordinates",
-        "type"
+        "type",
+        "coordinates"
       ]
     },
     "geoPolygon": {
       "type": "object",
-      "description": "A GeoJSON polygon with loops of positions (array of linear rings)",
+      "description": "A GeoJSON polygon (i.e. an array of linear rings)",
       "example": [
         [
           [
@@ -209,41 +225,66 @@
         ]
       ],
       "properties": {
-        "coordinates": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "array",
-            "minItems": 4,
-            "items": {
-              "$ref": "#/definitions/geoPosition"
-            }
-          }
-        },
         "type": {
           "type": "string",
           "example": "Polygon",
           "const": "Polygon"
+        },
+        "coordinates": {"$ref": "#/definitions/geoLinearRingArray"}
+      },
+      "required": [
+        "type",
+        "coordinates"
+      ]
+    },
+    "geoMultiPolygon": {
+      "type": "object",
+      "description": "An GeoJSON multi-polygon (i.e. an array of linear ring arrays)",
+      "example": [
+        [
+          [
+            [
+              -109.060253,
+              38.599328
+            ],
+            [
+              -109.059541,
+              38.719888
+            ],
+            [
+              -109.057388,
+              38.795456
+            ],
+            [
+              -109.054189,
+              38.874984
+            ]
+          ]
+        ]
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "example": "MultiPolygon",
+          "const": "MultiPolygon"
+        },
+        "coordinates": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/definitions/geoLinearRingArray"}
         }
       },
       "required": [
-        "coordinates",
-        "type"
+        "type",
+        "coordinates"
       ]
     },
-    "geoPosition": {
-      "type": "array",
-      "description": "A GeoJSON position (i.e. longitude, latitude, altitude)",
-      "example": [
-        -121.73638,
-        37.381666,
-        574.548
-      ],
-      "minItems": 2,
-      "maxItems": 3,
-      "items": {
-        "type": "number"
-      }
+    "geoObject": {
+      "oneOf": [
+        {"$ref": "types.json#/definitions/geoPoint"},
+        {"$ref": "types.json#/definitions/geoPolygon"},
+        {"$ref": "types.json#/definitions/geoMultiPolygon"}
+      ]
     },
     "hashes": {
       "type": "array",
@@ -385,10 +426,8 @@
           "person_id": {"$ref": "#/definitions/personId"},
           "roles": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "minItems": 1
+            "minItems": 1,
+            "items": {"type": "string"}
           }
         },
         "required": [
@@ -507,10 +546,8 @@
     "tags": {
       "type": "array",
       "description": "One or more tags in the format: <schemeId>&#95;<vocabularyLabel>&#95;<termLabel>",
-      "items": {
-        "type": "string"
-      },
-      "minItems": 1
+      "minItems": 1,
+      "items": {"type": "string"}
     },
     "thingId": {
       "$ref": "types.json#/definitions/objectId",

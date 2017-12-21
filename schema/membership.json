@@ -19,11 +19,11 @@
     "roles": {
       "type": "array",
       "description": "The person's roles within this organization (e.g. 'admin', 'contact', 'curator', 'manager')",
+      "minItems": 1,
       "items": {
         "type": "string",
         "example": "contact"
-      },
-      "minItems": 1
+      }
     }
   },
   "properties": {
