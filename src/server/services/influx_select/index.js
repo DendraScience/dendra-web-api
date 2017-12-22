@@ -50,21 +50,30 @@ class Service {
       // Stay async-friendly
       return new Promise((resolve, reject) => {
         setImmediate(() => {
-          const result = body && body.results && body.results[0]
-
-          if (result.error) {
-            reject(new errors.BadRequest('Error result returned', {
-              error: result.error
-            }))
-          } else if (result.series && (result.series.length > 0)) {
-            // TODO: Revisit this!!!
-            resolve({
-              limit: filters.$limit,
-              data: result.series
-            })
-          } else {
-            reject(new errors.BadRequest('No result returned'))
+          if (!body) {
+            return reject(new errors.BadRequest('No body returned'))
           }
+          if (body.error) {
+            return reject(new errors.BadRequest('Error returned', {
+              error: body.error
+            }))
+          }
+
+          const firstResult = body.results && body.results[0]
+
+          if (!firstResult) {
+            return reject(new errors.BadRequest('No result returned'))
+          }
+          if (firstResult.error) {
+            return reject(new errors.BadRequest('Error result returned', {
+              error: firstResult.error
+            }))
+          }
+
+          resolve({
+            limit: filters.$limit,
+            data: firstResult
+          })
         })
       })
     })

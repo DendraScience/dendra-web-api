@@ -41,9 +41,9 @@ exports.before = {
       }
 
       if (queryTime.$lt instanceof Date) {
-        parts.push(`(time > '${queryTime.$lt.toISOString()}')`);
+        parts.push(`(time < '${queryTime.$lt.toISOString()}')`);
       } else if (queryTime.$lte instanceof Date) {
-        parts.push(`(time > '${queryTime.$lte.toISOString()}')`);
+        parts.push(`(time <= '${queryTime.$lte.toISOString()}')`);
       }
 
       if (parts.length > 0) query.wc = parts.join(' AND ');
@@ -68,18 +68,18 @@ exports.after = {
     // TODO: Move this into a global hook?
     const count = 20;
     const data = hook.result.data;
-    const firstSeries = data[0];
-    const firstColumns = firstSeries.columns;
-    const firstValues = firstSeries.values;
+    const firstSeries = data.series && data.series[0];
+    const columns = firstSeries ? firstSeries.columns : [];
+    const values = firstSeries ? firstSeries.values : [];
     const timeAdjust = (hook.params.time_adjust | 0) * 1000;
     const utcOffset = hook.params.utc_offset | 0;
     const mapTask = function (start) {
       return new Promise(resolve => {
         setImmediate(() => {
-          const len = Math.min(start + count, firstValues.length);
+          const len = Math.min(start + count, values.length);
           for (let i = start; i < len; i++) {
-            const value = firstValues[i];
-            const item = firstColumns.reduce((obj, key, j) => {
+            const value = values[i];
+            const item = columns.reduce((obj, key, j) => {
               obj[key] = value[j];
               return obj;
             }, {});
@@ -101,18 +101,18 @@ exports.after = {
               newItem.d = item;
             }
 
-            firstValues[i] = newItem;
+            values[i] = newItem;
           }
           resolve();
         });
       });
     };
     const tasks = [];
-    for (let i = 0; i < firstValues.length; i += count) {
+    for (let i = 0; i < values.length; i += count) {
       tasks.push(mapTask(i));
     }
     return Promise.all(tasks).then(() => {
-      hook.result.data = firstValues;
+      hook.result.data = values;
       return hook;
     });
   }
