@@ -4,8 +4,9 @@ const {Interval} = require('@dendra-science/utils')
 
 // Reasonable min and max dates to perform low-level querying
 // NOTE: Didn't use min/max integer since db date conversion could choke
-const MIN_TIME = Date.UTC(1000, 0, 1)
-const MAX_TIME = Date.UTC(3000, 0, 1)
+// NOTE: Revised to be within InfluxDB default dates
+const MIN_TIME = Date.UTC(1800, 1, 2)
+const MAX_TIME = Date.UTC(2200, 1, 2)
 
 /**
  * High-level service that provides a standard facade to retrieve datapoints.
