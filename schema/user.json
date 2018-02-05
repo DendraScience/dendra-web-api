@@ -37,6 +37,7 @@
       }
     }
   },
+  "additionalProperties": false,
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
@@ -51,7 +52,6 @@
   "required": [
     "name"
   ],
-  "additionalProperties": false,
   "links": [
     {
       "title": "Create user",

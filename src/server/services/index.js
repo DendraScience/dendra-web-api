@@ -5,6 +5,7 @@ module.exports = (function () {
     const app = this
     const serviceNames = [
       'authentication',
+      'dashboard',
       'datapoint_lookup', // Route must precede datapoint
       'datapoint',
       'datastream_lookup', // Route must precede datastream

@@ -45,6 +45,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "connection": {
             "type": "string",
@@ -232,6 +233,7 @@
       ]
     }
   },
+  "additionalProperties": false,
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
@@ -266,7 +268,6 @@
     "enabled",
     "name"
   ],
-  "additionalProperties": false,
   "links": [
     {
       "title": "Create datastream",

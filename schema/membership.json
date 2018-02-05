@@ -6,7 +6,7 @@
   "type": "object",
   "definitions": {
     "_id": {
-      "$ref": "types.json#/definitions/objectId"
+      "$ref": "types.json#/definitions/membershipId"
     },
     "organization_id": {
       "$ref": "types.json#/definitions/organizationId",
@@ -26,6 +26,7 @@
       }
     }
   },
+  "additionalProperties": false,
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
@@ -39,7 +40,6 @@
     "person_id",
     "roles"
   ],
-  "additionalProperties": false,
   "links": [
     {
       "title": "Create membership",

@@ -12,18 +12,43 @@
       "$ref": "#/definitions/isoDate",
       "description": "Timestamp of when the document was created"
     },
+    "cssClasses": {
+      "type": "array",
+      "description": "One or more CSS class names to apply to the entity",
+      "minItems": 1,
+      "example": [
+        "first-class",
+        "second-class"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "cssStyle": {
+      "type": "object",
+      "description": "One or more CSS style name/value pairs to apply to the entity",
+      "example": {
+        "backgroundColor": "white"
+      }
+    },
+    "dashboardId": {
+      "$ref": "types.json#/definitions/objectId",
+      "example": "592f155746a1b867a114e090"
+    },
     "datastreamId": {
       "$ref": "types.json#/definitions/objectId",
       "example": "592f155746a1b867a114e020"
     },
     "datapointPaginationMeta": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "limit" : {"$ref": "#/definitions/paginationLimit"}
       }
     },
     "datapointQueryParameters": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "lat": {
           "type": "number",
@@ -66,6 +91,7 @@
     },
     "datastreamLookupParameters": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "_id": {
           "type": "array",
@@ -82,7 +108,9 @@
           "type": "array",
           "description": "A comma separated list of datastream sources (can be combined with attributes_exist and tags)",
           "example": ["edu.berkeley.sensor.ucnrs.legacy.odm", "gov.noaa.nws.ndfd.rest.xml"],
-          "items": {"type": "string"}
+          "items": {
+            "type": "string"
+          }
         },
         "station_id": {
           "type": "array",
@@ -132,6 +160,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "title": {
             "type": "string"
@@ -150,6 +179,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "identifier": {
             "type": "string"
@@ -188,6 +218,7 @@
     "geoPoint": {
       "type": "object",
       "description": "A GeoJSON point having one position (i.e. longitude, latitude, altitude)",
+      "additionalProperties": false,
       "properties": {
         "type": {
           "type": "string",
@@ -224,6 +255,7 @@
           ]
         ]
       ],
+      "additionalProperties": false,
       "properties": {
         "type": {
           "type": "string",
@@ -262,6 +294,7 @@
           ]
         ]
       ],
+      "additionalProperties": false,
       "properties": {
         "type": {
           "type": "string",
@@ -356,6 +389,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "sizes": {
             "type": "object",
@@ -391,6 +425,7 @@
     },
     "mediaSize": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "h": {
           "type": "integer"
@@ -421,19 +456,26 @@
       ],
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "organization_id": {"$ref": "#/definitions/organizationId"},
           "person_id": {"$ref": "#/definitions/personId"},
           "roles": {
             "type": "array",
             "minItems": 1,
-            "items": {"type": "string"}
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
           "roles"
         ]
       }
+    },
+    "membershipId": {
+      "$ref": "types.json#/definitions/objectId",
+      "example": "592f155746a1b867a114e080"
     },
     "objectId": {
       "type": "string",
@@ -457,6 +499,7 @@
     },
     "paginationMeta": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "total" : {"$ref": "#/definitions/paginationTotal"},
         "limit" : {"$ref": "#/definitions/paginationLimit"},
@@ -510,6 +553,7 @@
     },
     "queryParameters": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "field_name": {"$ref": "#/definitions/queryField"},
         "field_name[$op]": {"$ref": "#/definitions/queryFieldOp"},
@@ -547,7 +591,9 @@
       "type": "array",
       "description": "One or more tags in the format: <schemeId>&#95;<vocabularyLabel>&#95;<termLabel>",
       "minItems": 1,
-      "items": {"type": "string"}
+      "items": {
+        "type": "string"
+      }
     },
     "thingId": {
       "$ref": "types.json#/definitions/objectId",
@@ -574,6 +620,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "label": {
             "type": "string"

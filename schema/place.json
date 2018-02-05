@@ -55,6 +55,7 @@
       "example": "http://www.sanjoseca.gov"
     }
   },
+  "additionalProperties": false,
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
@@ -73,7 +74,6 @@
     "geo",
     "name"
   ],
-  "additionalProperties": false,
   "links": [
     {
       "title": "Create place",

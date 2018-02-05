@@ -6,7 +6,7 @@
   "type": "object",
   "definitions": {
     "_id": {
-      "$ref": "types.json#/definitions/objectId"
+      "$ref": "types.json#/definitions/stationId"
     },
     "activated_at": {
       "$ref": "types.json#/definitions/isoDate",
@@ -102,6 +102,7 @@
       "$ref": "types.json#/definitions/utcOffset"
     }
   },
+  "additionalProperties": false,
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
@@ -136,7 +137,6 @@
     "time_zone",
     "utc_offset"
   ],
-  "additionalProperties": false,
   "links": [
     {
       "title": "Create station",

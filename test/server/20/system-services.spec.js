@@ -16,7 +16,7 @@ describe('Service /system/schemas', function () {
   describe('#find()', function () {
     it('should get without error', function () {
       return guest.service('/system/schemas').find().then(res => {
-        expect(res).to.have.property('data').lengthOf(14)
+        expect(res).to.have.property('data').lengthOf(15)
       })
     })
   })

@@ -22,6 +22,7 @@
     },
     "term": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "abbreviation": {
           "type": "string",
@@ -57,6 +58,7 @@
       "enum": ["class", "unit"]
     }
   },
+  "additionalProperties": false,
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
@@ -72,7 +74,6 @@
     "label",
     "scheme_id"
   ],
-  "additionalProperties": false,
   "links": [
     {
       "title": "Create vocabulary",

@@ -42,6 +42,7 @@
       ]
     }
   },
+  "additionalProperties": false,
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
@@ -55,7 +56,6 @@
     "_id",
     "som_id"
   ],
-  "additionalProperties": false,
   "links": [
     {
       "title": "Create UOM",

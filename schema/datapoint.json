@@ -95,6 +95,7 @@
       }
     }
   },
+  "additionalProperties": false,
   "properties": {
     "d": {"$ref": "#/definitions/d"},
     "da": {"$ref": "#/definitions/da"},
@@ -114,7 +115,6 @@
     "t",
     "o"
   ],
-  "additionalProperties": false,
   "links": [
     {
       "title": "List datapoints",
