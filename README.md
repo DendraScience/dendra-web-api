@@ -22,8 +22,8 @@ The public facing REST API for Dendra. Built using [Feathers](https://feathersjs
 
 1. Make this project directory the current directory, i.e. `cd dendra-web-api`.
 
-2. Build the project `docker build -t dendro:dendra-web-api .`.
+2. Build the project `docker build -t dendra:dendra-web-api .`.
 
-3. Tag the desired image, e.g. `docker tag f0ec409b5194 dendro/dendra-web-api:latest`.
+3. Tag the desired image, e.g. `docker tag f0ec409b5194 dendra/dendra-web-api:latest`.
 
-4. Push it via `docker push dendro/dendra-web-api`.
+4. Push it via `docker push dendra/dendra-web-api`.

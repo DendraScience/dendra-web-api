@@ -3,14 +3,8 @@
     "secret": "WEB_API_SECRET"
   },
   "connections": {
-     "noaaGOES": {
-      "url": "NOAA_GOES_API_URL"
-    },
     "noaaNWS": {
       "url": "NOAA_NWS_API_URL"
-    },
-    "noaa": {
-      "url": "NOAA_API_URL"
     }
   },
   "databases": {
@@ -33,7 +27,13 @@
     "influx_select": {
       "apis": {
         "default": {
-          "url": "INFLUXDB_API_URL"
+          "url": "DEFAULT_INFLUXDB_API_URL"
+        },
+        "erczo": {
+          "url": "ERCZO_INFLUXDB_API_URL"
+        },
+        "erczo": {
+          "url": "UCNRS_INFLUXDB_API_URL"
         }
       }
     }
