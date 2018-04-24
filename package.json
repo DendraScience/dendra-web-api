@@ -1,6 +1,6 @@
 {
   "name": "dendra-web-api",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Dendra public facing REST API.",
   "license": "BSD-2-Clause-FreeBSD",
   "author": "J. Scott Smith <scott@newleafsolutionsinc.com>",

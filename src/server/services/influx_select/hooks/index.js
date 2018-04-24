@@ -18,6 +18,7 @@ exports.before = {
        */
 
       const query = hook.params.query
+      hook.params.coalesce = query.coalesce
       hook.params.compact = query.compact
       hook.params.time_adjust = query.time_adjust
       hook.params.utc_offset = query.utc_offset
@@ -51,7 +52,7 @@ exports.before = {
       }
     },
 
-    commonHooks.removeQuery('compact', 'time', 'time_adjust', 'utc_offset')
+    commonHooks.removeQuery('coalesce', 'compact', 'time', 'time_adjust', 'utc_offset')
   ],
 
   get: commonHooks.disallow(),
@@ -84,25 +85,33 @@ exports.after = {
           for (let i = start; i < len; i++) {
             const value = values[i]
             const item = columns.reduce((obj, key, j) => {
-              obj[key] = value[j]
+              obj.set(key, value[j])
               return obj
-            }, {})
+            }, new Map())
             const newItem = {}
 
             // Compact time values
-            newItem.t = new Date((new Date(item.time)).getTime() - timeAdjust)
-            newItem.o = typeof item.utc_offset === 'number' ? item.utc_offset : utcOffset
+            newItem.t = new Date((new Date(item.get('time'))).getTime() - timeAdjust)
 
-            delete item.time
-            delete item.utc_offset
+            const itemUtcOffset = item.get('utc_offset')
+            newItem.o = typeof itemUtcOffset === 'number' ? itemUtcOffset : utcOffset
+
+            item.delete('time')
+            item.delete('utc_offset')
 
             // Compact data values
-            const keys = Object.keys(item)
-            const v = item[keys[0]]
-            if ((keys.length === 1) && (typeof v === 'number')) {
-              newItem.v = v
+            if (item.size === 1) {
+              newItem.v = item.values().next().value
+            } else if (hook.params.coalesce) {
+              for (let val of item.values()) {
+                if (val !== null) {
+                  newItem.v = val
+                  break
+                }
+              }
             } else {
-              newItem.d = item
+              const d = newItem.d = {}
+              item.forEach((val, key) => (d[key] = val))
             }
 
             values[i] = newItem

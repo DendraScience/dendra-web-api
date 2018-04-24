@@ -32,7 +32,7 @@
         "erczo": {
           "url": "ERCZO_INFLUXDB_API_URL"
         },
-        "erczo": {
+        "ucnrs": {
           "url": "UCNRS_INFLUXDB_API_URL"
         }
       }
