@@ -20,13 +20,13 @@
     }
   },
   "connections": {
-    "noaaGOES": {
-      "url": "http://localhost:3031"
+    "aggregate": {
+      "url": "http://localhost:3034"
+    },
+    "aggregateStore": {
+      "url": "http://localhost:3036"
     },
     "noaaNWS": {
-      "url": "http://localhost:3032"
-    },
-    "noaa": {
       "url": "http://localhost:3032"
     }
   },

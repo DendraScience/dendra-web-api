@@ -6,9 +6,13 @@ const feathers = require('feathers')
 const restClient = require('feathers-rest/client')
 const request = require('request')
 
+let server
+
 before(function () {
-  return Promise.resolve(main.app.get('serverReady')).then(() => {
+  return Promise.resolve(main.app.get('serverReady')).then(svr => {
     const databases = main.app.get('databases')
+
+    server = svr
 
     global.guest = feathers()
       .configure(restClient('http://localhost:3030').request(request))
@@ -66,15 +70,18 @@ before(function () {
   })
 })
 
-after(function () {
+after(async function () {
+  await new Promise((resolve, reject) => server.close(err => err ? reject(err) : resolve()))
+  server.unref()
+
   const databases = main.app.get('databases')
 
   if (databases.mongodb && databases.mongodb.metadata) {
-    return Promise.resolve(databases.mongodb.metadata.db).then(db => {
-      return Promise.all([
-        db.collection('users').remove({email: 'user_test_nonadmin@test.dendra.science'}),
-        db.collection('users').remove({email: 'user_test_sysadmin@test.dendra.science'})
-      ])
-    })
+    const db = await databases.mongodb.metadata.db
+
+    await db.collection('users').remove({email: 'user_test_nonadmin@test.dendra.science'})
+    await db.collection('users').remove({email: 'user_test_sysadmin@test.dendra.science'})
+
+    await db.close()
   }
 })

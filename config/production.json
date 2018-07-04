@@ -3,6 +3,12 @@
     "secret": "WEB_API_SECRET"
   },
   "connections": {
+    "aggregate": {
+      "url": "AGGREGATE_API_URL"
+    },
+    "aggregateStore": {
+      "url": "AGGREGATE_JSON_API_URL"
+    },
     "noaaNWS": {
       "url": "NOAA_NWS_API_URL"
     }

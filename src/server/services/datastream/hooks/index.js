@@ -369,7 +369,7 @@ exports.before = {
   ],
 
   patch: [
-    commonHooks.disallow('rest')
+    commonHooks.disallow('external')
   ],
 
   remove: [
