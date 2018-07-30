@@ -29,7 +29,7 @@ exports.before = {
     });
   }],
 
-  patch: [commonHooks.disallow('rest')],
+  patch: [commonHooks.disallow('external')],
 
   remove: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
     roles: ['sys-admin']

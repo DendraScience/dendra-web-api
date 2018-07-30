@@ -5,6 +5,9 @@ module.exports = (function () {
     const app = this
     const serviceNames = [
       'authentication',
+      'aggregate',
+      'aggregate_request',
+      'aggregate_result',
       'dashboard',
       'datapoint_lookup', // Route must precede datapoint
       'datapoint',

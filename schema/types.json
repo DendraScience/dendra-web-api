@@ -3,6 +3,12 @@
   "$id": "types.json",
   "hidden": true,
   "definitions": {
+    "aggregateId": {
+      "type": "string",
+      "description": "The unique document identifier",
+      "example": "rollupDatapoints-0C97-4378-F4DA-A1FD-7353-EFBB-B379-9CBD-4B78-1927-44D2-790D-25BA-A086-BCEC-0D93",
+      "maxLength": 120
+    },
     "countryCode3": {
       "type": "string",
       "description": "An ISO 3166-1 alpha-3 country code",
