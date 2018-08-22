@@ -1,8 +1,5 @@
-module.exports = (function () {
-  return function () {
-    const app = this
-    const mysql = app.get('databases').mysql
+module.exports = async (app) => {
+  const mysql = app.get('databases').mysql
 
-    if (mysql.legacy) app.configure(require('./legacy'))
-  }
-})()
+  if (mysql.legacy) await require('./legacy')(app)
+}

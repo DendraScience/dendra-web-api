@@ -1,9 +1,6 @@
-module.exports = (function () {
-  return function () {
-    const app = this
-    const databases = app.get('databases')
+module.exports = async (app) => {
+  const databases = app.get('databases')
 
-    if (databases.mongodb) app.configure(require('./mongodb'))
-    if (databases.mysql) app.configure(require('./mysql'))
-  }
-})()
+  if (databases.mongodb) await require('./mongodb')(app)
+  if (databases.mysql) await require('./mysql')(app)
+}
