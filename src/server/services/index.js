@@ -22,6 +22,7 @@ module.exports = function (app) {
     'station',
     'system_schema',
     'system_time',
+    'system_timezone',
     'thing',
     'uom',
     'user',

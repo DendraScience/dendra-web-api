@@ -1,35 +1,33 @@
+const errors = require('@feathersjs/errors')
+const moment = require('moment-timezone')
 const hooks = require('./hooks')
-const {errors} = require('feathers-errors')
 
 class Service {
+  constructor (options = {}) {
+    this.id = options.id || '_id'
+  }
+
   get (id) {
-    // HACK: Only supports UTC for now - hardcoded
-    // TODO: Incorporate Moment.js and timezones to better deal with time
-    // TODO: Service should return more info/stats about the time and timezone
-    // TODO: The _id should resemble a proper timezone identifier, e.g. 'America-Los_Angeles'
-    const now = new Date()
-    switch (id.toLowerCase()) {
-      case 'utc':
-        return Promise.resolve({
-          _id: 'utc',
-          now: now
-        })
-      default:
-        throw new errors.NotFound('Page not found')
+    const now = moment().tz(id)
+
+    if (now.tz()) {
+      return Promise.resolve({
+        [this.id]: id,
+        now: now.format()
+      })
     }
+
+    return Promise.reject(
+      new errors.NotFound(`No record found for id '${id}'`)
+    )
   }
 }
 
-module.exports = (function () {
-  return function () {
-    const app = this
+module.exports = function (app) {
+  app.use('/system/time', new Service())
 
-    app.use('/system/time', new Service())
+  // Get the wrapped service object, bind hooks
+  const timeService = app.service('/system/time')
 
-    // Get the wrapped service object, bind hooks
-    const timeService = app.service('/system/time')
-
-    timeService.before(hooks.before)
-    timeService.after(hooks.after)
-  }
-})()
+  timeService.hooks(hooks)
+}

@@ -2,10 +2,7 @@ const errors = require('@feathersjs/errors')
 const {sorter, select, filterQuery} = require('@feathersjs/commons')
 const sift = require('sift')
 
-const fs = require('fs')
-const path = require('path')
-const util = require('util')
-const readFile = util.promisify(fs.readFile)
+const moment = require('moment-timezone')
 
 const hooks = require('./hooks')
 
@@ -17,15 +14,11 @@ class Service {
     this._sorter = options.sorter || sorter
   }
 
-  setup (app) {
-    this.app = app
-  }
-
   find (params, getFilter = filterQuery) {
     const {query, filters} = getFilter(params.query || {})
     const map = select(params)
 
-    const names = this.app.get('schemaNames')
+    const names = moment.tz.names()
 
     let values = names.map(name => ({[this.id]: name}))
 
@@ -58,15 +51,12 @@ class Service {
   }
 
   get (id) {
-    const schemaPath = this.app.get('schemaPath')
-    const names = this.app.get('schemaNames')
+    const zone = moment.tz.zone(id)
 
-    if (names.indexOf(id) > -1) {
-      return readFile(path.join(schemaPath, id), 'utf8').then(data => {
-        return {
-          [this.id]: id,
-          content: JSON.parse(data)
-        }
+    if (zone) {
+      return Promise.resolve({
+        [this.id]: id,
+        zone
       })
     }
 
@@ -77,10 +67,10 @@ class Service {
 }
 
 module.exports = function (app) {
-  app.use('/system/schemas', new Service())
+  app.use('/system/timezones', new Service())
 
   // Get the wrapped service object, bind hooks
-  const schemaService = app.service('/system/schemas')
+  const timezoneService = app.service('/system/timezones')
 
-  schemaService.hooks(hooks)
+  timezoneService.hooks(hooks)
 }
