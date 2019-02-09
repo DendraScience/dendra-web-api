@@ -49,10 +49,18 @@ class Service {
 
     const stack = [];
     const datastream = params.datastream;
-    let config = typeof datastream === 'object' && Array.isArray(datastream.datapoints_config) ? datastream.datapoints_config : [];
+
+    let config = [];
+    if (typeof datastream === 'object') {
+      if (Array.isArray(datastream.datapoints_config_built)) {
+        config = datastream.datapoints_config_built;
+      } else if (Array.isArray(datastream.datapoints_config)) {
+        config = datastream.datapoints_config;
+      }
+    }
 
     config.filter(inst => {
-      return typeof inst.path === 'string';
+      return typeof inst.path === 'string' && !(inst.actions && inst.actions.exclude === true);
     }).map(inst => {
       return {
         connection: typeof inst.connection === 'string' && this.connections[inst.connection] ? this.connections[inst.connection] : this,

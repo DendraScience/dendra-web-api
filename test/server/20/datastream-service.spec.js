@@ -163,6 +163,14 @@ describe('Service /datastreams', function () {
     })
   })
 
+  describe('#patch()', function () {
+    it('should patch without error', function () {
+      return sysAdmin.service('/datastreams').patch(_id, {datapoints_config_built: [{a: 1}]}).then(doc => {
+        expect(doc).to.have.nested.property('datapoints_config_built.0.a', 1)
+      })
+    })
+  })
+
   describe('#update()', function () {
     it('should update without error', function () {
       return helper.loadJSON(path.join(__dirname, 'data/datastream_ts2003.update.json')).then(doc => {

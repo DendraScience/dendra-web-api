@@ -1,0 +1,52 @@
+{
+  "actions": [
+    {
+      "exclude": true
+    },
+    {
+      "flag": [
+        "X"
+      ]
+    }
+  ],
+  "begins_at": "2018-10-23T14:30:00.000Z",
+  "created_by_name": "Test One Annotation Creator",
+  "datastream_ids": [
+    "592f155746a1b867a114e021",
+    "592f155746a1b867a114e022"
+  ],
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod.",
+  "enabled": true,
+  "ends_before": "2018-10-23T15:30:00.000Z",
+  "external_refs": [
+    {
+      "identifier": "554",
+      "type": "odm.incidents.IncidentID"
+    },
+    {
+      "identifier": "SNARL",
+      "type": "odm.incidents.StationNames"
+    },
+    {
+      "identifier": "3142,3143,3144,3146",
+      "type": "odm.incidents.Datastream_Names"
+    },
+    {
+      "identifier": "493",
+      "type": "odm.qualifiers.QualifierID"
+    },
+    {
+      "identifier": "X IR_554",
+      "type": "odm.qualifiers.QualifierCode"
+    },
+    {
+      "identifier": "SNARL GeoNor service; see incident report IR_554",
+      "type": "odm.qualifiers.QualifierDescription"
+    }
+  ],
+  "organization_id": "592f155746a1b867a114e030",
+  "station_ids": [
+    "592f155746a1b867a114e060"
+  ],
+  "title": "Test One Annotation"
+}

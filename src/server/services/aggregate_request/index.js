@@ -7,7 +7,7 @@ class Service {
   setup (app) {
     this.app = app
     this.connections = app.get('connections')
-    this.aggregateApp = this.connections.aggregate.app
+    this.aggregateBuildApp = this.connections.aggregateBuild.app
     this.aggregateStoreApp = this.connections.aggregateStore.app
   }
 
@@ -30,7 +30,7 @@ class Service {
      */
 
     try {
-      aggDoc = await this.aggregateApp.service('/aggregates').create(data)
+      aggDoc = await this.aggregateBuildApp.service('/builds').create(data)
     } catch (err) {
       this.app.logger.error(`Create aggregates error: ${err.message}`)
     }

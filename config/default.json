@@ -20,11 +20,14 @@
     }
   },
   "connections": {
-    "aggregate": {
+    "aggregateBuild": {
       "url": "http://localhost:3034"
     },
     "aggregateStore": {
       "url": "http://localhost:3036"
+    },
+    "annotationBuild": {
+      "url": "http://localhost:3034"
     },
     "noaaNWS": {
       "url": "http://localhost:3032"
@@ -40,7 +43,7 @@
           "default": 20,
           "max": 2000
         },
-        "url": "mongodb://localhost:27017/dendro_playground"
+        "url": "mongodb://localhost:27017/dendra_playground"
       }
     },
     "mysql": {
