@@ -96,6 +96,11 @@
       "$ref": "types.json#/definitions/organizationId",
       "description": "The organization to which this annotation belongs"
     },
+    "state": {
+      "type": "string",
+      "description": "The current state of this annotation",
+      "example": "approved"
+    },
     "station_ids": {
       "type": "array",
       "description": "One or more stations to which this annotation applies",
@@ -124,11 +129,11 @@
     "ends_before": {"$ref": "#/definitions/ends_before"},
     "external_refs": {"$ref": "#/definitions/external_refs"},
     "organization_id": {"$ref": "#/definitions/organization_id"},
+    "state": {"$ref": "#/definitions/state"},
     "station_ids": {"$ref": "#/definitions/station_ids"},
     "title": {"$ref": "#/definitions/title"}
   },
   "required": [
-    "begins_at",
     "enabled",
     "organization_id",
     "title"
@@ -152,11 +157,11 @@
           "ends_before": {"$ref": "#/definitions/ends_before"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
+          "state": {"$ref": "#/definitions/state"},
           "station_ids": {"$ref": "#/definitions/station_ids"},
           "title": {"$ref": "#/definitions/title"}
         },
         "required": [
-          "begins_at",
           "enabled",
           "organization_id",
           "title"
@@ -182,11 +187,11 @@
           "ends_before": {"$ref": "#/definitions/ends_before"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
+          "state": {"$ref": "#/definitions/state"},
           "station_ids": {"$ref": "#/definitions/station_ids"},
           "title": {"$ref": "#/definitions/title"}
         },
         "required": [
-          "begins_at",
           "enabled",
           "organization_id",
           "title"

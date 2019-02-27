@@ -170,9 +170,8 @@
     },
     "state": {
       "type": "string",
-      "description": "The current functional state of this datastream",
-      "example": "ready",
-      "const": "ready"
+      "description": "The current state of this datastream",
+      "example": "ready"
     },
     "station_id": {
       "$ref": "types.json#/definitions/stationId",
@@ -246,6 +245,7 @@
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"},
     "attributes": {"$ref": "#/definitions/attributes"},
     "attributes_info": {"$ref": "#/definitions/attributes_info"},
     "convertible_to_uoms": {"$ref": "#/definitions/convertible_to_uoms"},

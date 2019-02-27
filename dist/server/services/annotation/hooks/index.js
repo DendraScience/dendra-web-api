@@ -24,6 +24,7 @@ exports.before = {
   }), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), hook => {
     // TODO: Optimize with find/$select to return fewer fields?
     return hook.app.service('/annotations').get(hook.id).then(doc => {
+      hook.beforeDoc = doc;
       hook.data.created_at = doc.created_at;
       return hook;
     });
@@ -47,7 +48,8 @@ function createAnnotationBuild() {
       build_at: now,
       expires_at: new Date(now.getTime() + 86400000), // 24 hours from now
       spec: {
-        annotation: hook.result
+        annotation: hook.result,
+        annotation_before: hook.beforeDoc || {}
       }
     }).then(() => {
       return hook;

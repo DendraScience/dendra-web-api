@@ -7,6 +7,7 @@ const commonHooks = require('feathers-hooks-common');
 const globalHooks = require('../../../hooks');
 const { asyncHashDigest } = require('../../../lib/utils');
 const { errors } = require('feathers-errors');
+const { ObjectID } = require('mongodb');
 
 const SCHEMA_NAME = 'datastream.json';
 
@@ -300,6 +301,24 @@ function computeHashes() {
 
 exports.computeHashes = computeHashes; // For testing
 
+/**
+ * Generate and assign a new version identifier.
+ */
+function versionStamp() {
+  return hook => {
+    let items = commonHooks.getItems(hook);
+    if (!Array.isArray(items)) items = [items];
+
+    items.forEach(item => {
+      item.version_id = new ObjectID();
+    });
+
+    return hook;
+  };
+}
+
+exports.versionStamp = versionStamp; // For testing
+
 exports.before = {
   // all: [],
 
@@ -309,11 +328,11 @@ exports.before = {
 
   create: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
     roles: ['sys-admin']
-  }), commonHooks.discard('_computed', '_elapsed', '_include'), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), apiHooks.uniqueArray('data.tags'), computeAttributesInfo(), computeTagsInfo(), computeHashes()],
+  }), commonHooks.discard('_computed', '_elapsed', '_include'), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), apiHooks.uniqueArray('data.tags'), computeAttributesInfo(), computeTagsInfo(), computeHashes(), versionStamp()],
 
   update: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
     roles: ['sys-admin']
-  }), commonHooks.discard('_computed', '_elapsed', '_include'), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), apiHooks.uniqueArray('data.tags'), computeAttributesInfo(), computeTagsInfo(), computeHashes(), hook => {
+  }), commonHooks.discard('_computed', '_elapsed', '_include'), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), apiHooks.uniqueArray('data.tags'), computeAttributesInfo(), computeTagsInfo(), computeHashes(), versionStamp(), hook => {
     // TODO: Optimize with find/$select to return fewer fields?
     return hook.app.service('/datastreams').get(hook.id).then(doc => {
       if (doc.datapoints_config_built) {
@@ -328,7 +347,7 @@ exports.before = {
 
   patch: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
     roles: ['sys-admin']
-  }), globalHooks.validate('datastream.patch.json'), apiHooks.timestamp(), apiHooks.coerceQuery(), apiHooks.coerce()],
+  }), globalHooks.validate('datastream.patch.json'), apiHooks.timestamp(), apiHooks.coerceQuery(), apiHooks.coerce(), versionStamp()],
 
   remove: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
     roles: ['sys-admin']
@@ -364,7 +383,7 @@ function createAnnotationBuild() {
       build_at: now,
       expires_at: new Date(now.getTime() + 86400000), // 24 hours from now
       spec: {
-        datastream_id: hook.result._id
+        datastream: hook.result
       }
     }).then(() => {
       return hook;
@@ -409,8 +428,9 @@ exports.after = {
 
   create: [createAnnotationBuild()],
 
-  update: [createAnnotationBuild()]
+  update: [createAnnotationBuild()],
 
-  // patch: [],
+  patch: [commonHooks.when(hook => !hook.data.datapoints_config_built, createAnnotationBuild())]
+
   // remove: []
 };
