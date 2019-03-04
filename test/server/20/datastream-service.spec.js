@@ -118,6 +118,7 @@ describe('Service /datastreams', function () {
         expect(doc).to.have.property('_id')
         expect(doc).to.have.property('uom')
         expect(doc).to.have.property('preferred_uoms').lengthOf(1)
+        expect(doc).to.have.property('version_id').and.match(/^[a-fA-F0-9]{24}$/)
 
         /*
           Validate computed fields
@@ -163,6 +164,15 @@ describe('Service /datastreams', function () {
     })
   })
 
+  describe('#patch()', function () {
+    it('should patch without error', function () {
+      return sysAdmin.service('/datastreams').patch(_id, {datapoints_config_built: [{a: 1}]}).then(doc => {
+        expect(doc).to.have.nested.property('datapoints_config_built.0.a', 1)
+        expect(doc).to.have.nested.property('version_id').and.match(/^[a-fA-F0-9]{24}$/)
+      })
+    })
+  })
+
   describe('#update()', function () {
     it('should update without error', function () {
       return helper.loadJSON(path.join(__dirname, 'data/datastream_ts2003.update.json')).then(doc => {
@@ -172,6 +182,7 @@ describe('Service /datastreams', function () {
         expect(doc).to.have.property('tags').lengthOf(2)
         expect(doc).to.have.property('uom')
         expect(doc).to.have.property('preferred_uoms').lengthOf(1)
+        expect(doc).to.have.property('version_id').and.match(/^[a-fA-F0-9]{24}$/)
 
         /*
           Validate computed fields

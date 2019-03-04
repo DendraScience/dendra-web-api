@@ -21,6 +21,7 @@ class Service {
 
         // Remove internal fields
         delete obj.datapoints_config;
+        delete obj.datapoints_config_built;
 
         return obj;
       });

@@ -5,6 +5,7 @@ const commonHooks = require('feathers-hooks-common')
 const globalHooks = require('../../../hooks')
 const {asyncHashDigest} = require('../../../lib/utils')
 const {errors} = require('feathers-errors')
+const {ObjectID} = require('mongodb')
 
 const SCHEMA_NAME = 'datastream.json'
 
@@ -319,6 +320,24 @@ function computeHashes () {
 
 exports.computeHashes = computeHashes // For testing
 
+/**
+ * Generate and assign a new version identifier.
+ */
+function versionStamp () {
+  return (hook) => {
+    let items = commonHooks.getItems(hook)
+    if (!Array.isArray(items)) items = [items]
+
+    items.forEach(item => {
+      item.version_id = new ObjectID()
+    })
+
+    return hook
+  }
+}
+
+exports.versionStamp = versionStamp // For testing
+
 exports.before = {
   // all: [],
 
@@ -341,7 +360,9 @@ exports.before = {
 
     computeAttributesInfo(),
     computeTagsInfo(),
-    computeHashes()
+    computeHashes(),
+
+    versionStamp()
   ],
 
   update: [
@@ -359,9 +380,16 @@ exports.before = {
     computeTagsInfo(),
     computeHashes(),
 
+    versionStamp(),
+
     (hook) => {
       // TODO: Optimize with find/$select to return fewer fields?
       return hook.app.service('/datastreams').get(hook.id).then(doc => {
+        if (doc.datapoints_config_built) {
+          hook.data.datapoints_config_built = doc.datapoints_config_built
+        } else {
+          delete hook.data.datapoints_config_built
+        }
         hook.data.created_at = doc.created_at
         return hook
       })
@@ -369,7 +397,16 @@ exports.before = {
   ],
 
   patch: [
-    commonHooks.disallow('external')
+    auth.hooks.authenticate('jwt'),
+    authHooks.restrictToRoles({
+      roles: ['sys-admin']
+    }),
+    globalHooks.validate('datastream.patch.json'),
+    apiHooks.timestamp(),
+    apiHooks.coerceQuery(),
+    apiHooks.coerce(),
+
+    versionStamp()
   ],
 
   remove: [
@@ -396,6 +433,25 @@ function discardIfFalse (field) {
     }
 
     return hook
+  }
+}
+
+function createAnnotationBuild () {
+  return (hook) => {
+    const now = new Date()
+    const method = 'assembleDatapointsConfig'
+
+    return hook.app.get('connections').annotationBuild.app.service('/builds').create({
+      _id: `${method}-${hook.result._id}-${now.getTime()}-${Math.floor(Math.random() * 10000)}`,
+      method,
+      build_at: now,
+      expires_at: new Date(now.getTime() + 86400000), // 24 hours from now
+      spec: {
+        datastream: hook.result
+      }
+    }).then(() => {
+      return hook
+    })
   }
 }
 
@@ -434,12 +490,22 @@ exports.after = {
     discardIfFalse('uom'),
     commonHooks.populate({schema: convertibleToUomsSchema}),
     commonHooks.populate({schema: preferredUomsSchema})
-  ]
+  ],
 
   // find: [],
   // get: [],
-  // create: [],
-  // update: [],
-  // patch: [],
+
+  create: [
+    createAnnotationBuild()
+  ],
+
+  update: [
+    createAnnotationBuild()
+  ],
+
+  patch: [
+    commonHooks.when(hook => !hook.data.datapoints_config_built, createAnnotationBuild())
+  ]
+
   // remove: []
 }

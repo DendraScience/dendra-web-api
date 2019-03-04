@@ -5,9 +5,13 @@
   "definitions": {
     "aggregateId": {
       "type": "string",
-      "description": "The unique document identifier",
+      "description": "The unique aggregate identifier",
       "example": "rollupDatapoints-0C97-4378-F4DA-A1FD-7353-EFBB-B379-9CBD-4B78-1927-44D2-790D-25BA-A086-BCEC-0D93",
       "maxLength": 120
+    },
+    "annotationId": {
+      "$ref": "types.json#/definitions/objectId",
+      "example": "592f155746a1b867a114e0a0"
     },
     "countryCode3": {
       "type": "string",
@@ -646,6 +650,11 @@
       "type": "integer",
       "description": "An offset in seconds between the time zone and UTC",
       "example": -28800
+    },
+    "versionId": {
+      "$ref": "types.json#/definitions/objectId",
+      "description": "The automatically assigned version identifier",
+      "example": "592f155746a1b867a114e0b0"
     },
     "vocabularyId": {
       "$ref": "types.json#/definitions/stringId",

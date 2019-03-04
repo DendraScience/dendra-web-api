@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "datastream.patch.json",
+  "type": "object",
+  "definitions": {
+    "_id": {
+      "$ref": "types.json#/definitions/datastreamId"
+    },
+    "datapoints_config_built": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"}
+  }
+}

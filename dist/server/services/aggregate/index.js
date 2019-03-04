@@ -11,27 +11,27 @@ class Service {
   setup(app) {
     this.app = app;
     this.connections = app.get('connections');
-    this.aggregateApp = this.connections.aggregate.app;
+    this.aggregateBuildApp = this.connections.aggregateBuild.app;
   }
 
-  find(...args) {
-    // Proxy to aggregate API
-    return this.aggregateApp.service('/aggregates').find(...args);
+  find(params) {
+    // Proxy to aggregate build API
+    return this.aggregateBuildApp.service('/builds').find(params);
   }
 
-  _get(...args) {
-    // Proxy to aggregate API
-    return this.aggregateApp.service('/aggregates').get(...args);
+  _get(id, params) {
+    // Proxy to aggregate build API
+    return this.aggregateBuildApp.service('/builds').get(id, params);
   }
 
-  create(...args) {
-    // Proxy to aggregate API
-    return this.aggregateApp.service('/aggregates').create(...args);
+  create(data, params) {
+    // Proxy to aggregate build API
+    return this.aggregateBuildApp.service('/builds').create(data, params);
   }
 
-  remove(...args) {
-    // Proxy to aggregate API
-    return this.aggregateApp.service('/aggregates').remove(...args);
+  remove(id, params) {
+    // Proxy to aggregate build API
+    return this.aggregateBuildApp.service('/builds').remove(id, params);
   }
 }
 

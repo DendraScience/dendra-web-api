@@ -41,7 +41,7 @@
     },
     "datapoints_config": {
       "type": "array",
-      "description": "Service configuration used for fetching datapoints",
+      "description": "User-defined service configuration for fetching datapoints",
       "minItems": 1,
       "items": {
         "type": "object",
@@ -74,8 +74,16 @@
         "required": [
           "params",
           "path"
-        ],
-        "additionalProperties": false
+        ]
+      }
+    },
+    "datapoints_config_built": {
+      "type": "array",
+      "description": "System generated service configuration for fetching datapoints",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "example": {}
       }
     },
     "derivation_description": {
@@ -162,9 +170,8 @@
     },
     "state": {
       "type": "string",
-      "description": "The current functional state of this datastream",
-      "example": "ready",
-      "const": "ready"
+      "description": "The current state of this datastream",
+      "example": "ready"
     },
     "station_id": {
       "$ref": "types.json#/definitions/stationId",
@@ -238,10 +245,12 @@
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"},
     "attributes": {"$ref": "#/definitions/attributes"},
     "attributes_info": {"$ref": "#/definitions/attributes_info"},
     "convertible_to_uoms": {"$ref": "#/definitions/convertible_to_uoms"},
     "datapoints_config": {"$ref": "#/definitions/datapoints_config"},
+    "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"},
     "derivation_description": {"$ref": "#/definitions/derivation_description"},
     "derived_from_datastream_ids": {"$ref": "#/definitions/derived_from_datastream_ids"},
     "description": {"$ref": "#/definitions/description"},
@@ -280,6 +289,7 @@
         "properties": {
           "attributes": {"$ref": "#/definitions/attributes"},
           "datapoints_config": {"$ref": "#/definitions/datapoints_config"},
+          "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"},
           "derivation_description": {"$ref": "#/definitions/derivation_description"},
           "derived_from_datastream_ids": {"$ref": "#/definitions/derived_from_datastream_ids"},
           "description": {"$ref": "#/definitions/description"},
@@ -316,6 +326,7 @@
         "properties": {
           "attributes": {"$ref": "#/definitions/attributes"},
           "datapoints_config": {"$ref": "#/definitions/datapoints_config"},
+          "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"},
           "derivation_description": {"$ref": "#/definitions/derivation_description"},
           "derived_from_datastream_ids": {"$ref": "#/definitions/derived_from_datastream_ids"},
           "description": {"$ref": "#/definitions/description"},
@@ -338,6 +349,20 @@
           "enabled",
           "name"
         ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Patch datastream",
+      "description": "Patch an existing datastream.",
+      "rel": "self",
+      "href": "datastreams/{#/definitions/_id}",
+      "method": "PATCH",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"}
+        }
       },
       "targetSchema": {"rel": "self"}
     },

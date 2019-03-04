@@ -1,0 +1,243 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "annotation.json",
+  "title": "Annotation",
+  "description": "A note with optional actions to apply against a range of datapoints.",
+  "type": "object",
+  "definitions": {
+    "_id": {
+      "$ref": "types.json#/definitions/annotationId"
+    },
+    "actions": {
+      "type": "array",
+      "description": "Specific actions to apply against the identified datapoints",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "exclude": {
+                "type": "boolean",
+                "example": true,
+                "const": true
+              }
+            },
+            "required": [
+              "exclude"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "flag": {
+                "type": "array",
+                "minItems": 1,
+                "example": [
+                  "X"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "flag"
+            ]
+          }
+        ]
+      }
+    },
+    "begins_at": {
+      "$ref": "types.json#/definitions/isoDate"
+    },
+    "created_by_name": {
+      "type": "string",
+      "description": "Name of individual that created this annotation",
+      "example": "J. Smith"
+    },
+    "datastream_ids": {
+      "type": "array",
+      "description": "One or more datastreams to which this annotation applies",
+      "minItems": 1,
+      "items": {
+        "$ref": "types.json#/definitions/datastreamId"
+      }
+    },
+    "description": {
+      "$ref": "types.json#/definitions/description",
+      "example": "Loaded new program to logger, it rearranges the TenMin table slightly."
+    },
+    "enabled": {
+      "type": "boolean",
+      "description": "Whether this datastream is enabled (shown) in any user interface",
+      "example": true
+    },
+    "ends_before": {
+      "$ref": "types.json#/definitions/isoDate"
+    },
+    "external_refs": {
+      "$ref": "types.json#/definitions/externalRefs",
+      "example": [
+        {
+          "identifier": "3090",
+          "type": "odm.datastreams.datastreamid"
+        },
+        {
+          "identifier": "334",
+          "type": "odm.stations.stationid",
+          "url": "http://sensor.berkeley.edu/index_ucnrs.html"
+        }
+      ]
+    },
+    "organization_id": {
+      "$ref": "types.json#/definitions/organizationId",
+      "description": "The organization to which this annotation belongs"
+    },
+    "state": {
+      "type": "string",
+      "description": "The current state of this annotation",
+      "example": "approved"
+    },
+    "station_ids": {
+      "type": "array",
+      "description": "One or more stations to which this annotation applies",
+      "minItems": 1,
+      "items": {
+        "$ref": "types.json#/definitions/stationId"
+      }
+    },
+    "title": {
+      "type": "string",
+      "description": "Short text describing this annotation",
+      "example": "Station program update"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "_id": {"$ref": "#/definitions/_id"},
+    "created_at": {"$ref": "types.json#/definitions/createdAt"},
+    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "actions": {"$ref": "#/definitions/actions"},
+    "begins_at": {"$ref": "#/definitions/begins_at"},
+    "created_by_name": {"$ref": "#/definitions/created_by_name"},
+    "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
+    "description": {"$ref": "#/definitions/description"},
+    "enabled": {"$ref": "#/definitions/enabled"},
+    "ends_before": {"$ref": "#/definitions/ends_before"},
+    "external_refs": {"$ref": "#/definitions/external_refs"},
+    "organization_id": {"$ref": "#/definitions/organization_id"},
+    "state": {"$ref": "#/definitions/state"},
+    "station_ids": {"$ref": "#/definitions/station_ids"},
+    "title": {"$ref": "#/definitions/title"}
+  },
+  "required": [
+    "enabled",
+    "organization_id",
+    "title"
+  ],
+  "links": [
+    {
+      "title": "Create annotation",
+      "description": "Create a new annotation.",
+      "rel": "self",
+      "href": "annotations",
+      "method": "POST",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "actions": {"$ref": "#/definitions/actions"},
+          "begins_at": {"$ref": "#/definitions/begins_at"},
+          "created_by_name": {"$ref": "#/definitions/created_by_name"},
+          "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
+          "description": {"$ref": "#/definitions/description"},
+          "enabled": {"$ref": "#/definitions/enabled"},
+          "ends_before": {"$ref": "#/definitions/ends_before"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "organization_id": {"$ref": "#/definitions/organization_id"},
+          "state": {"$ref": "#/definitions/state"},
+          "station_ids": {"$ref": "#/definitions/station_ids"},
+          "title": {"$ref": "#/definitions/title"}
+        },
+        "required": [
+          "enabled",
+          "organization_id",
+          "title"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Update annotation",
+      "description": "Update an existing annotation.",
+      "rel": "self",
+      "href": "annotations/{#/definitions/_id}",
+      "method": "PUT",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "actions": {"$ref": "#/definitions/actions"},
+          "begins_at": {"$ref": "#/definitions/begins_at"},
+          "created_by_name": {"$ref": "#/definitions/created_by_name"},
+          "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
+          "description": {"$ref": "#/definitions/description"},
+          "enabled": {"$ref": "#/definitions/enabled"},
+          "ends_before": {"$ref": "#/definitions/ends_before"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "organization_id": {"$ref": "#/definitions/organization_id"},
+          "state": {"$ref": "#/definitions/state"},
+          "station_ids": {"$ref": "#/definitions/station_ids"},
+          "title": {"$ref": "#/definitions/title"}
+        },
+        "required": [
+          "enabled",
+          "organization_id",
+          "title"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Remove annotation",
+      "description": "Remove an existing annotation.",
+      "rel": "self",
+      "href": "annotations/{#/definitions/_id}",
+      "method": "DELETE",
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Annotation info",
+      "description": "Return a specific annotation.",
+      "rel": "self",
+      "href": "annotations/{#/definitions/_id}",
+      "method": "GET",
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "List annotations",
+      "description": "Find one or more annotations based on the query parameters.",
+      "rel": "instances",
+      "href": "annotations",
+      "method": "GET",
+      "schema": {
+        "$ref": "types.json#/definitions/queryParameters"
+      },
+      "targetSchema": {
+        "allOf": [
+          {"$ref": "types.json#/definitions/paginationMeta"},
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {"rel": "self"}
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
