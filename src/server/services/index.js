@@ -6,6 +6,7 @@ module.exports = function (app) {
     'aggregate',
     'aggregate_request',
     'aggregate_result',
+    'annotation',
     'dashboard',
     'datapoint_lookup', // Route must precede datapoint
     'datapoint',
