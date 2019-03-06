@@ -50,14 +50,6 @@
         ]
       }
     },
-    "begins_at": {
-      "$ref": "types.json#/definitions/isoDate"
-    },
-    "created_by_name": {
-      "type": "string",
-      "description": "Name of individual that created this annotation",
-      "example": "J. Smith"
-    },
     "datastream_ids": {
       "type": "array",
       "description": "One or more datastreams to which this annotation applies",
@@ -75,9 +67,6 @@
       "description": "Whether this datastream is enabled (shown) in any user interface",
       "example": true
     },
-    "ends_before": {
-      "$ref": "types.json#/definitions/isoDate"
-    },
     "external_refs": {
       "$ref": "types.json#/definitions/externalRefs",
       "example": [
@@ -91,6 +80,55 @@
           "url": "http://sensor.berkeley.edu/index_ucnrs.html"
         }
       ]
+    },
+    "intervals": {
+      "type": "array",
+      "description": "One or more intervals to which this annotation applies",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "begins_at": {
+                "$ref": "types.json#/definitions/isoDate"
+              },
+              "ends_before": {
+                "$ref": "types.json#/definitions/isoDate"
+              }
+            },
+            "required": [
+              "begins_at",
+              "ends_before"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "begins_at": {
+                "$ref": "types.json#/definitions/isoDate"
+              }
+            },
+            "required": [
+              "begins_at"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ends_before": {
+                "$ref": "types.json#/definitions/isoDate"
+              }
+            },
+            "required": [
+              "ends_before"
+            ]
+          }
+        ]
+      }
     },
     "organization_id": {
       "$ref": "types.json#/definitions/organizationId",
@@ -121,13 +159,11 @@
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
     "actions": {"$ref": "#/definitions/actions"},
-    "begins_at": {"$ref": "#/definitions/begins_at"},
-    "created_by_name": {"$ref": "#/definitions/created_by_name"},
     "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
     "description": {"$ref": "#/definitions/description"},
     "enabled": {"$ref": "#/definitions/enabled"},
-    "ends_before": {"$ref": "#/definitions/ends_before"},
     "external_refs": {"$ref": "#/definitions/external_refs"},
+    "intervals": {"$ref": "#/definitions/intervals"},
     "organization_id": {"$ref": "#/definitions/organization_id"},
     "state": {"$ref": "#/definitions/state"},
     "station_ids": {"$ref": "#/definitions/station_ids"},
@@ -149,13 +185,11 @@
         "type": "object",
         "properties": {
           "actions": {"$ref": "#/definitions/actions"},
-          "begins_at": {"$ref": "#/definitions/begins_at"},
-          "created_by_name": {"$ref": "#/definitions/created_by_name"},
           "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
           "description": {"$ref": "#/definitions/description"},
           "enabled": {"$ref": "#/definitions/enabled"},
-          "ends_before": {"$ref": "#/definitions/ends_before"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
+          "intervals": {"$ref": "#/definitions/intervals"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
           "state": {"$ref": "#/definitions/state"},
           "station_ids": {"$ref": "#/definitions/station_ids"},
@@ -179,13 +213,11 @@
         "type": "object",
         "properties": {
           "actions": {"$ref": "#/definitions/actions"},
-          "begins_at": {"$ref": "#/definitions/begins_at"},
-          "created_by_name": {"$ref": "#/definitions/created_by_name"},
           "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
           "description": {"$ref": "#/definitions/description"},
           "enabled": {"$ref": "#/definitions/enabled"},
-          "ends_before": {"$ref": "#/definitions/ends_before"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
+          "intervals": {"$ref": "#/definitions/intervals"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
           "state": {"$ref": "#/definitions/state"},
           "station_ids": {"$ref": "#/definitions/station_ids"},

@@ -8,7 +8,7 @@ describe('Service /annotations', function () {
   before(function () {
     if (databases.mongodb && databases.mongodb.metadata) {
       return Promise.resolve(databases.mongodb.metadata.db).then(db => {
-        return db.collection('annotations').remove({created_by_name: 'Test One Annotation Creator'})
+        return db.collection('annotations').remove({title: {$in: ['Test One Annotation', 'Test One Annotation - Updated']}})
       })
     }
   })
@@ -16,7 +16,7 @@ describe('Service /annotations', function () {
   after(function () {
     if (databases.mongodb && databases.mongodb.metadata) {
       return Promise.resolve(databases.mongodb.metadata.db).then(db => {
-        return db.collection('annotations').remove({created_by_name: 'Test One Annotation Creator'})
+        return db.collection('annotations').remove({title: {$in: ['Test One Annotation', 'Test One Annotation - Updated']}})
       })
     }
   })
@@ -45,7 +45,7 @@ describe('Service /annotations', function () {
 
   describe('#find()', function () {
     it('should find without error', function () {
-      return guest.service('/annotations').find({query: {created_by_name: 'Test One Annotation Creator'}}).then(res => {
+      return guest.service('/annotations').find({query: {title: 'Test One Annotation'}}).then(res => {
         expect(res).to.have.property('data').lengthOf(1)
       })
     })

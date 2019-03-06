@@ -9,15 +9,12 @@
       ]
     }
   ],
-  "begins_at": "2018-10-23T14:30:00.000Z",
-  "created_by_name": "Test One Annotation Creator",
   "datastream_ids": [
     "592f155746a1b867a114e021",
     "592f155746a1b867a114e022"
   ],
   "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod.",
   "enabled": true,
-  "ends_before": "2018-10-23T15:30:00.000Z",
   "external_refs": [
     {
       "identifier": "554",
@@ -42,6 +39,12 @@
     {
       "identifier": "SNARL GeoNor service; see incident report IR_554",
       "type": "odm.qualifiers.QualifierDescription"
+    }
+  ],
+  "intervals": [
+    {
+      "begins_at": "2018-10-23T14:30:00.000Z",
+      "ends_before": "2018-10-23T15:30:00.000Z"
     }
   ],
   "organization_id": "592f155746a1b867a114e030",
