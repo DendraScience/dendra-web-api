@@ -441,17 +441,28 @@ function createAnnotationBuild () {
     const now = new Date()
     const method = 'assembleDatapointsConfig'
 
-    return hook.app.get('connections').annotationBuild.app.service('/builds').create({
-      _id: `${method}-${hook.result._id}-${now.getTime()}-${Math.floor(Math.random() * 10000)}`,
-      method,
-      build_at: now,
-      expires_at: new Date(now.getTime() + 86400000), // 24 hours from now
-      spec: {
-        datastream: hook.result
-      }
-    }).then(() => {
-      return hook
+    let items = hook.result
+    if (!Array.isArray(items)) items = [items]
+
+    let step = Promise.resolve()
+    items.forEach(item => {
+      // HACK: Don't trigger another build if we're patching the built config
+      if (hook.method === 'patch' && hook.data.datapoints_config_built) return
+
+      step = step.then(() => {
+        return hook.app.get('connections').annotationBuild.app.service('/builds').create({
+          _id: `${method}-${item._id}-${now.getTime()}-${Math.floor(Math.random() * 10000)}`,
+          method,
+          build_at: now,
+          expires_at: new Date(now.getTime() + 86400000), // 24 hours from now
+          spec: {
+            datastream: item
+          }
+        })
+      })
     })
+
+    return step.then(() => hook)
   }
 }
 
@@ -504,7 +515,7 @@ exports.after = {
   ],
 
   patch: [
-    commonHooks.when(hook => !hook.data.datapoints_config_built, createAnnotationBuild())
+    createAnnotationBuild()
   ]
 
   // remove: []
