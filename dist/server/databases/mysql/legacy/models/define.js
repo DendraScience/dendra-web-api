@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = (sequelize, DataTypes, modelName, tableName) => {
   const Datavalue = sequelize.define(modelName, {
@@ -38,6 +38,5 @@ module.exports = (sequelize, DataTypes, modelName, tableName) => {
     },
     tableName: tableName
   });
-
   return Datavalue;
 };

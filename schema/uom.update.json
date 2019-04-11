@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "uom.update.json",
+  "$patch": {
+    "source": {"$ref": "uom.json#"},
+    "with": [
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "_id": {"$ref": "#/definitions/_id"},
+          "convertible_to_uom_ids": {"$ref": "#/definitions/convertible_to_uom_ids"},
+          "library_config": {"$ref": "#/definitions/library_config"},
+          "som_id": {"$ref": "#/definitions/som_id"},
+          "unit_tags": {"$ref": "#/definitions/unit_tags"}
+        }
+      }
+    ]
+  }
+}

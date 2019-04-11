@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "annotation.json",
   "title": "Annotation",
   "description": "A note with optional actions to apply against a range of datapoints.",
@@ -7,56 +7,6 @@
   "definitions": {
     "_id": {
       "$ref": "types.json#/definitions/annotationId"
-    },
-    "actions": {
-      "type": "array",
-      "description": "Specific actions to apply against the identified datapoints",
-      "minItems": 1,
-      "items": {
-        "oneOf": [
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "exclude": {
-                "type": "boolean",
-                "example": true,
-                "const": true
-              }
-            },
-            "required": [
-              "exclude"
-            ]
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "flag": {
-                "type": "array",
-                "minItems": 1,
-                "example": [
-                  "X"
-                ],
-                "items": {
-                  "type": "string"
-                }
-              }
-            },
-            "required": [
-              "flag"
-            ]
-          }
-        ]
-      }
-    },
-    "begins_at": {
-      "$ref": "types.json#/definitions/isoDate"
-    },
-    "created_by_name": {
-      "type": "string",
-      "description": "Name of individual that created this annotation",
-      "example": "J. Smith"
     },
     "datastream_ids": {
       "type": "array",
@@ -69,14 +19,6 @@
     "description": {
       "$ref": "types.json#/definitions/description",
       "example": "Loaded new program to logger, it rearranges the TenMin table slightly."
-    },
-    "enabled": {
-      "type": "boolean",
-      "description": "Whether this datastream is enabled (shown) in any user interface",
-      "example": true
-    },
-    "ends_before": {
-      "$ref": "types.json#/definitions/isoDate"
     },
     "external_refs": {
       "$ref": "types.json#/definitions/externalRefs",
@@ -91,6 +33,10 @@
           "url": "http://sensor.berkeley.edu/index_ucnrs.html"
         }
       ]
+    },
+    "intervals": {
+      "$ref": "types.json#/definitions/intervals",
+      "description": "One or more intervals to which this annotation applies"
     },
     "organization_id": {
       "$ref": "types.json#/definitions/organizationId",
@@ -118,24 +64,25 @@
   "additionalProperties": false,
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
+    "actions": {"$ref": "types.json#/definitions/annotationActions"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
-    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
-    "actions": {"$ref": "#/definitions/actions"},
-    "begins_at": {"$ref": "#/definitions/begins_at"},
-    "created_by_name": {"$ref": "#/definitions/created_by_name"},
+    "created_by": {"$ref": "types.json#/definitions/createdBy"},
     "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
     "description": {"$ref": "#/definitions/description"},
-    "enabled": {"$ref": "#/definitions/enabled"},
-    "ends_before": {"$ref": "#/definitions/ends_before"},
     "external_refs": {"$ref": "#/definitions/external_refs"},
+    "intervals": {"$ref": "#/definitions/intervals"},
+    "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
     "organization_id": {"$ref": "#/definitions/organization_id"},
     "state": {"$ref": "#/definitions/state"},
     "station_ids": {"$ref": "#/definitions/station_ids"},
-    "title": {"$ref": "#/definitions/title"}
+    "title": {"$ref": "#/definitions/title"},
+    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "updated_by": {"$ref": "types.json#/definitions/updatedBy"}
   },
   "required": [
-    "enabled",
+    "is_enabled",
     "organization_id",
+    "state",
     "title"
   ],
   "links": [
@@ -148,24 +95,45 @@
       "schema": {
         "type": "object",
         "properties": {
-          "actions": {"$ref": "#/definitions/actions"},
-          "begins_at": {"$ref": "#/definitions/begins_at"},
-          "created_by_name": {"$ref": "#/definitions/created_by_name"},
+          "actions": {"$ref": "types.json#/definitions/annotationActions"},
           "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
           "description": {"$ref": "#/definitions/description"},
-          "enabled": {"$ref": "#/definitions/enabled"},
-          "ends_before": {"$ref": "#/definitions/ends_before"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
+          "intervals": {"$ref": "#/definitions/intervals"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
           "state": {"$ref": "#/definitions/state"},
           "station_ids": {"$ref": "#/definitions/station_ids"},
           "title": {"$ref": "#/definitions/title"}
         },
         "required": [
-          "enabled",
+          "is_enabled",
           "organization_id",
+          "state",
           "title"
         ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Patch annotation",
+      "description": "Patch an existing annotation.",
+      "rel": "self",
+      "href": "annotations/{#/definitions/_id}",
+      "method": "PATCH",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "actions": {"$ref": "types.json#/definitions/annotationActions"},
+          "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
+          "description": {"$ref": "#/definitions/description"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "intervals": {"$ref": "#/definitions/intervals"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "state": {"$ref": "#/definitions/state"},
+          "station_ids": {"$ref": "#/definitions/station_ids"},
+          "title": {"$ref": "#/definitions/title"}
+        }
       },
       "targetSchema": {"rel": "self"}
     },
@@ -178,22 +146,22 @@
       "schema": {
         "type": "object",
         "properties": {
-          "actions": {"$ref": "#/definitions/actions"},
-          "begins_at": {"$ref": "#/definitions/begins_at"},
-          "created_by_name": {"$ref": "#/definitions/created_by_name"},
+          "_id": {"$ref": "#/definitions/_id"},
+          "actions": {"$ref": "types.json#/definitions/annotationActions"},
           "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
           "description": {"$ref": "#/definitions/description"},
-          "enabled": {"$ref": "#/definitions/enabled"},
-          "ends_before": {"$ref": "#/definitions/ends_before"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
+          "intervals": {"$ref": "#/definitions/intervals"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
           "state": {"$ref": "#/definitions/state"},
           "station_ids": {"$ref": "#/definitions/station_ids"},
           "title": {"$ref": "#/definitions/title"}
         },
         "required": [
-          "enabled",
+          "is_enabled",
           "organization_id",
+          "state",
           "title"
         ]
       },

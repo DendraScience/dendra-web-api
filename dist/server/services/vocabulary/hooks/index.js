@@ -1,43 +1,25 @@
-'use strict';
+"use strict";
 
-const apiHooks = require('@dendra-science/api-hooks-common');
-const auth = require('feathers-authentication');
-const authHooks = require('feathers-authentication-hooks');
-const commonHooks = require('feathers-hooks-common');
 const globalHooks = require('../../../hooks');
-
-const SCHEMA_NAME = 'vocabulary.json';
 
 exports.before = {
   // all: [],
-
-  find: [apiHooks.coerceQuery()],
-
-  // get: [],
-
-  create: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  }), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce()],
-
-  update: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  }), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), hook => {
-    // TODO: Optimize with find/$select to return fewer fields?
-    return hook.app.service('/vocabularies').get(hook.id).then(doc => {
-      hook.data.created_at = doc.created_at;
-      return hook;
-    });
+  find: globalHooks.beforeFind(),
+  get: globalHooks.beforeGet(),
+  create: globalHooks.beforeCreate('vocabulary.create.json'),
+  update: [globalHooks.beforeUpdate('vocabulary.update.json'), ({
+    data,
+    params
+  }) => {
+    if (params.before) {
+      data.created_at = params.before.created_at;
+      data.created_by = params.before.created_by;
+    }
   }],
-
-  patch: [commonHooks.disallow('external')],
-
-  remove: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  })]
+  patch: globalHooks.beforePatch('vocabulary.patch.json'),
+  remove: globalHooks.beforeRemove()
 };
-
-exports.after = {
-  // all: [],
+exports.after = {// all: [],
   // find: [],
   // get: [],
   // create: [],

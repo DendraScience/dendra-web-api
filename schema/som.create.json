@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "som.create.json",
+  "$patch": {
+    "source": {"$ref": "som.json#"},
+    "with": [
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "_id": {"$ref": "#/definitions/_id"},
+          "name": {"$ref": "#/definitions/name"}
+        }
+      }
+    ]
+  }
+}

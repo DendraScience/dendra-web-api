@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "som.patch.json",
+  "$patch": {
+    "source": {"$ref": "som.json#"},
+    "with": [
+      {
+        "op": "remove",
+        "path": "/required"
+      },
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "name": {"$ref": "types.json#/definitions/unset"}
+        }
+      }
+    ]
+  }
+}

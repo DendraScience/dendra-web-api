@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "scheme.patch.json",
+  "$patch": {
+    "source": {"$ref": "scheme.json#"},
+    "with": [
+      {
+        "op": "remove",
+        "path": "/required"
+      },
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "description": {"$ref": "#/definitions/description"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "name": {"$ref": "#/definitions/name"},
+          "priority": {"$ref": "#/definitions/priority"},
+          "url": {"$ref": "#/definitions/url"},
+          "version": {"$ref": "#/definitions/version"},
+          "$unset": {
+            "properties": {
+              "description": {"$ref": "types.json#/definitions/unset"},
+              "priority": {"$ref": "types.json#/definitions/unset"},
+              "url": {"$ref": "types.json#/definitions/unset"},
+              "version": {"$ref": "types.json#/definitions/unset"}
+            },
+            "type": "object"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "uom.json",
   "title": "Unit of Measurement",
   "description": "A quantity used as a standard of measurement.",
@@ -45,12 +45,14 @@
   "additionalProperties": false,
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
-    "created_at": {"$ref": "types.json#/definitions/createdAt"},
-    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
     "convertible_to_uom_ids": {"$ref": "#/definitions/convertible_to_uom_ids"},
+    "created_at": {"$ref": "types.json#/definitions/createdAt"},
+    "created_by": {"$ref": "types.json#/definitions/createdBy"},
     "library_config": {"$ref": "#/definitions/library_config"},
     "som_id": {"$ref": "#/definitions/som_id"},
-    "unit_tags": {"$ref": "#/definitions/unit_tags"}
+    "unit_tags": {"$ref": "#/definitions/unit_tags"},
+    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "updated_by": {"$ref": "types.json#/definitions/updatedBy"}
   },
   "required": [
     "_id",
@@ -63,10 +65,6 @@
       "rel": "self",
       "href": "uoms",
       "method": "POST",
-      "required": [
-        "_id",
-        "som_id"
-      ],
       "schema": {
         "type": "object",
         "properties": {
@@ -74,6 +72,26 @@
           "convertible_to_uom_ids": {"$ref": "#/definitions/convertible_to_uom_ids"},
           "library_config": {"$ref": "#/definitions/library_config"},
           "som_id": {"$ref": "#/definitions/som_id"},
+          "unit_tags": {"$ref": "#/definitions/unit_tags"}
+        },
+        "required": [
+          "_id",
+          "som_id"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Patch SOM",
+      "description": "Patch an existing unit of measurement.",
+      "rel": "self",
+      "href": "uoms/{#/definitions/_id}",
+      "method": "PATCH",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "convertible_to_uom_ids": {"$ref": "#/definitions/convertible_to_uom_ids"},
+          "library_config": {"$ref": "#/definitions/library_config"},
           "unit_tags": {"$ref": "#/definitions/unit_tags"}
         }
       },
@@ -85,18 +103,19 @@
       "rel": "self",
       "href": "uoms/{#/definitions/_id}",
       "method": "PUT",
-      "required": [
-        "_id",
-        "som_id"
-      ],
       "schema": {
         "type": "object",
         "properties": {
+          "_id": {"$ref": "#/definitions/_id"},
           "convertible_to_uom_ids": {"$ref": "#/definitions/convertible_to_uom_ids"},
           "library_config": {"$ref": "#/definitions/library_config"},
           "som_id": {"$ref": "#/definitions/som_id"},
           "unit_tags": {"$ref": "#/definitions/unit_tags"}
-        }
+        },
+        "required": [
+          "_id",
+          "som_id"
+        ]
       },
       "targetSchema": {"rel": "self"}
     },

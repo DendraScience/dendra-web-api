@@ -25,7 +25,7 @@ const schemas = require('./schemas')
 const services = require('./services')
 const channels = require('./channels')
 
-module.exports = async (logger) => {
+module.exports = async logger => {
   const app = express(feathers())
 
   app.logger = logger
@@ -40,7 +40,7 @@ module.exports = async (logger) => {
   app.use(helmet())
   app.use(compress())
   app.use(express.json())
-  app.use(express.urlencoded({extended: true}))
+  app.use(express.urlencoded({ extended: true }))
 
   app.configure(express.rest())
   app.configure(auth(app.get('authentication')))
@@ -54,7 +54,7 @@ module.exports = async (logger) => {
   app.configure(channels)
 
   app.use(express.notFound())
-  app.use(express.errorHandler({logger}))
+  app.use(express.errorHandler({ logger }))
 
   return app
 }

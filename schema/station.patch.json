@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "station.patch.json",
+  "$patch": {
+    "source": {"$ref": "station.json#"},
+    "with": [
+      {
+        "op": "remove",
+        "path": "/required"
+      },
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
+          "external_links": {"$ref": "#/definitions/external_links"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "full_name": {"$ref": "#/definitions/full_name"},
+          "geo": {"$ref": "types.json#/definitions/geoPoint"},
+          "is_active": {"$ref": "#/definitions/is_active"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "is_geo_protected": {"$ref": "types.json#/definitions/isGeoProtected"},
+          "is_hidden": {"$ref": "types.json#/definitions/isHidden"},
+          "is_stationary": {"$ref": "#/definitions/is_stationary"},
+          "media": {"$ref": "types.json#/definitions/media"},
+          "name": {"$ref": "#/definitions/name"},
+          "operational_roles": {"$ref": "types.json#/definitions/operationalRoles"},
+          "organization_id": {"$ref": "#/definitions/organization_id"},
+          "place_id": {"$ref": "#/definitions/place_id"},
+          "slug": {"$ref": "#/definitions/slug"},
+          "state": {"$ref": "#/definitions/state"},
+          "station_type": {"$ref": "#/definitions/station_type"},
+          "thing_ids": {"$ref": "#/definitions/thing_ids"},
+          "thing_type_ids": {"$ref": "#/definitions/thing_type_ids"},
+          "time_zone": {"$ref": "types.json#/definitions/timeZoneAbbr"},
+          "utc_offset": {"$ref": "types.json#/definitions/utcOffset"},
+          "$unset": {
+            "properties": {
+              "access_levels": {"$ref": "types.json#/definitions/unset"},
+              "external_links": {"$ref": "types.json#/definitions/unset"},
+              "external_refs": {"$ref": "types.json#/definitions/unset"},
+              "full_name": {"$ref": "types.json#/definitions/unset"},
+              "geo": {"$ref": "types.json#/definitions/unset"},
+              "media": {"$ref": "types.json#/definitions/unset"},
+              "operational_roles": {"$ref": "types.json#/definitions/unset"},
+              "organization_id": {"$ref": "types.json#/definitions/unset"},
+              "place_id": {"$ref": "types.json#/definitions/unset"},
+              "slug": {"$ref": "types.json#/definitions/unset"},
+              "thing_ids": {"$ref": "types.json#/definitions/unset"},
+              "thing_type_ids": {"$ref": "types.json#/definitions/unset"}
+            },
+            "type": "object"
+          }
+        }
+      }
+    ]
+  }
+}

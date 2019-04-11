@@ -11,12 +11,19 @@ const crypto = require('crypto')
 /**
  * Simple, promise-based hash generator.
  */
-function asyncHashDigest (data, algorithm = 'sha1', encoding = 'hex') {
-  return new Promise((resolve) => {
+function asyncHashDigest(data, algorithm = 'sha1', encoding = 'hex') {
+  return new Promise(resolve => {
     setImmediate(() => {
-      resolve(crypto.createHash(algorithm).update(data).digest(encoding))
+      resolve(
+        crypto
+          .createHash(algorithm)
+          .update(data)
+          .digest(encoding)
+      )
     })
   })
 }
 
-exports.asyncHashDigest = asyncHashDigest
+module.exports = {
+  asyncHashDigest
+}

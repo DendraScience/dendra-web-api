@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "aggregate.request.json",
+  "$patch": {
+    "source": {"$ref": "aggregate.request.json#"},
+    "with": [
+      {
+        "op": "replace",
+        "path": "/required",
+        "value": [
+          "method",
+          "spec"
+        ]
+      },
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "build_at": {"$ref": "#/definitions/build_at"},
+          "build_every": {"$ref": "#/definitions/build_every"},
+          "description": {"$ref": "#/definitions/description"},
+          "expires_at": {"$ref": "#/definitions/expires_at"},
+          "method": {"$ref": "#/definitions/method"},
+          "name": {"$ref": "#/definitions/name"},
+          "spec": {"$ref": "#/definitions/spec"}
+        }
+      }
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 const Logger = require('mongodb').Logger
 
-module.exports = async (app) => {
+module.exports = async app => {
   const mongodb = app.get('databases').mongodb
 
   if (mongodb.defaultLogger) {

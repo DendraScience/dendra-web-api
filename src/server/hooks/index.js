@@ -10,5 +10,24 @@
 //   }
 // }
 
+const beforeCreate = require('./beforeCreate')
+const beforeFind = require('./beforeFind')
+const beforeGet = require('./beforeGet')
+const beforePatch = require('./beforePatch')
+const beforeRemove = require('./beforeRemove')
+const beforeUpdate = require('./beforeUpdate')
+const restrictQueryToAbility = require('./restrictQueryToAbility')
+const restrictToAbility = require('./restrictToAbility')
+const setAbility = require('./setAbility')
+
 module.exports = {
+  beforeCreate,
+  beforeFind,
+  beforeGet,
+  beforePatch,
+  beforeRemove,
+  beforeUpdate,
+  restrictQueryToAbility,
+  restrictToAbility,
+  setAbility
 }

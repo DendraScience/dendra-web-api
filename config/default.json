@@ -1,23 +1,23 @@
 {
   "authentication": {
-    "secret": "ThYncCxLbjhin7YZBtZgda7nm0KSeT4rM0UsvpCnJXPA6sTVq6NKvsDoHjzyjkMKnB4gKDqsUx8Gg7mYsRbV9Q==",
-    "path": "/authentication",
-    "service": "users",
     "jwt": {
+      "algorithm": "HS256",
+      "audience": "https://dendra.science",
+      "expiresIn": "1d",
       "header": {
         "type": "access"
       },
-      "audience": "https://dendra.science",
-      "issuer": "feathers",
-      "algorithm": "HS256",
-      "expiresIn": "1d"
+      "issuer": "feathers"
     },
     "local": {
       "entity": "user",
+      "passwordField": "password",
       "service": "users",
-      "usernameField": "email",
-      "passwordField": "password"
-    }
+      "usernameField": "email"
+    },
+    "path": "/authentication",
+    "secret": "ThYncCxLbjhin7YZBtZgda7nm0KSeT4rM0UsvpCnJXPA6sTVq6NKvsDoHjzyjkMKnB4gKDqsUx8Gg7mYsRbV9Q==",
+    "service": "users"
   },
   "connections": {
     "aggregateBuild": {
@@ -43,7 +43,11 @@
           "default": 20,
           "max": 2000
         },
-        "url": "mongodb://localhost:27017/dendra_playground"
+        "url": "mongodb://localhost:27017/dendra_playground",
+        "whitelist": [
+          "$and",
+          "$or"
+        ]
       }
     },
     "mysql": {

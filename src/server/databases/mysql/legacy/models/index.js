@@ -1,6 +1,6 @@
 const path = require('path')
 
-module.exports = (sequelize) => {
+module.exports = sequelize => {
   const names = [
     'datavalues2',
     'datavalues_borr',

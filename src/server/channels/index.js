@@ -1,4 +1,4 @@
-module.exports = function (app) {
+module.exports = function(app) {
   if (typeof app.channel !== 'function') {
     // If no real-time functionality has been configured just return
     return
@@ -10,7 +10,7 @@ module.exports = function (app) {
     app.channel('anonymous').join(connection)
   })
 
-  app.on('login', (user, {connection}) => {
+  app.on('login', (user, { connection }) => {
     // connection can be undefined if there is no
     // real-time connection, e.g. when logging in via REST
     if (connection) {
@@ -31,7 +31,8 @@ module.exports = function (app) {
     }
   })
 
-  app.publish((data, hook) => { // eslint-disable-line no-unused-vars
+  app.publish((data, hook) => {
+    // eslint-disable-line no-unused-vars
     // Here you can add event publishers to channels set up in `channels.js`
     // To publish only for a specific event use `app.publish(eventname, () => {})`
 

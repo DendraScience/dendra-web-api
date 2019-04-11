@@ -1,8 +1,8 @@
 const Sequelize = require('sequelize')
 const models = require('./models')
 
-module.exports = async (app) => {
-  const {legacy} = app.get('databases').mysql
+module.exports = async app => {
+  const { legacy } = app.get('databases').mysql
 
   // Configure a new instance
   const opts = {

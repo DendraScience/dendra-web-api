@@ -1,22 +1,19 @@
-'use strict';
+"use strict";
 
-const commonHooks = require('feathers-hooks-common');
+const {
+  disallow
+} = require('feathers-hooks-common');
 
 exports.before = {
   // all: [],
-
-  find: commonHooks.disallow(),
-
+  find: disallow(),
   // get: [],
-
-  create: commonHooks.disallow(),
-  update: commonHooks.disallow(),
-  patch: commonHooks.disallow(),
-  remove: commonHooks.disallow()
+  create: disallow(),
+  update: disallow(),
+  patch: disallow(),
+  remove: disallow()
 };
-
-exports.after = {
-  // all: [],
+exports.after = {// all: [],
   // find: [],
   // get: [],
   // create: [],

@@ -1,0 +1,139 @@
+{
+  "_id": "ds-variable",
+  "created_at": "2017-05-28T09:50:23.106Z",
+  "created_by": "592f155746a1b867a114e010",
+  "is_enabled": true,
+  "label": "Variable - Updated",
+  "scheme_id": "ds",
+  "terms": [
+    {
+      "label": "BarometricPressure",
+      "name": "Barometric Pressure"
+    },
+    {
+      "label": "Concentration"
+    },
+    {
+      "label": "Count"
+    },
+    {
+      "label": "Depth"
+    },
+    {
+      "label": "Description"
+    },
+    {
+      "label": "DielectricStrength",
+      "name": "Dielectric Strength"
+    },
+    {
+      "label": "Direction"
+    },
+    {
+      "label": "Discharge"
+    },
+    {
+      "label": "Duration"
+    },
+    {
+      "label": "ElectricCurrent",
+      "name": "Electric Current"
+    },
+    {
+      "label": "ElectricalResistance",
+      "name": "Electrical Resistance"
+    },
+    {
+      "label": "ElectricalConductivity",
+      "name": "Electrical Conductivity"
+    },
+    {
+      "label": "Evapotranspiration"
+    },
+    {
+      "label": "Flux"
+    },
+    {
+      "label": "Height"
+    },
+    {
+      "label": "Luminance"
+    },
+    {
+      "label": "Moisture"
+    },
+    {
+      "label": "NetRadiation",
+      "name": "Net Radiation"
+    },
+    {
+      "label": "Period"
+    },
+    {
+      "label": "PhotosyntheticallyActiveRadiation",
+      "name": "Photosynthetically Active Radiation"
+    },
+    {
+      "label": "Power"
+    },
+    {
+      "label": "Precipitation"
+    },
+    {
+      "label": "Pressure"
+    },
+    {
+      "label": "RelativeHumidity",
+      "name": "Relative Humidity"
+    },
+    {
+      "label": "Radiation"
+    },
+    {
+      "label": "RadioTransmission",
+      "name": "Radio Transmission"
+    },
+    {
+      "label": "Speed"
+    },
+    {
+      "label": "Temperature"
+    },
+    {
+      "label": "Transpiration"
+    },
+    {
+      "label": "Turbidity"
+    },
+    {
+      "label": "Unknown"
+    },
+    {
+      "label": "VaporPressure",
+      "name": "Vapor Pressure"
+    },
+    {
+      "label": "VaporPressureDeficit",
+      "name": "Vapor Pressure Deficit"
+    },
+    {
+      "label": "Velocity"
+    },
+    {
+      "label": "Visibility"
+    },
+    {
+      "label": "Voltage"
+    },
+    {
+      "label": "Volume"
+    },
+    {
+      "label": "VolumetricWaterContent",
+      "name": "Volumetric Water Content"
+    }
+  ],
+  "updated_at": "2017-05-28T09:50:23.106Z",
+  "updated_by": "592f155746a1b867a114e010",
+  "vocabulary_type": "class"
+}

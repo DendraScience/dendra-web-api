@@ -1,17 +1,18 @@
 const service = require('feathers-mongodb')
 const hooks = require('./hooks')
 
-module.exports = function (app) {
+module.exports = function(app) {
   const databases = app.get('databases')
 
   if (!(databases.mongodb && databases.mongodb.metadata)) return
 
-  const {metadata} = databases.mongodb
-  const {db} = metadata
+  const { metadata } = databases.mongodb
+  const { db } = metadata
 
   const mongoService = service({
     Model: db.collection('vocabularies'),
-    paginate: metadata.paginate
+    paginate: metadata.paginate,
+    whitelist: metadata.whitelist
   })
 
   // HACK: Monkey-patch the service to allow for string IDs

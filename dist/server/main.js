@@ -1,48 +1,35 @@
-'use strict';
+"use strict";
 
 /**
- * Web API Express server.
+ * Web API entry point.
  *
  * @author J. Scott Smith
  * @license BSD-2-Clause-FreeBSD
  * @module server/main
  */
-
-// TODO: Define hooks to prevent updating!
-// TODO: Ensure that we have indexes for all queries
-
-const feathers = require('feathers');
-const compress = require('compression');
-const cors = require('cors');
-const configuration = require('feathers-configuration');
-const bodyParser = require('body-parser');
-const hooks = require('feathers-hooks');
-const rest = require('feathers-rest');
-const socketio = require('feathers-socketio');
-const connections = require('./connections');
-const databases = require('./databases');
-const schemas = require('./schemas');
-const services = require('./services');
-const middleware = require('./middleware');
-const winston = require('winston');
-
-const app = feathers();
-
 // TODO: Configure Winston
-const log = app.logger = winston;
+const log = require('winston');
 
-// Configure
-app.configure(configuration());
+process.on('uncaughtException', err => {
+  log.error(`An unexpected error occurred\n  ${err.stack}`);
+  process.exit(1);
+});
+process.on('unhandledRejection', err => {
+  if (!err) {
+    log.error('An unexpected empty rejection occurred');
+  } else if (err instanceof Error) {
+    log.error(`An unexpected rejection occurred\n  ${err.stack}`);
+  } else {
+    log.error(`An unexpected rejection occurred\n  ${err}`);
+  }
 
-// Feathers setup
-app.use(compress()).options('*', cors()).use(cors()).use(bodyParser.json()).use(bodyParser.urlencoded({ extended: true })).configure(hooks()).configure(rest()).configure(socketio()).configure(connections).configure(databases).configure(schemas).configure(services).configure(middleware);
-
-// TODO: Handle SIGTERM gracefully for Docker
+  process.exit(1);
+}); // TODO: Handle SIGTERM gracefully for Docker
 // SEE: http://joseoncode.com/2014/07/21/graceful-shutdown-in-node-dot-js/
-app.set('serverReady', Promise.resolve(app.get('middlewareReady')).then(() => {
+
+require('./app')(log).then(app => {
   const port = app.get('port');
   const server = app.listen(port);
-
   return new Promise((resolve, reject) => {
     server.once('error', reject);
     server.once('listening', () => {
@@ -52,6 +39,4 @@ app.set('serverReady', Promise.resolve(app.get('middlewareReady')).then(() => {
   });
 }).catch(err => {
   log.error(err);
-}));
-
-exports.app = app; // For testing
+});

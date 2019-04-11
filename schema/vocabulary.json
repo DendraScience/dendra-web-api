@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "vocabulary.json",
   "title": "Vocabulary",
   "description": "A controlled vocabulary used to tag data producing entities.",
@@ -47,6 +47,7 @@
     },
     "terms": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "$ref": "#/definitions/term"
       }
@@ -62,17 +63,22 @@
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
-    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "created_by": {"$ref": "types.json#/definitions/createdBy"},
     "description": {"$ref": "#/definitions/description"},
+    "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
     "label": {"$ref": "#/definitions/label"},
     "scheme_id": {"$ref": "#/definitions/scheme_id"},
     "terms": {"$ref": "#/definitions/terms"},
+    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
     "vocabulary_type": {"$ref": "#/definitions/vocabulary_type"}
   },
   "required": [
     "_id",
+    "is_enabled",
     "label",
-    "scheme_id"
+    "scheme_id",
+    "vocabulary_type"
   ],
   "links": [
     {
@@ -81,18 +87,39 @@
       "rel": "self",
       "href": "vocabularies",
       "method": "POST",
-      "required": [
-        "_id",
-        "label",
-        "scheme_id"
-      ],
       "schema": {
         "type": "object",
         "properties": {
           "_id": {"$ref": "#/definitions/_id"},
           "description": {"$ref": "#/definitions/description"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "label": {"$ref": "#/definitions/label"},
           "scheme_id": {"$ref": "#/definitions/scheme_id"},
+          "terms": {"$ref": "#/definitions/terms"},
+          "vocabulary_type": {"$ref": "#/definitions/vocabulary_type"}
+        },
+        "required": [
+          "_id",
+          "is_enabled",
+          "label",
+          "scheme_id",
+          "vocabulary_type"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Patch vocabulary",
+      "description": "Patch an existing vocabulary.",
+      "rel": "self",
+      "href": "vocabularies/{#/definitions/_id}",
+      "method": "PATCH",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "description": {"$ref": "#/definitions/description"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "label": {"$ref": "#/definitions/label"},
           "terms": {"$ref": "#/definitions/terms"},
           "vocabulary_type": {"$ref": "#/definitions/vocabulary_type"}
         }
@@ -105,19 +132,24 @@
       "rel": "self",
       "href": "vocabularies/{#/definitions/_id}",
       "method": "PUT",
-      "required": [
-        "label",
-        "scheme_id"
-      ],
       "schema": {
         "type": "object",
         "properties": {
+          "_id": {"$ref": "#/definitions/_id"},
           "description": {"$ref": "#/definitions/description"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "label": {"$ref": "#/definitions/label"},
           "scheme_id": {"$ref": "#/definitions/scheme_id"},
           "terms": {"$ref": "#/definitions/terms"},
           "vocabulary_type": {"$ref": "#/definitions/vocabulary_type"}
-        }
+        },
+        "required": [
+          "_id",
+          "is_enabled",
+          "label",
+          "scheme_id",
+          "vocabulary_type"
+        ]
       },
       "targetSchema": {"rel": "self"}
     },

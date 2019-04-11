@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "annotation.update.json",
+  "$patch": {
+    "source": {"$ref": "annotation.json#"},
+    "with": [
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "_id": {"$ref": "#/definitions/_id"},
+          "actions": {"$ref": "types.json#/definitions/annotationActions"},
+          "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
+          "description": {"$ref": "#/definitions/description"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "intervals": {"$ref": "#/definitions/intervals"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "organization_id": {"$ref": "#/definitions/organization_id"},
+          "state": {"$ref": "#/definitions/state"},
+          "station_ids": {"$ref": "#/definitions/station_ids"},
+          "title": {"$ref": "#/definitions/title"}
+        }
+      }
+    ]
+  }
+}
