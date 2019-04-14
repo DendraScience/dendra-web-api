@@ -36,6 +36,7 @@ module.exports = () => {
       throw new errors.NotFound(`No record found for id '${context.id}'`);
     }
 
+    console.log('>>> query', JSON.stringify(params.query));
     return context;
   };
 };

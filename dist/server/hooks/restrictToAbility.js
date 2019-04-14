@@ -42,7 +42,6 @@ module.exports = () => {
     }
 
     let before;
-    console.log('>>> HERE');
 
     if (context.id) {
       before = await service.get(context.id, Object.assign({}, params, {
@@ -71,21 +70,25 @@ module.exports = () => {
       const allowedData = _.pick(data, allowedFields);
 
       const patchedData = _.clone(before);
+      /*
+        Simulate the patch and verify the result before the service does it.
+       */
 
-      console.log('>>> PATCH allowedData.0', allowedData);
-      console.log('>>> PATCH patchedData.1', patchedData);
+
       if (allowedData.$set) _.forEach(allowedData.$set, (v, k) => _.set(patchedData, k, v));
       if (allowedData.$unset) _.forEach(allowedData.$unset, (v, k) => _.unset(patchedData, k));
-      console.log('>>> PATCH patchedData.2', patchedData);
 
       if (ability.cannot(action, patchedData)) {
         throw new errors.Forbidden(`You are not allowed to ${action} ${serviceName} using the data`);
       }
+      /*
+        Refactor the patch to use only allowed fields.
+       */
+
 
       context.data = {};
       if (allowedData.$set) context.data.$set = allowedData.$set;
       if (allowedData.$unset) context.data.$unset = allowedData.$unset;
-      console.log('>>> PATCH context.data', context.data);
     }
 
     params.before = before;

@@ -143,17 +143,32 @@ describe(`Service ${servicePath}`, function() {
     })
   })
 
-  describe.skip('#find()', function() {
+  describe('#find()', function() {
     it('guest should find without error', function() {
-      return helper.shouldFindWithoutError(conn.guest, servicePath)
+      return helper.shouldFindWithoutError(conn.guest, servicePath, {}, 0)
     })
 
     it('user should find without error', function() {
-      return helper.shouldFindWithoutError(conn.user, servicePath)
+      return helper
+        .shouldFindWithoutError(conn.user, servicePath, {}, 1)
+        .then(({ retRes }) => {
+          expect(retRes).to.have.nested.property(
+            'data.0._id',
+            `${testData.rootUser._id}`
+          )
+        })
+    })
+
+    it('sample user should find without error', function() {
+      return helper
+        .shouldFindWithoutError(sampleConn, servicePath, {}, 1)
+        .then(({ retRes }) => {
+          expect(retRes).to.have.nested.property('data.0._id', id.doc)
+        })
     })
 
     it('sys admin should find without error', function() {
-      return helper.shouldFindWithoutError(conn.sysAdmin, servicePath)
+      return helper.shouldFindWithoutError(conn.sysAdmin, servicePath, {}, 4)
     })
   })
 
@@ -292,8 +307,14 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    // it('sample user should remove with error', function() {
-    // })
+    it('sample user should remove with error', function() {
+      return helper.shouldRemoveWithError(
+        sampleConn,
+        servicePath,
+        id.doc,
+        'Forbidden'
+      )
+    })
 
     it('sys admin should remove multiple with error', function() {
       return helper.shouldRemoveMultipleWithError(

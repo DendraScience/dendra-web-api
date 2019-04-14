@@ -5,6 +5,7 @@
   "full_name": "Test User - Updated",
   "is_enabled": true,
   "name": "Sample User Role",
+  "password": "test123",
   "roles": [
     "user"
   ],

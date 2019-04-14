@@ -19,7 +19,6 @@ exports.before = {
 
     ({ data, params }) => {
       if (params.before) {
-        if (!data.password) data.password = params.before.password
         data.created_at = params.before.created_at
         data.created_by = params.before.created_by
       }

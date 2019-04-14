@@ -53,7 +53,6 @@ async function shouldCreateWithError(
   try {
     retDoc = await client.service(servicePath).create(data)
   } catch (err) {
-    console.log('>>> ERROR', err.message)
     retErr = err
   }
 
@@ -138,7 +137,6 @@ async function shouldGetWithError(client, servicePath, id, code) {
   try {
     retDoc = await client.service(servicePath).get(id)
   } catch (err) {
-    console.log('>>> ERROR', err.message)
     retErr = err
   }
 
@@ -182,7 +180,6 @@ async function shouldPatchMultipleWithError(
   try {
     retRes = await client.service(servicePath).patch(null, data, { query })
   } catch (err) {
-    console.log('>>> ERROR', err.message)
     retErr = err
   }
 
@@ -208,7 +205,6 @@ async function shouldPatchWithError(
   try {
     retDoc = await client.service(servicePath).patch(id, data)
   } catch (err) {
-    console.log('>>> ERROR', err.message)
     retErr = err
   }
 
@@ -233,7 +229,6 @@ async function shouldPatchWithoutError(
   try {
     retDoc = await client.service(servicePath).patch(id, data)
   } catch (err) {
-    console.log('>>> ERROR', err.message)
     retErr = err
   }
 
