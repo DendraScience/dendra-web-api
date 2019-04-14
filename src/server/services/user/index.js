@@ -13,12 +13,11 @@ module.exports = function(app) {
     '/users',
     service({
       Model: db.collection('users'),
-      paginate: metadata.paginate
+      paginate: metadata.paginate,
+      whitelist: metadata.whitelist
     })
   )
 
   // Get the wrapped service object, bind hooks
-  const userService = app.service('/users')
-
-  userService.hooks(hooks)
+  app.service('users').hooks(hooks)
 }

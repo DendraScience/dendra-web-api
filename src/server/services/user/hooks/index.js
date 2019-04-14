@@ -1,4 +1,3 @@
-const commonHooks = require('feathers-hooks-common')
 const globalHooks = require('../../../hooks')
 const local = require('@feathersjs/authentication-local')
 
@@ -10,13 +9,13 @@ exports.before = {
   get: globalHooks.beforeGet(),
 
   create: [
-    globalHooks.beforeCreate('user.create.json'),
-    local.hooks.hashPassword()
+    local.hooks.hashPassword(),
+    globalHooks.beforeCreate('user.create.json')
   ],
 
   update: [
-    globalHooks.beforeUpdate('user.update.json'),
     local.hooks.hashPassword(),
+    globalHooks.beforeUpdate('user.update.json'),
 
     ({ data, params }) => {
       if (params.before) {
@@ -28,20 +27,15 @@ exports.before = {
   ],
 
   patch: [
-    globalHooks.beforePatch('user.patch.json'),
-    local.hooks.hashPassword()
+    local.hooks.hashPassword(),
+    globalHooks.beforePatch('user.patch.json')
   ],
 
   remove: globalHooks.beforeRemove()
 }
 
 exports.after = {
-  all: [
-    commonHooks.iff(
-      context => context.params.provider,
-      commonHooks.discard('password')
-    )
-  ]
+  all: local.hooks.protect('password')
 
   // find: [],
   // get: [],

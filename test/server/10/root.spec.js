@@ -30,10 +30,13 @@ before(async function() {
   global.baseUrl = `http://${host}:${port}`
   global.metadata = app.get('databases').mongodb.metadata
 
-  global.coll = ['users', 'vocabularies'].reduce((obj, name) => {
-    obj[name] = metadata.db.collection(name)
-    return obj
-  }, {})
+  global.coll = ['schemes', 'soms', 'uoms', 'users', 'vocabularies'].reduce(
+    (obj, name) => {
+      obj[name] = metadata.db.collection(name)
+      return obj
+    },
+    {}
+  )
 
   /*
     Create root users

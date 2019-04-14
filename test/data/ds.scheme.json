@@ -1,0 +1,6 @@
+{
+  "_id": "ds",
+  "description": "A collection of controlled vocabularies for internal use in the Dendra system.",
+  "is_enabled": true,
+  "name": "Dendra System Controlled Vocabularies"
+}

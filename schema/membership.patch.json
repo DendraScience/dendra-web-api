@@ -12,7 +12,12 @@
         "op": "replace",
         "path": "/properties",
         "value": {
-          "roles": {"$ref": "types.json#/definitions/unset"}
+          "$set": {
+            "properties": {
+              "roles": {"$ref": "types.json#/definitions/unset"}
+            },
+            "type": "object"
+          }
         }
       }
     ]

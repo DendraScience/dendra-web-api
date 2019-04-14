@@ -1,7 +1,5 @@
 "use strict";
 
-const commonHooks = require('feathers-hooks-common');
-
 const globalHooks = require('../../../hooks');
 
 const local = require('@feathersjs/authentication-local');
@@ -10,8 +8,8 @@ exports.before = {
   // all: [],
   find: globalHooks.beforeFind(),
   get: globalHooks.beforeGet(),
-  create: [globalHooks.beforeCreate('user.create.json'), local.hooks.hashPassword()],
-  update: [globalHooks.beforeUpdate('user.update.json'), local.hooks.hashPassword(), ({
+  create: [local.hooks.hashPassword(), globalHooks.beforeCreate('user.create.json')],
+  update: [local.hooks.hashPassword(), globalHooks.beforeUpdate('user.update.json'), ({
     data,
     params
   }) => {
@@ -21,11 +19,11 @@ exports.before = {
       data.created_by = params.before.created_by;
     }
   }],
-  patch: [globalHooks.beforePatch('user.patch.json'), local.hooks.hashPassword()],
+  patch: [local.hooks.hashPassword(), globalHooks.beforePatch('user.patch.json')],
   remove: globalHooks.beforeRemove()
 };
 exports.after = {
-  all: [commonHooks.iff(context => context.params.provider, commonHooks.discard('password'))] // find: [],
+  all: local.hooks.protect('password') // find: [],
   // get: [],
   // create: [],
   // update: [],

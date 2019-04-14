@@ -12,9 +12,14 @@
         "op": "replace",
         "path": "/properties",
         "value": {
-          "convertible_to_uom_ids": {"$ref": "#/definitions/convertible_to_uom_ids"},
-          "library_config": {"$ref": "#/definitions/library_config"},
-          "unit_tags": {"$ref": "#/definitions/unit_tags"},
+          "$set": {
+            "properties": {
+              "convertible_to_uom_ids": {"$ref": "#/definitions/convertible_to_uom_ids"},
+              "library_config": {"$ref": "#/definitions/library_config"},
+              "unit_tags": {"$ref": "#/definitions/unit_tags"}
+            },
+            "type": "object"
+          },
           "$unset": {
             "properties": {
               "convertible_to_uom_ids": {"$ref": "types.json#/definitions/unset"},

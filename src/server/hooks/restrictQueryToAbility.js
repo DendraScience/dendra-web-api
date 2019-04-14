@@ -1,5 +1,4 @@
 const errors = require('@feathersjs/errors')
-
 const { toMongoQuery } = require('@casl/mongoose')
 
 module.exports = () => {

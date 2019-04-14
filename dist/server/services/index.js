@@ -18,14 +18,8 @@ module.exports = function (app) {
   // 'organization',
   // 'person',
   // 'place',
-  // 'scheme',
-  // 'som',
-  // 'station',
-  // 'system_schema',
-  // 'system_time',
-  // 'system_timezone',
-  // 'thing',
-  // 'uom',
-  'user', 'vocabulary'];
+  'scheme', 'som', // 'station',
+  'system_schema', 'system_time', 'system_timezone', // 'thing',
+  'uom', 'user', 'vocabulary'];
   names.forEach(name => app.configure(require(path.join(__dirname, name))));
 };

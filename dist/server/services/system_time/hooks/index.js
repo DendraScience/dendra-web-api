@@ -1,5 +1,7 @@
 "use strict";
 
+const apiHooks = require('@dendra-science/api-hooks-common');
+
 const {
   disallow
 } = require('feathers-hooks-common');
@@ -7,7 +9,7 @@ const {
 exports.before = {
   // all: [],
   find: disallow(),
-  // get: [],
+  get: apiHooks.coerceQuery(),
   create: disallow(),
   update: disallow(),
   patch: disallow(),

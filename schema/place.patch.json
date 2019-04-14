@@ -12,16 +12,21 @@
         "op": "replace",
         "path": "/properties",
         "value": {
-          "abbreviation": {"$ref": "#/definitions/abbreviation"},
-          "attributes": {"$ref": "#/definitions/attributes"},
-          "country_code": {"$ref": "types.json#/definitions/isoCountryCode3"},
-          "external_refs": {"$ref": "#/definitions/external_refs"},
-          "full_name": {"$ref": "#/definitions/full_name"},
-          "geo": {"$ref": "types.json#/definitions/geoObject"},
-          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
-          "name": {"$ref": "#/definitions/name"},
-          "place_type": {"$ref": "#/definitions/place_type"},
-          "url": {"$ref": "#/definitions/url"},
+          "$set": {
+            "properties": {
+              "abbreviation": {"$ref": "#/definitions/abbreviation"},
+              "attributes": {"$ref": "#/definitions/attributes"},
+              "country_code": {"$ref": "types.json#/definitions/isoCountryCode3"},
+              "external_refs": {"$ref": "#/definitions/external_refs"},
+              "full_name": {"$ref": "#/definitions/full_name"},
+              "geo": {"$ref": "types.json#/definitions/geoObject"},
+              "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+              "name": {"$ref": "#/definitions/name"},
+              "place_type": {"$ref": "#/definitions/place_type"},
+              "url": {"$ref": "#/definitions/url"}
+            },
+            "type": "object"
+          },
           "$unset": {
             "properties": {
               "abbreviation": {"$ref": "types.json#/definitions/unset"},

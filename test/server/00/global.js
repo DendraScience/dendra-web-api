@@ -53,6 +53,7 @@ async function shouldCreateWithError(
   try {
     retDoc = await client.service(servicePath).create(data)
   } catch (err) {
+    console.log('>>> ERROR', err.message)
     retErr = err
   }
 
@@ -72,7 +73,7 @@ async function shouldCreateWithoutError(client, servicePath, dataOrFileName) {
   try {
     retDoc = await client.service(servicePath).create(data)
   } catch (err) {
-    console.error('shouldCreateWithoutError', err.message)
+    // console.error('shouldCreateWithoutError', err.message)
     retErr = err
   }
 
@@ -104,7 +105,8 @@ async function shouldFindWithoutError(
   client,
   servicePath,
   query = {},
-  length = 1
+  length = 1,
+  paginate = true
 ) {
   let retRes
   let retErr
@@ -112,15 +114,19 @@ async function shouldFindWithoutError(
   try {
     retRes = await client.service(servicePath).find({ query })
   } catch (err) {
-    console.error('shouldFindWithoutError', err.message)
+    // console.error('shouldFindWithoutError', err.message)
     retErr = err
   }
 
   /* eslint-disable-next-line no-unused-expressions */
   expect(retErr).to.be.undefined
-  expect(retRes)
-    .to.have.property('data')
-    .lengthOf(length)
+  if (paginate) {
+    expect(retRes)
+      .to.have.property('data')
+      .lengthOf(length)
+  } else {
+    expect(retRes).to.have.lengthOf(length)
+  }
 
   return { retRes, retErr }
 }
@@ -132,6 +138,7 @@ async function shouldGetWithError(client, servicePath, id, code) {
   try {
     retDoc = await client.service(servicePath).get(id)
   } catch (err) {
+    console.log('>>> ERROR', err.message)
     retErr = err
   }
 
@@ -149,7 +156,7 @@ async function shouldGetWithoutError(client, servicePath, id) {
   try {
     retDoc = await client.service(servicePath).get(id)
   } catch (err) {
-    console.error('shouldGetWithoutError', err.message)
+    // console.error('shouldGetWithoutError', err.message)
     retErr = err
   }
 
@@ -175,6 +182,7 @@ async function shouldPatchMultipleWithError(
   try {
     retRes = await client.service(servicePath).patch(null, data, { query })
   } catch (err) {
+    console.log('>>> ERROR', err.message)
     retErr = err
   }
 
@@ -200,6 +208,7 @@ async function shouldPatchWithError(
   try {
     retDoc = await client.service(servicePath).patch(id, data)
   } catch (err) {
+    console.log('>>> ERROR', err.message)
     retErr = err
   }
 
@@ -224,7 +233,7 @@ async function shouldPatchWithoutError(
   try {
     retDoc = await client.service(servicePath).patch(id, data)
   } catch (err) {
-    console.error('shouldPatchWithoutError', err.message)
+    console.log('>>> ERROR', err.message)
     retErr = err
   }
 
@@ -274,7 +283,7 @@ async function shouldRemoveWithoutError(client, servicePath, id) {
   try {
     retDoc = await client.service(servicePath).remove(id)
   } catch (err) {
-    console.error('shouldRemoveWithoutError', err.message)
+    // console.error('shouldRemoveWithoutError', err.message)
     retErr = err
   }
 
@@ -349,7 +358,7 @@ async function shouldUpdateWithoutError(
   try {
     retDoc = await client.service(servicePath).update(id, data)
   } catch (err) {
-    console.error('shouldUpdateWithoutError', err.message)
+    // console.error('shouldUpdateWithoutError', err.message)
     retErr = err
   }
 
@@ -364,6 +373,8 @@ global.assert = chai.assert
 global.expect = chai.expect
 
 global.helper = {
+  getCode,
+
   loadData,
   loadJSON,
 

@@ -56,7 +56,5 @@ module.exports = function(app) {
   app.use('/system/time', new Service())
 
   // Get the wrapped service object, bind hooks
-  const timeService = app.service('/system/time')
-
-  timeService.hooks(hooks)
+  app.service('system/time').hooks(hooks)
 }

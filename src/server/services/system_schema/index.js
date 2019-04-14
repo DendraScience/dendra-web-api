@@ -36,16 +36,12 @@ class Service extends AdapterService {
     )
   }
 
-  setup(app) {
-    this.app = app
-  }
-
   get _names() {
-    return this.app.get('schemaNames')
+    return this.options.names
   }
 
   _schemaPath(id) {
-    return path.join(this.app.get('schemaPath'), id)
+    return path.join(this.options.schemaPath, id)
   }
 
   async _find(params = {}) {
@@ -100,10 +96,14 @@ class Service extends AdapterService {
 }
 
 module.exports = function(app) {
-  app.use('/system/schemas', new Service())
+  app.use(
+    '/system/schemas',
+    new Service({
+      names: app.get('schemaNames'),
+      schemaPath: app.get('schemaPath')
+    })
+  )
 
   // Get the wrapped service object, bind hooks
-  const schemaService = app.service('/system/schemas')
-
-  schemaService.hooks(hooks)
+  app.service('system/schemas').hooks(hooks)
 }

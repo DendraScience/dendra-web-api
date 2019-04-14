@@ -12,11 +12,16 @@
         "op": "replace",
         "path": "/properties",
         "value": {
-          "description": {"$ref": "#/definitions/description"},
-          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
-          "label": {"$ref": "#/definitions/label"},
-          "terms": {"$ref": "#/definitions/terms"},
-          "vocabulary_type": {"$ref": "#/definitions/vocabulary_type"},
+          "$set": {
+            "properties": {
+              "description": {"$ref": "#/definitions/description"},
+              "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+              "label": {"$ref": "#/definitions/label"},
+              "terms": {"$ref": "#/definitions/terms"},
+              "vocabulary_type": {"$ref": "#/definitions/vocabulary_type"}
+            },
+            "type": "object"
+          },
           "$unset": {
             "properties": {
               "description": {"$ref": "types.json#/definitions/unset"},

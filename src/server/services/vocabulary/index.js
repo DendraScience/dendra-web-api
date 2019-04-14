@@ -21,7 +21,5 @@ module.exports = function(app) {
   app.use('/vocabularies', mongoService)
 
   // Get the wrapped service object, bind hooks
-  const vocabularyService = app.service('/vocabularies')
-
-  vocabularyService.hooks(hooks)
+  app.service('vocabularies').hooks(hooks)
 }

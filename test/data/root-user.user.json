@@ -1,6 +1,7 @@
 {
   "email": "root_user@test.dendra.science",
   "full_name": "Test User",
+  "is_enabled": true,
   "name": "Root User Role",
   "password": "$2a$12$99EVJdX6ZWfNvYVZlL2Guew4yNpGuNWrKM1gZeLOQamJhK7A2kL9i",
   "roles": [

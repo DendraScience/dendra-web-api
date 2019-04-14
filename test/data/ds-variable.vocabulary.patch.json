@@ -1,3 +1,5 @@
 {
-  "label": "Variable - Patched"
+  "$set": {
+    "label": "Variable - Patched"
+  }
 }

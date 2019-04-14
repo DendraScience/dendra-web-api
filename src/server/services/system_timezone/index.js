@@ -93,7 +93,5 @@ module.exports = function(app) {
   app.use('/system/timezones', new Service())
 
   // Get the wrapped service object, bind hooks
-  const timezoneService = app.service('/system/timezones')
-
-  timezoneService.hooks(hooks)
+  app.service('system/timezones').hooks(hooks)
 }

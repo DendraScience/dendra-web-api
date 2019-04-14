@@ -12,12 +12,17 @@
         "op": "replace",
         "path": "/properties",
         "value": {
-          "build_at": {"$ref": "#/definitions/build_at"},
-          "build_every": {"$ref": "#/definitions/build_every"},
-          "build_info": {"$ref": "#/definitions/build_info"},
-          "description": {"$ref": "#/definitions/description"},
-          "expires_at": {"$ref": "#/definitions/expires_at"},
-          "name": {"$ref": "#/definitions/name"},
+          "$set": {
+            "properties": {
+              "build_at": {"$ref": "#/definitions/build_at"},
+              "build_every": {"$ref": "#/definitions/build_every"},
+              "build_info": {"$ref": "#/definitions/build_info"},
+              "description": {"$ref": "#/definitions/description"},
+              "expires_at": {"$ref": "#/definitions/expires_at"},
+              "name": {"$ref": "#/definitions/name"}
+            },
+            "type": "object"
+          },
           "$unset": {
             "properties": {
               "build_at": {"$ref": "types.json#/definitions/unset"},

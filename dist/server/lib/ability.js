@@ -11,7 +11,6 @@ const {
 } = require('./rules');
 
 const TYPE_KEY = Symbol.for('type');
-Ability.addAlias('update', 'patch');
 Ability.addAlias('read', ['get', 'find']);
 Ability.addAlias('delete', 'remove');
 
@@ -34,7 +33,7 @@ async function defineAbilityForContext(context) {
   } else {
     user.roles.forEach(role => userRulesByRole[role](extract, {
       user
-    })); // const memberships = await context.app.service('/memberships').find({
+    })); // const memberships = await context.app.service('memberships').find({
     //   paginate: false,
     //   query: {
     //     person_id: user.person_id,

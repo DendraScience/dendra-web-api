@@ -12,15 +12,20 @@
         "op": "replace",
         "path": "/properties",
         "value": {
-          "actions": {"$ref": "types.json#/definitions/annotationActions"},
-          "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
-          "description": {"$ref": "#/definitions/description"},
-          "external_refs": {"$ref": "#/definitions/external_refs"},
-          "intervals": {"$ref": "#/definitions/intervals"},
-          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
-          "state": {"$ref": "#/definitions/state"},
-          "station_ids": {"$ref": "#/definitions/station_ids"},
-          "title": {"$ref": "#/definitions/title"},
+          "$set": {
+            "properties": {
+              "actions": {"$ref": "types.json#/definitions/annotationActions"},
+              "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
+              "description": {"$ref": "#/definitions/description"},
+              "external_refs": {"$ref": "#/definitions/external_refs"},
+              "intervals": {"$ref": "#/definitions/intervals"},
+              "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+              "state": {"$ref": "#/definitions/state"},
+              "station_ids": {"$ref": "#/definitions/station_ids"},
+              "title": {"$ref": "#/definitions/title"}
+            },
+            "type": "object"
+          },
           "$unset": {
             "properties": {
               "actions": {"$ref": "types.json#/definitions/unset"},
