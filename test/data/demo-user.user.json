@@ -1,0 +1,10 @@
+{
+  "email": "demo_user@test.dendra.science",
+  "full_name": "Demo User",
+  "is_enabled": true,
+  "name": "Demo User",
+  "password": "test123",
+  "roles": [
+    "user"
+  ]
+}

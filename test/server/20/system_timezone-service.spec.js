@@ -13,7 +13,7 @@ describe(`Service ${servicePath}`, function() {
   describe('#create()', function() {
     it('guest should create with error', function() {
       return helper.shouldCreateWithError(
-        conn.guest,
+        clients.guest,
         servicePath,
         {},
         'MethodNotAllowed'
@@ -22,7 +22,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('user should create with error', function() {
       return helper.shouldCreateWithError(
-        conn.user,
+        clients.user,
         servicePath,
         {},
         'MethodNotAllowed'
@@ -31,7 +31,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('sys admin should create multiple with error', function() {
       return helper.shouldCreateWithError(
-        conn.sysAdmin,
+        clients.sysAdmin,
         servicePath,
         [{}, {}],
         'MethodNotAllowed'
@@ -40,7 +40,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('sys admin should create with error', function() {
       return helper.shouldCreateWithError(
-        conn.sysAdmin,
+        clients.sysAdmin,
         servicePath,
         {},
         'MethodNotAllowed'
@@ -50,22 +50,22 @@ describe(`Service ${servicePath}`, function() {
 
   describe('#get()', function() {
     it('guest should get without error', function() {
-      return helper.shouldGetWithoutError(conn.guest, servicePath, id.doc)
+      return helper.shouldGetWithoutError(clients.guest, servicePath, id.doc)
     })
 
     it('user should get without error', function() {
-      return helper.shouldGetWithoutError(conn.user, servicePath, id.doc)
+      return helper.shouldGetWithoutError(clients.user, servicePath, id.doc)
     })
 
     it('sys admin should get without error', function() {
-      return helper.shouldGetWithoutError(conn.sysAdmin, servicePath, id.doc)
+      return helper.shouldGetWithoutError(clients.sysAdmin, servicePath, id.doc)
     })
   })
 
   describe('#find()', function() {
     it('guest should find without error', function() {
       return helper.shouldFindWithoutError(
-        conn.guest,
+        clients.guest,
         servicePath,
         {},
         findLength,
@@ -75,7 +75,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('user should find without error', function() {
       return helper.shouldFindWithoutError(
-        conn.user,
+        clients.user,
         servicePath,
         {},
         findLength,
@@ -85,7 +85,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('sys admin should find without error', function() {
       return helper.shouldFindWithoutError(
-        conn.sysAdmin,
+        clients.sysAdmin,
         servicePath,
         {},
         findLength,
@@ -97,7 +97,7 @@ describe(`Service ${servicePath}`, function() {
   describe('#patch()', function() {
     it('guest should patch with error', function() {
       return helper.shouldPatchWithError(
-        conn.guest,
+        clients.guest,
         servicePath,
         id.doc,
         {},
@@ -107,7 +107,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('user should patch with error', function() {
       return helper.shouldPatchWithError(
-        conn.user,
+        clients.user,
         servicePath,
         id.doc,
         {},
@@ -117,7 +117,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('sys admin should patch multiple with error', function() {
       return helper.shouldPatchMultipleWithError(
-        conn.sysAdmin,
+        clients.sysAdmin,
         servicePath,
         { _id: id.doc },
         {},
@@ -127,7 +127,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('ys admin should patch with error', function() {
       return helper.shouldPatchWithError(
-        conn.sysAdmin,
+        clients.sysAdmin,
         servicePath,
         id.doc,
         {},
@@ -139,7 +139,7 @@ describe(`Service ${servicePath}`, function() {
   describe('#update()', function() {
     it('guest should update with error', function() {
       return helper.shouldUpdateWithError(
-        conn.guest,
+        clients.guest,
         servicePath,
         id.doc,
         {},
@@ -149,7 +149,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('user should update with error', function() {
       return helper.shouldUpdateWithError(
-        conn.user,
+        clients.user,
         servicePath,
         id.doc,
         {},
@@ -159,7 +159,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('sys admin should update multiple with error', function() {
       return helper.shouldUpdateMultipleWithError(
-        conn.sysAdmin,
+        clients.sysAdmin,
         servicePath,
         { _id: id.doc },
         {},
@@ -169,7 +169,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('sys admin should update with error', function() {
       return helper.shouldUpdateWithError(
-        conn.sysAdmin,
+        clients.sysAdmin,
         servicePath,
         id.doc,
         {},
@@ -181,7 +181,7 @@ describe(`Service ${servicePath}`, function() {
   describe('#remove()', function() {
     it('guest should remove with error', function() {
       return helper.shouldRemoveWithError(
-        conn.guest,
+        clients.guest,
         servicePath,
         id.doc,
         'MethodNotAllowed'
@@ -190,7 +190,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('user should remove with error', function() {
       return helper.shouldRemoveWithError(
-        conn.user,
+        clients.user,
         servicePath,
         id.doc,
         'MethodNotAllowed'
@@ -199,7 +199,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('sys admin should remove multiple with error', function() {
       return helper.shouldRemoveMultipleWithError(
-        conn.sysAdmin,
+        clients.sysAdmin,
         servicePath,
         { _id: id.doc },
         'MethodNotAllowed'
@@ -208,7 +208,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('sys admin should remove with error', function() {
       return helper.shouldRemoveWithError(
-        conn.sysAdmin,
+        clients.sysAdmin,
         servicePath,
         id.doc,
         'MethodNotAllowed'

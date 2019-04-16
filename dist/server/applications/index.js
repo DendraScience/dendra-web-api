@@ -7,8 +7,8 @@ const restClient = require('@feathersjs/rest-client');
 const request = require('request');
 
 module.exports = function (app) {
-  const connections = app.get('connections') || {};
-  Object.values(connections).forEach(connection => {
-    connection.app = feathers().configure(restClient(connection.url).request(request));
+  const applications = app.get('applications') || {};
+  Object.values(applications).forEach(application => {
+    application.app = feathers().configure(restClient(application.url).request(request));
   });
 };

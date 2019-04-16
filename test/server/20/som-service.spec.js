@@ -23,7 +23,7 @@ describe(`Service ${servicePath}`, function() {
   describe('#create()', function() {
     it('guest should create with error', function() {
       return helper.shouldCreateWithError(
-        conn.guest,
+        clients.guest,
         servicePath,
         dataFile,
         'NotAuthenticated'
@@ -32,7 +32,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('user should create with error', function() {
       return helper.shouldCreateWithError(
-        conn.user,
+        clients.user,
         servicePath,
         dataFile,
         'Forbidden'
@@ -41,7 +41,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('sys admin should create multiple with error', function() {
       return helper.shouldCreateWithError(
-        conn.sysAdmin,
+        clients.sysAdmin,
         servicePath,
         [dataFile, dataFile],
         'MethodNotAllowed'
@@ -50,7 +50,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('sys admin should create without error', function() {
       return helper
-        .shouldCreateWithoutError(conn.sysAdmin, servicePath, dataFile)
+        .shouldCreateWithoutError(clients.sysAdmin, servicePath, dataFile)
         .then(({ retDoc }) => {
           id.doc = retDoc._id
         })
@@ -59,36 +59,36 @@ describe(`Service ${servicePath}`, function() {
 
   describe('#get()', function() {
     it('guest should get without error', function() {
-      return helper.shouldGetWithoutError(conn.guest, servicePath, id.doc)
+      return helper.shouldGetWithoutError(clients.guest, servicePath, id.doc)
     })
 
     it('user should get without error', function() {
-      return helper.shouldGetWithoutError(conn.user, servicePath, id.doc)
+      return helper.shouldGetWithoutError(clients.user, servicePath, id.doc)
     })
 
     it('sys admin should get without error', function() {
-      return helper.shouldGetWithoutError(conn.sysAdmin, servicePath, id.doc)
+      return helper.shouldGetWithoutError(clients.sysAdmin, servicePath, id.doc)
     })
   })
 
   describe('#find()', function() {
     it('guest should find without error', function() {
-      return helper.shouldFindWithoutError(conn.guest, servicePath)
+      return helper.shouldFindWithoutError(clients.guest, servicePath)
     })
 
     it('user should find without error', function() {
-      return helper.shouldFindWithoutError(conn.user, servicePath)
+      return helper.shouldFindWithoutError(clients.user, servicePath)
     })
 
     it('sys admin should find without error', function() {
-      return helper.shouldFindWithoutError(conn.sysAdmin, servicePath)
+      return helper.shouldFindWithoutError(clients.sysAdmin, servicePath)
     })
   })
 
   describe('#patch()', function() {
     it('guest should patch with error', function() {
       return helper.shouldPatchWithError(
-        conn.guest,
+        clients.guest,
         servicePath,
         id.doc,
         `${dataFile}.patch`,
@@ -98,7 +98,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('user should patch with error', function() {
       return helper.shouldPatchWithError(
-        conn.user,
+        clients.user,
         servicePath,
         id.doc,
         `${dataFile}.patch`,
@@ -108,7 +108,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('sys admin should patch multiple with error', function() {
       return helper.shouldPatchMultipleWithError(
-        conn.sysAdmin,
+        clients.sysAdmin,
         servicePath,
         { _id: id.doc },
         `${dataFile}.patch`,
@@ -119,7 +119,7 @@ describe(`Service ${servicePath}`, function() {
     it('sys admin should patch without error', function() {
       return helper
         .shouldPatchWithoutError(
-          conn.sysAdmin,
+          clients.sysAdmin,
           servicePath,
           id.doc,
           `${dataFile}.patch`
@@ -133,7 +133,7 @@ describe(`Service ${servicePath}`, function() {
   describe('#update()', function() {
     it('guest should update with error', function() {
       return helper.shouldUpdateWithError(
-        conn.guest,
+        clients.guest,
         servicePath,
         id.doc,
         `${dataFile}.update`,
@@ -143,7 +143,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('user should update with error', function() {
       return helper.shouldUpdateWithError(
-        conn.user,
+        clients.user,
         servicePath,
         id.doc,
         `${dataFile}.update`,
@@ -153,7 +153,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('sys admin should update multiple with error', function() {
       return helper.shouldUpdateMultipleWithError(
-        conn.sysAdmin,
+        clients.sysAdmin,
         servicePath,
         { _id: id.doc },
         `${dataFile}.update`,
@@ -164,7 +164,7 @@ describe(`Service ${servicePath}`, function() {
     it('sys admin should update without error', function() {
       return helper
         .shouldUpdateWithoutError(
-          conn.sysAdmin,
+          clients.sysAdmin,
           servicePath,
           id.doc,
           `${dataFile}.update`
@@ -178,7 +178,7 @@ describe(`Service ${servicePath}`, function() {
   describe('#remove()', function() {
     it('guest should remove with error', function() {
       return helper.shouldRemoveWithError(
-        conn.guest,
+        clients.guest,
         servicePath,
         id.doc,
         'NotAuthenticated'
@@ -187,7 +187,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('user should remove with error', function() {
       return helper.shouldRemoveWithError(
-        conn.user,
+        clients.user,
         servicePath,
         id.doc,
         'Forbidden'
@@ -196,7 +196,7 @@ describe(`Service ${servicePath}`, function() {
 
     it('sys admin should remove multiple with error', function() {
       return helper.shouldRemoveMultipleWithError(
-        conn.sysAdmin,
+        clients.sysAdmin,
         servicePath,
         { _id: id.doc },
         'MethodNotAllowed'
@@ -204,7 +204,11 @@ describe(`Service ${servicePath}`, function() {
     })
 
     it('sys admin should remove without error', function() {
-      return helper.shouldRemoveWithoutError(conn.sysAdmin, servicePath, id.doc)
+      return helper.shouldRemoveWithoutError(
+        clients.sysAdmin,
+        servicePath,
+        id.doc
+      )
     })
   })
 })

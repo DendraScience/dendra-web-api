@@ -72,7 +72,6 @@ async function shouldCreateWithoutError(client, servicePath, dataOrFileName) {
   try {
     retDoc = await client.service(servicePath).create(data)
   } catch (err) {
-    // console.error('shouldCreateWithoutError', err.message)
     retErr = err
   }
 
@@ -113,7 +112,6 @@ async function shouldFindWithoutError(
   try {
     retRes = await client.service(servicePath).find({ query })
   } catch (err) {
-    // console.error('shouldFindWithoutError', err.message)
     retErr = err
   }
 
@@ -154,7 +152,6 @@ async function shouldGetWithoutError(client, servicePath, id) {
   try {
     retDoc = await client.service(servicePath).get(id)
   } catch (err) {
-    // console.error('shouldGetWithoutError', err.message)
     retErr = err
   }
 
@@ -278,7 +275,6 @@ async function shouldRemoveWithoutError(client, servicePath, id) {
   try {
     retDoc = await client.service(servicePath).remove(id)
   } catch (err) {
-    // console.error('shouldRemoveWithoutError', err.message)
     retErr = err
   }
 
@@ -353,7 +349,6 @@ async function shouldUpdateWithoutError(
   try {
     retDoc = await client.service(servicePath).update(id, data)
   } catch (err) {
-    // console.error('shouldUpdateWithoutError', err.message)
     retErr = err
   }
 

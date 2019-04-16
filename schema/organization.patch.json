@@ -14,6 +14,7 @@
         "value": {
           "$set": {
             "properties": {
+              "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
               "description": {"$ref": "#/definitions/description"},
               "email": {"$ref": "#/definitions/email"},
               "full_name": {"$ref": "#/definitions/full_name"},
@@ -26,6 +27,7 @@
           },
           "$unset": {
             "properties": {
+              "access_levels": {"$ref": "types.json#/definitions/unset"},
               "description": {"$ref": "types.json#/definitions/unset"},
               "email": {"$ref": "types.json#/definitions/unset"},
               "full_name": {"$ref": "types.json#/definitions/unset"},

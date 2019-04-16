@@ -11,6 +11,10 @@
 //     console.log('My custom global hook ran. Feathers is awesome!')
 //   }
 // }
+const accessFind = require('./accessFind');
+
+const accessGet = require('./accessGet');
+
 const beforeCreate = require('./beforeCreate');
 
 const beforeFind = require('./beforeFind');
@@ -30,6 +34,8 @@ const restrictToAbility = require('./restrictToAbility');
 const setAbility = require('./setAbility');
 
 module.exports = {
+  accessFind,
+  accessGet,
   beforeCreate,
   beforeFind,
   beforeGet,

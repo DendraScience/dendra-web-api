@@ -30,13 +30,19 @@ before(async function() {
   global.baseUrl = `http://${host}:${port}`
   global.metadata = app.get('databases').mongodb.metadata
 
-  global.coll = ['schemes', 'soms', 'uoms', 'users', 'vocabularies'].reduce(
-    (obj, name) => {
-      obj[name] = metadata.db.collection(name)
-      return obj
-    },
-    {}
-  )
+  global.coll = [
+    'organizations',
+    'persons',
+    'places',
+    'schemes',
+    'soms',
+    'uoms',
+    'users',
+    'vocabularies'
+  ].reduce((obj, name) => {
+    obj[name] = metadata.db.collection(name)
+    return obj
+  }, {})
 
   /*
     Create root users
@@ -56,7 +62,7 @@ before(async function() {
   }
 
   /*
-    Configure connections
+    Configure clients
    */
 
   const guest = feathers().configure(restClient(baseUrl).request(request))
@@ -93,7 +99,7 @@ before(async function() {
     password: 'def456'
   })
 
-  global.conn = {
+  global.clients = {
     guest,
     sysAdmin,
     user

@@ -8,6 +8,7 @@
         "op": "replace",
         "path": "/properties",
         "value": {
+          "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
           "description": {"$ref": "#/definitions/description"},
           "email": {"$ref": "#/definitions/email"},
           "full_name": {"$ref": "#/definitions/full_name"},

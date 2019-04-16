@@ -1,11 +1,18 @@
 const publicRules = ({ can, cannot }) => {
   // Organizations
-  can('read', 'organizations', {
+  can('read', 'organizations', { is_enabled: true })
+  can('access', 'organizations', {
     'access_levels_resolved.public_level': { $gt: 0 }
   })
 
+  // Persons
+  can('read', 'persons', { is_enabled: true })
+
+  // Places
+  can('read', 'places', { is_enabled: true })
+
   // Schemes
-  can('read', 'schemes')
+  can('read', 'schemes', { is_enabled: true })
 
   // SOMs
   can('read', 'soms')
@@ -14,7 +21,7 @@ const publicRules = ({ can, cannot }) => {
   can('read', 'uoms')
 
   // Vocabularies
-  can('read', 'vocabularies')
+  can('read', 'vocabularies', { is_enabled: true })
 }
 
 const membershipRulesByRole = {
@@ -35,12 +42,22 @@ const userRulesByRole = {
 
   user: ({ can, cannot }, { user }) => {
     // Organizations
-    can('read', 'organizations', {
+    can('read', 'organizations', { is_enabled: true })
+    can('access', 'organizations', {
       'access_levels_resolved.public_level': { $gt: 0 }
     })
 
+    // Persons
+    can('read', 'persons', { is_enabled: true })
+    can('patch', 'persons', { _id: user.person_id, is_enabled: true })
+    can('assign', 'persons')
+    cannot('assign', 'persons', ['$set.is_enabled'])
+
+    // Places
+    can('read', 'places', { is_enabled: true })
+
     // Schemes
-    can('read', 'schemes')
+    can('read', 'schemes', { is_enabled: true })
 
     // SOMs
     can('read', 'soms')
@@ -60,7 +77,7 @@ const userRulesByRole = {
     ])
 
     // Vocabularies
-    can('read', 'vocabularies')
+    can('read', 'vocabularies', { is_enabled: true })
   }
 }
 

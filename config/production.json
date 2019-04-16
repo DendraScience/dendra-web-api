@@ -1,8 +1,5 @@
 {
-  "authentication": {
-    "secret": "WEB_API_SECRET"
-  },
-  "connections": {
+  "applications": {
     "aggregateBuild": {
       "url": "AGGREGATE_BUILD_API_URL"
     },
@@ -15,6 +12,9 @@
     "noaaNWS": {
       "url": "NOAA_NWS_API_URL"
     }
+  },
+  "authentication": {
+    "secret": "WEB_API_SECRET"
   },
   "databases": {
     "mongodb": {

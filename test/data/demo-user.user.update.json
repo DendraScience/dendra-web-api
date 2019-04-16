@@ -1,10 +1,10 @@
 {
   "created_at": "2017-07-21T03:16:36.664Z",
   "created_by": "592f155746a1b867a114e010",
-  "email": "sample_user@test.dendra.science",
-  "full_name": "Test User - Updated",
+  "email": "demo_user@test.dendra.science",
+  "full_name": "Demo User - Updated",
   "is_enabled": true,
-  "name": "Sample User Role",
+  "name": "Demo User",
   "password": "test123",
   "roles": [
     "user"
