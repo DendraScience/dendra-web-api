@@ -2,6 +2,7 @@ const path = require('path')
 
 module.exports = function(app) {
   const names = [
+    'ability',
     'authentication',
     // 'aggregate',
     // 'aggregate_request',

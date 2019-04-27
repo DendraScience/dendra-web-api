@@ -9,11 +9,13 @@ module.exports = async app => {
     if (defaultLogger.level) Logger.setLevel(defaultLogger.level)
 
     // Set our own logger
-    // TODO: Replace logger with winston; handle this centrally
     // SEE: http://mongodb.github.io/node-mongodb-native/2.0/tutorials/logging/
-    // Logger.setCurrentLogger((msg, context) => {
-    //   console.log(msg, context)
-    // })
+    Logger.setCurrentLogger((message, context) => {
+      app.logger.log({
+        level: context.type,
+        message
+      })
+    })
   }
 
   if (mongodb.metadata) await require('./metadata')(app)

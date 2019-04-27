@@ -6,28 +6,32 @@
  * @module server/main
  */
 
-// TODO: Configure Winston
-const log = require('winston')
+const winston = require('winston')
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [new winston.transports.Console()]
+})
 
 process.on('uncaughtException', err => {
-  log.error(`An unexpected error occurred\n  ${err.stack}`)
+  logger.error(`An unexpected error occurred\n  ${err.stack}`)
   process.exit(1)
 })
 
 process.on('unhandledRejection', err => {
   if (!err) {
-    log.error('An unexpected empty rejection occurred')
+    logger.error('An unexpected empty rejection occurred')
   } else if (err instanceof Error) {
-    log.error(`An unexpected rejection occurred\n  ${err.stack}`)
+    logger.error(`An unexpected rejection occurred\n  ${err.stack}`)
   } else {
-    log.error(`An unexpected rejection occurred\n  ${err}`)
+    logger.error(`An unexpected rejection occurred\n  ${err}`)
   }
   process.exit(1)
 })
 
 // TODO: Handle SIGTERM gracefully for Docker
 // SEE: http://joseoncode.com/2014/07/21/graceful-shutdown-in-node-dot-js/
-require('./app')(log)
+require('./app')(logger)
   .then(app => {
     const port = app.get('port')
     const server = app.listen(port)
@@ -35,11 +39,13 @@ require('./app')(log)
     return new Promise((resolve, reject) => {
       server.once('error', reject)
       server.once('listening', () => {
-        log.info('Feathers application started on %s:%s', app.get('host'), port)
+        logger.info(
+          `Feathers application started on ${app.get('host')}:${port}`
+        )
         resolve(server)
       })
     })
   })
   .catch(err => {
-    log.error(err)
+    logger.error(err)
   })

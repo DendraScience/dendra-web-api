@@ -37,7 +37,7 @@ module.exports = () => {
       context.data[TYPE_KEY] = serviceName;
 
       if (ability.cannot(action, context.data)) {
-        throw new errors.Forbidden(`You are not allowed to ${action} ${serviceName} using the data`);
+        throw new errors.Forbidden(`You are not allowed to ${action} ${serviceName} using the data.`);
       }
     }
 
@@ -50,13 +50,13 @@ module.exports = () => {
       before[TYPE_KEY] = serviceName;
 
       if (ability.cannot(action, before)) {
-        throw new errors.Forbidden(`You are not allowed to ${action} the existing ${serviceName}`);
+        throw new errors.Forbidden(`You are not allowed to ${action} the existing ${serviceName}.`);
       }
     }
 
     if (action === 'patch') {
       if (!before) {
-        throw new errors.Forbidden(`You are not allowed to ${action} without matching ${serviceName}`);
+        throw new errors.Forbidden(`You are not allowed to ${action} without matching ${serviceName}.`);
       }
 
       const data = context.data || {};
@@ -79,7 +79,7 @@ module.exports = () => {
       if (allowedData.$unset) _.forEach(allowedData.$unset, (v, k) => _.unset(patchedData, k));
 
       if (ability.cannot(action, patchedData)) {
-        throw new errors.Forbidden(`You are not allowed to ${action} ${serviceName} using the data`);
+        throw new errors.Forbidden(`You are not allowed to ${action} ${serviceName} using the data.`);
       }
       /*
         Refactor the patch to use only allowed fields.

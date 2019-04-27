@@ -33,7 +33,7 @@ module.exports = () => {
     } else if (action === 'find') {
       params.query.$limit = 0;
     } else {
-      throw new errors.NotFound(`No record found for id '${context.id}'`);
+      throw new errors.NotFound(`No record found for id '${context.id}'.`);
     }
 
     return context;

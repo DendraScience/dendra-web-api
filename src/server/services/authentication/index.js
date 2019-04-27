@@ -9,6 +9,7 @@ module.exports = function(app) {
     },
 
     after: {
+      // TODO: Move to an ability?
       create: iff(context => !context.params.user.is_enabled, disallow())
     }
   })

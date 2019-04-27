@@ -3,7 +3,7 @@
 const path = require('path');
 
 module.exports = function (app) {
-  const names = ['authentication', // 'aggregate',
+  const names = ['ability', 'authentication', // 'aggregate',
   // 'aggregate_request',
   // 'aggregate_result',
   // 'annotation',

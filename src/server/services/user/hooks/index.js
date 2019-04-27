@@ -1,5 +1,9 @@
+const errors = require('@feathersjs/errors')
 const globalHooks = require('../../../hooks')
 const local = require('@feathersjs/authentication-local')
+const { discard, getByDot } = require('feathers-hooks-common')
+
+const CURRENT_PASSWORD = 'current_password'
 
 exports.before = {
   // all: [],
@@ -27,7 +31,22 @@ exports.before = {
 
   patch: [
     local.hooks.hashPassword(),
-    globalHooks.beforePatch('user.patch.json')
+    local.hooks.hashPassword(CURRENT_PASSWORD),
+
+    ({ data, params }) => {
+      params.currentPassword = getByDot(data, `$set.${CURRENT_PASSWORD}`)
+    },
+    discard(`$set.${CURRENT_PASSWORD}`),
+
+    globalHooks.beforePatch('user.patch.json'),
+
+    ({ data, params }) => {
+      const newPassword = getByDot(data, '$set.password')
+
+      if (newPassword && params.currentPassword !== params.before.password) {
+        throw new errors.Forbidden('The current password is not valid.')
+      }
+    }
   ],
 
   remove: globalHooks.beforeRemove()

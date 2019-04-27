@@ -26,7 +26,7 @@ module.exports = () => {
 
       if (ability.cannot(action, context.data)) {
         throw new errors.Forbidden(
-          `You are not allowed to ${action} ${serviceName} using the data`
+          `You are not allowed to ${action} ${serviceName} using the data.`
         )
       }
     }
@@ -43,7 +43,7 @@ module.exports = () => {
 
       if (ability.cannot(action, before)) {
         throw new errors.Forbidden(
-          `You are not allowed to ${action} the existing ${serviceName}`
+          `You are not allowed to ${action} the existing ${serviceName}.`
         )
       }
     }
@@ -51,7 +51,7 @@ module.exports = () => {
     if (action === 'patch') {
       if (!before) {
         throw new errors.Forbidden(
-          `You are not allowed to ${action} without matching ${serviceName}`
+          `You are not allowed to ${action} without matching ${serviceName}.`
         )
       }
 
@@ -75,7 +75,7 @@ module.exports = () => {
 
       if (ability.cannot(action, patchedData)) {
         throw new errors.Forbidden(
-          `You are not allowed to ${action} ${serviceName} using the data`
+          `You are not allowed to ${action} ${serviceName} using the data.`
         )
       }
 

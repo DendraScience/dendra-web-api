@@ -37,6 +37,15 @@ const userRulesByRole = {
     can('manage', 'all')
 
     // Users
+    cannot('save', 'users', {
+      roles: 'sys-admin',
+      person_id: { $exists: true }
+    })
+    cannot('save', 'users', {
+      roles: 'user',
+      person_id: { $exists: false }
+    })
+    cannot('save', 'users', { _id: user._id, roles: { $ne: 'sys-admin' } })
     cannot('remove', 'users', { _id: user._id })
   },
 
