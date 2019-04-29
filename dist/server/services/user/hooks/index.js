@@ -1,5 +1,7 @@
 "use strict";
 
+const bcrypt = require('bcryptjs');
+
 const errors = require('@feathersjs/errors');
 
 const globalHooks = require('../../../hooks');
@@ -11,7 +13,8 @@ const {
   getByDot
 } = require('feathers-hooks-common');
 
-const CURRENT_PASSWORD = 'current_password';
+const PATCH_CURRENT_PASSWORD = '$set.current_password';
+const PATCH_PASSWORD = '$set.password';
 exports.before = {
   // all: [],
   find: globalHooks.beforeFind(),
@@ -26,18 +29,21 @@ exports.before = {
       data.created_by = params.before.created_by;
     }
   }],
-  patch: [local.hooks.hashPassword(), local.hooks.hashPassword(CURRENT_PASSWORD), ({
+  patch: [// local.hooks.hashPassword({ passwordField: PATCH_CURRENT_PASSWORD }),
+  local.hooks.hashPassword({
+    passwordField: PATCH_PASSWORD
+  }), ({
     data,
     params
   }) => {
-    params.currentPassword = getByDot(data, `$set.${CURRENT_PASSWORD}`);
-  }, discard(`$set.${CURRENT_PASSWORD}`), globalHooks.beforePatch('user.patch.json'), ({
+    params.currentPassword = getByDot(data, PATCH_CURRENT_PASSWORD);
+  }, discard(PATCH_CURRENT_PASSWORD), globalHooks.beforePatch('user.patch.json'), async ({
     data,
     params
   }) => {
-    const newPassword = getByDot(data, '$set.password');
+    const newPassword = getByDot(data, PATCH_PASSWORD);
 
-    if (newPassword && params.currentPassword !== params.before.password) {
+    if (newPassword && !(await bcrypt.compare(params.currentPassword, params.before.password))) {
       throw new errors.Forbidden('The current password is not valid.');
     }
   }],
