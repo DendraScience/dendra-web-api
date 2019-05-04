@@ -5,6 +5,18 @@ const publicRules = ({ can, cannot }) => {
     'access_levels_resolved.public_level': { $gt: 0 }
   })
 
+  // Stations
+  can('read', 'stations', { is_enabled: true })
+  can('access', 'stations', {
+    'access_levels_resolved.public_level': { $gt: 0 }
+  })
+
+  // Datastreams
+  can('read', 'datastreams', { is_enabled: true })
+  can('access', 'datastreams', {
+    'access_levels_resolved.public_level': { $gt: 0 }
+  })
+
   // Persons
   can('read', 'persons', { is_enabled: true })
 
@@ -14,14 +26,14 @@ const publicRules = ({ can, cannot }) => {
   // Schemes
   can('read', 'schemes', { is_enabled: true })
 
+  // Vocabularies
+  can('read', 'vocabularies', { is_enabled: true })
+
   // SOMs
   can('read', 'soms')
 
   // UOMs
   can('read', 'uoms')
-
-  // Vocabularies
-  can('read', 'vocabularies', { is_enabled: true })
 }
 
 const membershipRulesByRole = {
@@ -56,6 +68,18 @@ const userRulesByRole = {
       'access_levels_resolved.public_level': { $gt: 0 }
     })
 
+    // Stations
+    can('read', 'stations', { is_enabled: true })
+    can('access', 'stations', {
+      'access_levels_resolved.public_level': { $gt: 0 }
+    })
+
+    // Datastreams
+    can('read', 'datastreams', { is_enabled: true })
+    can('access', 'datastreams', {
+      'access_levels_resolved.public_level': { $gt: 0 }
+    })
+
     // Persons
     can('read', 'persons', { is_enabled: true })
     can('patch', 'persons', { _id: user.person_id, is_enabled: true })
@@ -67,6 +91,9 @@ const userRulesByRole = {
 
     // Schemes
     can('read', 'schemes', { is_enabled: true })
+
+    // Vocabularies
+    can('read', 'vocabularies', { is_enabled: true })
 
     // SOMs
     can('read', 'soms')
@@ -84,9 +111,6 @@ const userRulesByRole = {
       '$set.roles',
       '$unset.person_id'
     ])
-
-    // Vocabularies
-    can('read', 'vocabularies', { is_enabled: true })
   }
 }
 

@@ -7,10 +7,10 @@ exports.before = {
 
   get: globalHooks.beforeGet(),
 
-  create: globalHooks.beforeCreate('som.create.json'),
+  create: globalHooks.beforeCreate({ schemaName: 'som.create.json' }),
 
   update: [
-    globalHooks.beforeUpdate('som.update.json'),
+    globalHooks.beforeUpdate({ schemaName: 'som.update.json' }),
 
     ({ data, params }) => {
       if (params.before) {
@@ -20,7 +20,7 @@ exports.before = {
     }
   ],
 
-  patch: globalHooks.beforePatch('som.patch.json'),
+  patch: globalHooks.beforePatch({ schemaName: 'som.patch.json' }),
 
   remove: globalHooks.beforeRemove()
 }

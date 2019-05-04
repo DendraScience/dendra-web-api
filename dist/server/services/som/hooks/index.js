@@ -6,8 +6,12 @@ exports.before = {
   // all: [],
   find: globalHooks.beforeFind(),
   get: globalHooks.beforeGet(),
-  create: globalHooks.beforeCreate('som.create.json'),
-  update: [globalHooks.beforeUpdate('som.update.json'), ({
+  create: globalHooks.beforeCreate({
+    schemaName: 'som.create.json'
+  }),
+  update: [globalHooks.beforeUpdate({
+    schemaName: 'som.update.json'
+  }), ({
     data,
     params
   }) => {
@@ -16,7 +20,9 @@ exports.before = {
       data.created_by = params.before.created_by;
     }
   }],
-  patch: globalHooks.beforePatch('som.patch.json'),
+  patch: globalHooks.beforePatch({
+    schemaName: 'som.patch.json'
+  }),
   remove: globalHooks.beforeRemove()
 };
 exports.after = {// all: [],

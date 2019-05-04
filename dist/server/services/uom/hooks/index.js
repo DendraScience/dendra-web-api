@@ -6,8 +6,12 @@ exports.before = {
   // all: [],
   find: globalHooks.beforeFind(),
   get: globalHooks.beforeGet(),
-  create: globalHooks.beforeCreate('uom.create.json'),
-  update: [globalHooks.beforeUpdate('uom.update.json'), ({
+  create: globalHooks.beforeCreate({
+    schemaName: 'uom.create.json'
+  }),
+  update: [globalHooks.beforeUpdate({
+    schemaName: 'uom.update.json'
+  }), ({
     data,
     params
   }) => {
@@ -16,7 +20,9 @@ exports.before = {
       data.created_by = params.before.created_by;
     }
   }],
-  patch: globalHooks.beforePatch('uom.patch.json'),
+  patch: globalHooks.beforePatch({
+    schemaName: 'uom.patch.json'
+  }),
   remove: globalHooks.beforeRemove()
 };
 exports.after = {// all: [],

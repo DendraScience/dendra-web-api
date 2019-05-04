@@ -1,4 +1,20 @@
 const globalHooks = require('../../../hooks')
+const _ = require('lodash')
+
+const defaultsMigrations = rec => {
+  _.defaults(
+    rec,
+    {
+      is_enabled: rec.enabled,
+      vocabulary_type: rec.label === 'Unit' ? 'unit' : 'class'
+    },
+    {
+      is_enabled: true
+    }
+  )
+
+  delete rec.enabled
+}
 
 exports.before = {
   // all: [],
@@ -7,10 +23,16 @@ exports.before = {
 
   get: globalHooks.beforeGet(),
 
-  create: globalHooks.beforeCreate('vocabulary.create.json'),
+  create: globalHooks.beforeCreate({
+    alterItems: defaultsMigrations,
+    schemaName: 'vocabulary.create.json'
+  }),
 
   update: [
-    globalHooks.beforeUpdate('vocabulary.update.json'),
+    globalHooks.beforeUpdate({
+      alterItems: defaultsMigrations,
+      schemaName: 'vocabulary.update.json'
+    }),
 
     ({ data, params }) => {
       if (params.before) {
@@ -20,7 +42,7 @@ exports.before = {
     }
   ],
 
-  patch: globalHooks.beforePatch('vocabulary.patch.json'),
+  patch: globalHooks.beforePatch({ schemaName: 'vocabulary.patch.json' }),
 
   remove: globalHooks.beforeRemove()
 }

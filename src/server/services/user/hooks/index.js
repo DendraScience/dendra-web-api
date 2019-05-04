@@ -2,10 +2,25 @@ const bcrypt = require('bcryptjs')
 const errors = require('@feathersjs/errors')
 const globalHooks = require('../../../hooks')
 const local = require('@feathersjs/authentication-local')
-const { discard, getByDot } = require('feathers-hooks-common')
+const { deleteByDot, getByDot } = require('feathers-hooks-common')
+const _ = require('lodash')
 
 const PATCH_CURRENT_PASSWORD = '$set.current_password'
 const PATCH_PASSWORD = '$set.password'
+
+const defaultsMigrations = rec => {
+  _.defaults(
+    rec,
+    {
+      is_enabled: rec.enabled
+    },
+    {
+      is_enabled: true
+    }
+  )
+
+  delete rec.enabled
+}
 
 exports.before = {
   // all: [],
@@ -16,12 +31,20 @@ exports.before = {
 
   create: [
     local.hooks.hashPassword(),
-    globalHooks.beforeCreate('user.create.json')
+
+    globalHooks.beforeCreate({
+      alterItems: defaultsMigrations,
+      schemaName: 'user.create.json'
+    })
   ],
 
   update: [
     local.hooks.hashPassword(),
-    globalHooks.beforeUpdate('user.update.json'),
+
+    globalHooks.beforeUpdate({
+      alterItems: defaultsMigrations,
+      schemaName: 'user.update.json'
+    }),
 
     ({ data, params }) => {
       if (params.before) {
@@ -32,15 +55,16 @@ exports.before = {
   ],
 
   patch: [
-    // local.hooks.hashPassword({ passwordField: PATCH_CURRENT_PASSWORD }),
     local.hooks.hashPassword({ passwordField: PATCH_PASSWORD }),
 
     ({ data, params }) => {
       params.currentPassword = getByDot(data, PATCH_CURRENT_PASSWORD)
     },
-    discard(PATCH_CURRENT_PASSWORD),
 
-    globalHooks.beforePatch('user.patch.json'),
+    globalHooks.beforePatch({
+      alterItems: rec => deleteByDot(rec, PATCH_CURRENT_PASSWORD),
+      schemaName: 'user.patch.json'
+    }),
 
     async ({ data, params }) => {
       const newPassword = getByDot(data, PATCH_PASSWORD)

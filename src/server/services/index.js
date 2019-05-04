@@ -12,7 +12,7 @@ module.exports = function(app) {
     // 'datapoint_lookup', // Route must precede datapoint
     // 'datapoint',
     // 'datastream_lookup', // Route must precede datastream
-    // 'datastream',
+    'datastream',
     // 'influx_select',
     // 'legacy_datavalue',
     // 'membership',
@@ -21,7 +21,7 @@ module.exports = function(app) {
     'place',
     'scheme',
     'som',
-    // 'station',
+    'station',
     'system_schema',
     'system_time',
     'system_timezone',

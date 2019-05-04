@@ -2,6 +2,19 @@
 
 const globalHooks = require('../../../hooks');
 
+const _ = require('lodash');
+
+const defaultsMigrations = rec => {
+  _.defaults(rec, {
+    is_enabled: rec.enabled
+  }, {
+    is_enabled: true,
+    sort_value: 0
+  });
+
+  delete rec.enabled;
+};
+
 const stages = [{
   $addFields: {
     access_levels_resolved: {
@@ -16,8 +29,14 @@ exports.before = {
   // all: [],
   find: [globalHooks.beforeFind(), globalHooks.accessFind(stages)],
   get: [globalHooks.beforeGet(), globalHooks.accessGet(stages)],
-  create: globalHooks.beforeCreate('organization.create.json'),
-  update: [globalHooks.beforeUpdate('organization.update.json'), ({
+  create: globalHooks.beforeCreate({
+    alterItems: defaultsMigrations,
+    schemaName: 'organization.create.json'
+  }),
+  update: [globalHooks.beforeUpdate({
+    alterItems: defaultsMigrations,
+    schemaName: 'organization.update.json'
+  }), ({
     data,
     params
   }) => {
@@ -26,7 +45,9 @@ exports.before = {
       data.created_by = params.before.created_by;
     }
   }],
-  patch: globalHooks.beforePatch('organization.patch.json'),
+  patch: globalHooks.beforePatch({
+    schemaName: 'organization.patch.json'
+  }),
   remove: globalHooks.beforeRemove()
 };
 exports.after = {// all: [],

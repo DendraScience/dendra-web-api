@@ -12,6 +12,24 @@ const publicRules = ({
     'access_levels_resolved.public_level': {
       $gt: 0
     }
+  }); // Stations
+
+  can('read', 'stations', {
+    is_enabled: true
+  });
+  can('access', 'stations', {
+    'access_levels_resolved.public_level': {
+      $gt: 0
+    }
+  }); // Datastreams
+
+  can('read', 'datastreams', {
+    is_enabled: true
+  });
+  can('access', 'datastreams', {
+    'access_levels_resolved.public_level': {
+      $gt: 0
+    }
   }); // Persons
 
   can('read', 'persons', {
@@ -24,15 +42,15 @@ const publicRules = ({
 
   can('read', 'schemes', {
     is_enabled: true
+  }); // Vocabularies
+
+  can('read', 'vocabularies', {
+    is_enabled: true
   }); // SOMs
 
   can('read', 'soms'); // UOMs
 
-  can('read', 'uoms'); // Vocabularies
-
-  can('read', 'vocabularies', {
-    is_enabled: true
-  });
+  can('read', 'uoms');
 };
 
 const membershipRulesByRole = {
@@ -100,6 +118,24 @@ const userRulesByRole = {
       'access_levels_resolved.public_level': {
         $gt: 0
       }
+    }); // Stations
+
+    can('read', 'stations', {
+      is_enabled: true
+    });
+    can('access', 'stations', {
+      'access_levels_resolved.public_level': {
+        $gt: 0
+      }
+    }); // Datastreams
+
+    can('read', 'datastreams', {
+      is_enabled: true
+    });
+    can('access', 'datastreams', {
+      'access_levels_resolved.public_level': {
+        $gt: 0
+      }
     }); // Persons
 
     can('read', 'persons', {
@@ -118,6 +154,10 @@ const userRulesByRole = {
 
     can('read', 'schemes', {
       is_enabled: true
+    }); // Vocabularies
+
+    can('read', 'vocabularies', {
+      is_enabled: true
     }); // SOMs
 
     can('read', 'soms'); // UOMs
@@ -133,11 +173,7 @@ const userRulesByRole = {
       is_enabled: true
     });
     can('assign', 'users');
-    cannot('assign', 'users', ['$set.is_enabled', '$set.person_id', '$set.roles', '$unset.person_id']); // Vocabularies
-
-    can('read', 'vocabularies', {
-      is_enabled: true
-    });
+    cannot('assign', 'users', ['$set.is_enabled', '$set.person_id', '$set.roles', '$unset.person_id']);
   }
 };
 module.exports = {

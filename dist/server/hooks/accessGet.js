@@ -58,7 +58,7 @@ module.exports = (stages = []) => {
     const pipeline = [{
       $match: query
     }, ...stages];
-    if (accessQuery) pipeline.push({
+    if (accessQuery && Object.keys(accessQuery).length) pipeline.push({
       $match: accessQuery
     });
     pipeline.push({

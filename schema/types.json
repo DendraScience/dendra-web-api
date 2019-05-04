@@ -965,6 +965,11 @@
       "$ref": "#/definitions/stringId",
       "example": "imp"
     },
+    "sortValue": {
+      "type": "integer",
+      "description": "A numeric value that controls how the document is ordered in lists",
+      "example": 10
+    },
     "stationId": {
       "$ref": "#/definitions/objectId",
       "example": "592f155746a1b867a114e060"

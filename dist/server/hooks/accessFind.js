@@ -55,11 +55,6 @@ module.exports = (stages = []) => {
 
       return _.get(r, '[0].data', []);
     };
-
-    if (filters.$limit === 0) {
-      context.result = shapeResult();
-      return context;
-    }
     /*
       Construct aggregation pipeline.
      */
@@ -72,47 +67,60 @@ module.exports = (stages = []) => {
     const pipeline = [{
       $match: query
     }, ...stages];
-    if (accessQuery) pipeline.push({
+    if (accessQuery && Object.keys(accessQuery).length) pipeline.push({
       $match: accessQuery
     });
-    const dataPipeline = [];
+    const total = [{
+      $count: 'count'
+    }];
 
-    if (filters.$select) {
-      dataPipeline.push({
-        $project: service._getSelect(filters.$select)
+    if (filters.$limit === 0) {
+      pipeline.push({
+        $facet: {
+          total
+        }
       });
-    }
-
-    if (filters.$sort) {
-      dataPipeline.push(filters.$sort);
     } else {
-      dataPipeline.push({
-        $sort: {
-          _id: 1
+      const data = [];
+
+      if (filters.$select) {
+        data.push({
+          $project: service._getSelect(filters.$select)
+        });
+      }
+
+      if (filters.$sort) {
+        data.push({
+          $sort: filters.$sort
+        });
+      } else {
+        data.push({
+          $sort: {
+            _id: 1
+          }
+        });
+      }
+
+      if (filters.$limit) {
+        data.push({
+          $limit: filters.$limit
+        });
+      }
+
+      if (filters.$skip) {
+        data.push({
+          $skip: filters.$skip
+        });
+      }
+
+      pipeline.push({
+        $facet: {
+          data,
+          total
         }
       });
     }
 
-    if (filters.$limit) {
-      dataPipeline.push({
-        $limit: filters.$limit
-      });
-    }
-
-    if (filters.$skip) {
-      dataPipeline.push({
-        $skip: filters.$skip
-      });
-    }
-
-    pipeline.push({
-      $facet: {
-        data: dataPipeline,
-        total: [{
-          $count: 'count'
-        }]
-      }
-    });
     const options = {
       allowDiskUse: true
     };

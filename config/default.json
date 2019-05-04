@@ -40,21 +40,22 @@
       },
       "metadata": {
         "paginate": {
-          "default": 20,
+          "default": 200,
           "max": 2000
         },
         "url": "mongodb://localhost:27017/dendra_playground",
         "whitelist": [
           "$and",
-          "$or"
+          "$or",
+          "$text"
         ]
       }
     },
     "mysql": {
       "legacy": {
         "paginate": {
-          "default": 20,
-          "max": 2000
+          "default": 288,
+          "max": 2016
         },
         "url": "mysql://root:R0otD3v3l0per@localhost:3306/odm_local"
       }
@@ -66,8 +67,8 @@
   "services": {
     "datapoint": {
       "paginate": {
-        "default": 20,
-        "max": 2000
+        "default": 288,
+        "max": 2016
       }
     },
     "datastream_lookup": {
@@ -80,8 +81,8 @@
         }
       },
       "paginate": {
-        "default": 20,
-        "max": 2000
+        "default": 288,
+        "max": 2016
       }
     }
   }

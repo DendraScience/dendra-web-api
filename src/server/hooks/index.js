@@ -21,6 +21,7 @@ const beforeUpdate = require('./beforeUpdate')
 const restrictQueryToAbility = require('./restrictQueryToAbility')
 const restrictToAbility = require('./restrictToAbility')
 const setAbility = require('./setAbility')
+const versionStamp = require('./versionStamp')
 
 module.exports = {
   accessFind,
@@ -33,5 +34,6 @@ module.exports = {
   beforeUpdate,
   restrictQueryToAbility,
   restrictToAbility,
-  setAbility
+  setAbility,
+  versionStamp
 }

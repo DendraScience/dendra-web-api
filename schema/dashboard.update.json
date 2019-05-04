@@ -14,7 +14,7 @@
           "name": {"$ref": "#/definitions/name"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
           "slug": {"$ref": "#/definitions/slug"},
-          "sort_value": {"$ref": "#/definitions/sort_value"},
+          "sort_value": {"$ref": "types.json#/definitions/sortValue"},
           "sources": {"$ref": "#/definitions/sources"},
           "station_id": {"$ref": "#/definitions/station_id"},
           "utc_offset": {"$ref": "#/definitions/utc_offset"}

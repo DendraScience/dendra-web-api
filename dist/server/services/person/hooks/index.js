@@ -2,12 +2,30 @@
 
 const globalHooks = require('../../../hooks');
 
+const _ = require('lodash');
+
+const defaultsMigrations = rec => {
+  _.defaults(rec, {
+    is_enabled: rec.enabled
+  }, {
+    is_enabled: true
+  });
+
+  delete rec.enabled;
+};
+
 exports.before = {
   // all: [],
   find: globalHooks.beforeFind(),
   get: globalHooks.beforeGet(),
-  create: globalHooks.beforeCreate('person.create.json'),
-  update: [globalHooks.beforeUpdate('person.update.json'), ({
+  create: globalHooks.beforeCreate({
+    alterItems: defaultsMigrations,
+    schemaName: 'person.create.json'
+  }),
+  update: [globalHooks.beforeUpdate({
+    alterItems: defaultsMigrations,
+    schemaName: 'person.update.json'
+  }), ({
     data,
     params
   }) => {
@@ -16,7 +34,9 @@ exports.before = {
       data.created_by = params.before.created_by;
     }
   }],
-  patch: globalHooks.beforePatch('person.patch.json'),
+  patch: globalHooks.beforePatch({
+    schemaName: 'person.patch.json'
+  }),
   remove: globalHooks.beforeRemove()
 };
 exports.after = {// all: [],

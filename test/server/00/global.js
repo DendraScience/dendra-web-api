@@ -152,6 +152,8 @@ async function shouldGetWithoutError(client, servicePath, id) {
   try {
     retDoc = await client.service(servicePath).get(id)
   } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.log(err.message)
     retErr = err
   }
 

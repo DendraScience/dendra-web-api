@@ -31,11 +31,13 @@ before(async function() {
   global.metadata = app.get('databases').mongodb.metadata
 
   global.coll = [
+    'datastreams',
     'organizations',
     'persons',
     'places',
     'schemes',
     'soms',
+    'stations',
     'uoms',
     'users',
     'vocabularies'

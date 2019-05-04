@@ -1,4 +1,19 @@
 const globalHooks = require('../../../hooks')
+const _ = require('lodash')
+
+const defaultsMigrations = rec => {
+  _.defaults(
+    rec,
+    {
+      is_enabled: rec.enabled
+    },
+    {
+      is_enabled: true
+    }
+  )
+
+  delete rec.enabled
+}
 
 exports.before = {
   // all: [],
@@ -7,10 +22,16 @@ exports.before = {
 
   get: globalHooks.beforeGet(),
 
-  create: globalHooks.beforeCreate('place.create.json'),
+  create: globalHooks.beforeCreate({
+    alterItems: defaultsMigrations,
+    schemaName: 'place.create.json'
+  }),
 
   update: [
-    globalHooks.beforeUpdate('place.update.json'),
+    globalHooks.beforeUpdate({
+      alterItems: defaultsMigrations,
+      schemaName: 'place.update.json'
+    }),
 
     ({ data, params }) => {
       if (params.before) {
@@ -20,7 +41,7 @@ exports.before = {
     }
   ],
 
-  patch: globalHooks.beforePatch('place.patch.json'),
+  patch: globalHooks.beforePatch({ schemaName: 'place.patch.json' }),
 
   remove: globalHooks.beforeRemove()
 }

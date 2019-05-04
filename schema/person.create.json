@@ -8,6 +8,7 @@
         "op": "replace",
         "path": "/properties",
         "value": {
+          "_id": {"$ref": "#/definitions/_id"},
           "email": {"$ref": "#/definitions/email"},
           "full_name": {"$ref": "#/definitions/full_name"},
           "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},

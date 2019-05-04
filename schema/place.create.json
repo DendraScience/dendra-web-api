@@ -8,6 +8,7 @@
         "op": "replace",
         "path": "/properties",
         "value": {
+          "_id": {"$ref": "#/definitions/_id"},
           "abbreviation": {"$ref": "#/definitions/abbreviation"},
           "attributes": {"$ref": "#/definitions/attributes"},
           "country_code": {"$ref": "types.json#/definitions/isoCountryCode3"},

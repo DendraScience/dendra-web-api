@@ -115,11 +115,6 @@
       "$ref": "types.json#/definitions/slug",
       "example": "well-status"
     },
-    "sort_value": {
-      "type": "integer",
-      "description": "A numeric value that controls how the dashboard is ordered in lists",
-      "example": 10
-    },
     "sources": {
       "type": "array",
       "description": "Fetching and publishing configuration for populating dashboard components",
@@ -271,7 +266,7 @@
     "name": {"$ref": "#/definitions/name"},
     "organization_id": {"$ref": "#/definitions/organization_id"},
     "slug": {"$ref": "#/definitions/slug"},
-    "sort_value": {"$ref": "#/definitions/sort_value"},
+    "sort_value": {"$ref": "types.json#/definitions/sortValue"},
     "sources": {"$ref": "#/definitions/sources"},
     "station_id": {"$ref": "#/definitions/station_id"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
@@ -297,7 +292,7 @@
           "name": {"$ref": "#/definitions/name"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
           "slug": {"$ref": "#/definitions/slug"},
-          "sort_value": {"$ref": "#/definitions/sort_value"},
+          "sort_value": {"$ref": "types.json#/definitions/sortValue"},
           "sources": {"$ref": "#/definitions/sources"},
           "station_id": {"$ref": "#/definitions/station_id"},
           "utc_offset": {"$ref": "#/definitions/utc_offset"}
@@ -324,7 +319,7 @@
           "name": {"$ref": "#/definitions/name"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
           "slug": {"$ref": "#/definitions/slug"},
-          "sort_value": {"$ref": "#/definitions/sort_value"},
+          "sort_value": {"$ref": "types.json#/definitions/sortValue"},
           "sources": {"$ref": "#/definitions/sources"},
           "station_id": {"$ref": "#/definitions/station_id"},
           "utc_offset": {"$ref": "#/definitions/utc_offset"}

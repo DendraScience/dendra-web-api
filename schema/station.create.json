@@ -8,6 +8,7 @@
         "op": "replace",
         "path": "/properties",
         "value": {
+          "_id": {"$ref": "#/definitions/_id"},
           "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
           "external_links": {"$ref": "#/definitions/external_links"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
