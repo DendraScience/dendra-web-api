@@ -27,7 +27,7 @@ async function defineAbilityForContext(context) {
   const extract = AbilityBuilder.extract();
   const {
     user
-  } = context.params; // console.log('>>> defineAbilityForContext', context.params, user)
+  } = context.params;
 
   if (!user) {
     publicRules(extract);

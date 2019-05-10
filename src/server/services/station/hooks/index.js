@@ -49,6 +49,11 @@ const stages = [
         ]
       }
     }
+  },
+  {
+    $project: {
+      organization: false
+    }
   }
 ]
 

@@ -15,8 +15,14 @@ module.exports = async app => {
       underscored: true
     },
     dialect: 'mysql',
-    // TODO: Replace logger with winston; handle this centrally
-    logging: console.log
+
+    logging(message) {
+      app.logger.log({
+        level: 'info',
+        message
+      });
+    }
+
   };
   const sequelize = new Sequelize(legacy.url, opts);
   legacy.Sequelize = Sequelize;

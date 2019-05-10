@@ -82,11 +82,11 @@ module.exports = (stages = []) => {
       } else {
         data.push({ $sort: { _id: 1 } })
       }
-      if (filters.$limit) {
-        data.push({ $limit: filters.$limit })
-      }
       if (filters.$skip) {
         data.push({ $skip: filters.$skip })
+      }
+      if (filters.$limit) {
+        data.push({ $limit: filters.$limit })
       }
 
       pipeline.push({

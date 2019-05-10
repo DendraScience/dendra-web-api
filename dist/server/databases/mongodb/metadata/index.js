@@ -5,8 +5,7 @@ const MongoClient = require('mongodb').MongoClient;
 module.exports = async app => {
   const {
     metadata
-  } = app.get('databases').mongodb;
-  const log = app.logger; // Configure a new instance
+  } = app.get('databases').mongodb; // Configure a new instance
 
   let retries = 100;
 
@@ -16,7 +15,7 @@ module.exports = async app => {
       metadata.db = metadata.client.db(metadata.dbName);
       break;
     } catch (err) {
-      log.error(err);
+      app.logger.error(err);
     }
 
     if (retries-- === 0) throw new Error('MongoDB connection retry attempts exceeded');

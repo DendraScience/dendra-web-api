@@ -44,6 +44,10 @@ const stages = [{
       }, '$organization.access_levels', '$access_levels']
     }
   }
+}, {
+  $project: {
+    organization: false
+  }
 }];
 exports.before = {
   // all: [],

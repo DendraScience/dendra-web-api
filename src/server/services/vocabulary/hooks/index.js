@@ -9,7 +9,8 @@ const defaultsMigrations = rec => {
       vocabulary_type: rec.label === 'Unit' ? 'unit' : 'class'
     },
     {
-      is_enabled: true
+      is_enabled: true,
+      is_hidden: false
     }
   )
 

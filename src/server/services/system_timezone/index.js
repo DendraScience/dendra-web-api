@@ -16,7 +16,6 @@ const _select = (data, ...args) => {
 }
 
 const moment = require('moment-timezone')
-
 const hooks = require('./hooks')
 
 class Service extends AdapterService {

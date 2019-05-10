@@ -1,6 +1,7 @@
 {
   "_id": "ds-variable",
   "is_enabled": true,
+  "is_hidden": false,
   "label": "Variable",
   "scheme_id": "ds",
   "terms": [

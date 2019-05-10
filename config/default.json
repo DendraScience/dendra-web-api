@@ -45,6 +45,7 @@
         },
         "url": "mongodb://localhost:27017/dendra_playground",
         "whitelist": [
+          "$all",
           "$and",
           "$or",
           "$text"
@@ -53,10 +54,6 @@
     },
     "mysql": {
       "legacy": {
-        "paginate": {
-          "default": 288,
-          "max": 2016
-        },
         "url": "mysql://root:R0otD3v3l0per@localhost:3306/odm_local"
       }
     }
@@ -79,10 +76,6 @@
         "default": {
           "url": "http://localhost:8086"
         }
-      },
-      "paginate": {
-        "default": 288,
-        "max": 2016
       }
     }
   }

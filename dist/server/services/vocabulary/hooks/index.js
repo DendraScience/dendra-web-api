@@ -9,7 +9,8 @@ const defaultsMigrations = rec => {
     is_enabled: rec.enabled,
     vocabulary_type: rec.label === 'Unit' ? 'unit' : 'class'
   }, {
-    is_enabled: true
+    is_enabled: true,
+    is_hidden: false
   });
 
   delete rec.enabled;
