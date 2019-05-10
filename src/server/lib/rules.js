@@ -1,20 +1,22 @@
+const { UserRole, Visibility } = require('./utils')
+
 const publicRules = ({ can, cannot }) => {
   // Organizations
   can('read', 'organizations', { is_enabled: true })
   can('access', 'organizations', {
-    'access_levels_resolved.public_level': { $gt: 0 }
+    'access_levels_resolved.public_level': { $gte: Visibility.METADATA }
   })
 
   // Stations
   can('read', 'stations', { is_enabled: true })
   can('access', 'stations', {
-    'access_levels_resolved.public_level': { $gt: 0 }
+    'access_levels_resolved.public_level': { $gte: Visibility.METADATA }
   })
 
   // Datastreams
   can('read', 'datastreams', { is_enabled: true })
   can('access', 'datastreams', {
-    'access_levels_resolved.public_level': { $gt: 0 }
+    'access_levels_resolved.public_level': { $gte: Visibility.METADATA }
   })
 
   // Persons
@@ -45,7 +47,7 @@ const membershipRulesByRole = {
 }
 
 const userRulesByRole = {
-  'sys-admin': ({ can, cannot }, { user }) => {
+  [UserRole.SYS_ADMIN]: ({ can, cannot }, { user }) => {
     can('manage', 'all')
 
     // Users
@@ -54,30 +56,33 @@ const userRulesByRole = {
       person_id: { $exists: true }
     })
     cannot('save', 'users', {
-      roles: 'user',
+      roles: UserRole.USER,
       person_id: { $exists: false }
     })
-    cannot('save', 'users', { _id: user._id, roles: { $ne: 'sys-admin' } })
+    cannot('save', 'users', {
+      _id: user._id,
+      roles: { $ne: UserRole.SYS_ADMIN }
+    })
     cannot('remove', 'users', { _id: user._id })
   },
 
-  user: ({ can, cannot }, { user }) => {
+  [UserRole.USER]: ({ can, cannot }, { user }) => {
     // Organizations
     can('read', 'organizations', { is_enabled: true })
     can('access', 'organizations', {
-      'access_levels_resolved.public_level': { $gt: 0 }
+      'access_levels_resolved.public_level': { $gte: Visibility.METADATA }
     })
 
     // Stations
     can('read', 'stations', { is_enabled: true })
     can('access', 'stations', {
-      'access_levels_resolved.public_level': { $gt: 0 }
+      'access_levels_resolved.public_level': { $gte: Visibility.METADATA }
     })
 
     // Datastreams
     can('read', 'datastreams', { is_enabled: true })
     can('access', 'datastreams', {
-      'access_levels_resolved.public_level': { $gt: 0 }
+      'access_levels_resolved.public_level': { $gte: Visibility.METADATA }
     })
 
     // Persons

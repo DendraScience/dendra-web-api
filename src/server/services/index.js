@@ -10,7 +10,7 @@ module.exports = function(app) {
     // 'annotation',
     // 'dashboard',
     // 'datapoint_lookup', // Route must precede datapoint
-    // 'datapoint',
+    'datapoint',
     // 'datastream_lookup', // Route must precede datastream
     'datastream',
     'influx_select',
@@ -25,6 +25,7 @@ module.exports = function(app) {
     'system_schema',
     'system_time',
     'system_timezone',
+    // 'team',
     // 'thing',
     'uom',
     'user',

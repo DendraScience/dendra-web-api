@@ -1,4 +1,5 @@
 const globalHooks = require('../../../hooks')
+const { Visibility } = require('../../../lib/utils')
 const _ = require('lodash')
 
 const defaultsMigrations = rec => {
@@ -41,8 +42,8 @@ const stages = [
       access_levels_resolved: {
         $mergeObjects: [
           {
-            member_level: 1,
-            public_level: 1
+            member_level: Visibility.DOWNLOAD,
+            public_level: Visibility.DOWNLOAD
           },
           '$organization.access_levels',
           '$access_levels'

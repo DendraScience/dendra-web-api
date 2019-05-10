@@ -8,8 +8,20 @@
 
 const crypto = require('crypto')
 
-export const isProd = process.env.NODE_ENV === 'production'
-export const isDev = !isProd
+const isProd = process.env.NODE_ENV === 'production'
+const isDev = !isProd
+
+const UserRole = {
+  SYS_ADMIN: 'sys-admin',
+  USER: 'user'
+}
+
+const Visibility = {
+  RESTRICTED: 0,
+  METADATA: 1,
+  GRAPH: 2,
+  DOWNLOAD: 3
+}
 
 /**
  * Simple, promise-based hash generator.
@@ -58,5 +70,9 @@ function tKeyVal({ local, t_int: tInt, t_local: tLocal }) {
 
 module.exports = {
   asyncHashDigest,
-  tKeyVal
+  isDev,
+  isProd,
+  tKeyVal,
+  UserRole,
+  Visibility
 }
