@@ -49,7 +49,7 @@ exports.before = {
     } // Eval $sort query field
 
 
-    if (query.$sort && query.$sort.time !== undefined) {
+    if (query.$sort && typeof query.$sort.time !== 'undefined') {
       newQuery.$sort = {
         local_date_time: query.$sort.time
       };

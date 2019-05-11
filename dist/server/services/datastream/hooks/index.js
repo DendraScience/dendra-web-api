@@ -4,6 +4,10 @@ const errors = require('@feathersjs/errors');
 
 const globalHooks = require('../../../hooks');
 
+const {
+  Visibility
+} = require('../../../lib/utils');
+
 const _ = require('lodash');
 
 const defaultsMigrations = rec => {
@@ -122,21 +126,28 @@ const stages = [{
   $addFields: {
     access_levels_resolved: {
       $mergeObjects: [{
-        member_level: 1,
-        public_level: 1
+        member_level: Visibility.DOWNLOAD,
+        public_level: Visibility.DOWNLOAD
       }, '$organization.access_levels', '$station.access_levels', '$access_levels']
     }
-  }
-}, {
-  $project: {
-    organization: false,
-    station: false
   }
 }];
 exports.before = {
   // all: [],
-  find: [globalHooks.beforeFind(), globalHooks.accessFind(stages)],
-  get: [globalHooks.beforeGet(), globalHooks.accessGet(stages)],
+  find: [globalHooks.beforeFind(), globalHooks.accessFind(stages.concat({
+    $project: {
+      attributes_built: false,
+      datapoints_config_built: false,
+      organization: false,
+      station: false
+    }
+  }))],
+  get: [globalHooks.beforeGet(), globalHooks.accessGet(stages.concat({
+    $project: {
+      organization: false,
+      station: false
+    }
+  }))],
   create: [globalHooks.beforeCreate({
     alterItems: defaultsMigrations,
     schemaName: 'datastream.create.json',

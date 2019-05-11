@@ -11,13 +11,11 @@ module.exports = function (app) {
     legacy
   } = databases.mysql;
   const {
-    models,
-    paginate
+    models
   } = legacy;
   Object.keys(models).forEach(name => {
     app.use(`/legacy/${name}`, service({
-      Model: models[name],
-      paginate
+      Model: models[name]
     })); // Get the wrapped service object, bind hooks
 
     app.service(`legacy/${name}`).hooks(hooks);

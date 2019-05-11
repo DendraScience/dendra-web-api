@@ -7,10 +7,10 @@ module.exports = function(app) {
   if (!(databases.mysql && databases.mysql.legacy)) return
 
   const { legacy } = databases.mysql
-  const { models, paginate } = legacy
+  const { models } = legacy
 
   Object.keys(models).forEach(name => {
-    app.use(`/legacy/${name}`, service({ Model: models[name], paginate }))
+    app.use(`/legacy/${name}`, service({ Model: models[name] }))
 
     // Get the wrapped service object, bind hooks
     app.service(`legacy/${name}`).hooks(hooks)

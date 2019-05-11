@@ -91,7 +91,8 @@ exports.after = {
     colsMap.delete('utc_offset');
     const utcOffset = savedQuery.utc_offset | 0;
     const getOffset = utcOffsetIndex === undefined ? () => utcOffset : value => value[utcOffsetIndex] || utcOffset;
-    const patchItem = savedQuery.coalesce ? (item, value) => {
+    const patchItem = savedQuery.coalesce || colsMap.size === 1 // TODO: Revisit this
+    ? (item, value) => {
       for (let [, i] of colsMap) {
         if (value[i] !== null) {
           item.v = value[i];

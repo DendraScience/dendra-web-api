@@ -1,5 +1,10 @@
 "use strict";
 
+const {
+  UserRole,
+  Visibility
+} = require('./utils');
+
 const publicRules = ({
   can,
   cannot
@@ -10,7 +15,7 @@ const publicRules = ({
   });
   can('access', 'organizations', {
     'access_levels_resolved.public_level': {
-      $gt: 0
+      $gte: Visibility.METADATA
     }
   }); // Stations
 
@@ -19,7 +24,7 @@ const publicRules = ({
   });
   can('access', 'stations', {
     'access_levels_resolved.public_level': {
-      $gt: 0
+      $gte: Visibility.METADATA
     }
   }); // Datastreams
 
@@ -28,7 +33,17 @@ const publicRules = ({
   });
   can('access', 'datastreams', {
     'access_levels_resolved.public_level': {
-      $gt: 0
+      $gte: Visibility.METADATA
+    }
+  });
+  can('graph', 'datastreams', {
+    'access_levels_resolved.public_level': {
+      $gte: Visibility.GRAPH
+    }
+  });
+  can('download', 'datastreams', {
+    'access_levels_resolved.public_level': {
+      $gte: Visibility.DOWNLOAD
     }
   }); // Persons
 
@@ -74,7 +89,7 @@ const membershipRulesByRole = {
   }) => {}
 };
 const userRulesByRole = {
-  'sys-admin': ({
+  [UserRole.SYS_ADMIN]: ({
     can,
     cannot
   }, {
@@ -89,7 +104,7 @@ const userRulesByRole = {
       }
     });
     cannot('save', 'users', {
-      roles: 'user',
+      roles: UserRole.USER,
       person_id: {
         $exists: false
       }
@@ -97,14 +112,14 @@ const userRulesByRole = {
     cannot('save', 'users', {
       _id: user._id,
       roles: {
-        $ne: 'sys-admin'
+        $ne: UserRole.SYS_ADMIN
       }
     });
     cannot('remove', 'users', {
       _id: user._id
     });
   },
-  user: ({
+  [UserRole.USER]: ({
     can,
     cannot
   }, {
@@ -116,7 +131,7 @@ const userRulesByRole = {
     });
     can('access', 'organizations', {
       'access_levels_resolved.public_level': {
-        $gt: 0
+        $gte: Visibility.METADATA
       }
     }); // Stations
 
@@ -125,7 +140,7 @@ const userRulesByRole = {
     });
     can('access', 'stations', {
       'access_levels_resolved.public_level': {
-        $gt: 0
+        $gte: Visibility.METADATA
       }
     }); // Datastreams
 
@@ -134,7 +149,17 @@ const userRulesByRole = {
     });
     can('access', 'datastreams', {
       'access_levels_resolved.public_level': {
-        $gt: 0
+        $gte: Visibility.METADATA
+      }
+    });
+    can('graph', 'datastreams', {
+      'access_levels_resolved.public_level': {
+        $gte: Visibility.GRAPH
+      }
+    });
+    can('download', 'datastreams', {
+      'access_levels_resolved.public_level': {
+        $gte: Visibility.DOWNLOAD
       }
     }); // Persons
 

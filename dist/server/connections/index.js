@@ -7,8 +7,8 @@ const rest = require('@feathersjs/rest-client');
 const axios = require('axios');
 
 module.exports = function (app) {
-  const applications = app.get('applications') || {};
-  Object.values(applications).forEach(application => {
-    application.app = feathers().configure(rest(application.url).axios(axios));
+  const connections = app.get('connections') || {};
+  Object.values(connections).forEach(connection => {
+    connection.app = feathers().configure(rest(connection.url).axios(axios));
   });
 };

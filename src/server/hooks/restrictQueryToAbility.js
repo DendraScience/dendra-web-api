@@ -22,6 +22,8 @@ module.exports = () => {
 
     const query = toMongoQuery(ability, serviceName, action)
 
+    if (!params.query) params.query = {}
+
     if (query !== null) {
       params.query.$and = (params.query.$and || []).concat(query)
     } else if (action === 'find') {

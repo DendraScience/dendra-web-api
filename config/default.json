@@ -1,18 +1,4 @@
 {
-  "applications": {
-    "aggregateBuild": {
-      "url": "http://localhost:3034"
-    },
-    "aggregateStore": {
-      "url": "http://localhost:3036"
-    },
-    "annotationBuild": {
-      "url": "http://localhost:3034"
-    },
-    "noaaNWS": {
-      "url": "http://localhost:3032"
-    }
-  },
   "authentication": {
     "jwt": {
       "algorithm": "HS256",
@@ -32,6 +18,20 @@
     "path": "/authentication",
     "secret": "ThYncCxLbjhin7YZBtZgda7nm0KSeT4rM0UsvpCnJXPA6sTVq6NKvsDoHjzyjkMKnB4gKDqsUx8Gg7mYsRbV9Q==",
     "service": "users"
+  },
+  "connections": {
+    "aggregateBuild": {
+      "url": "http://localhost:3034"
+    },
+    "aggregateStore": {
+      "url": "http://localhost:3036"
+    },
+    "annotationBuild": {
+      "url": "http://localhost:3034"
+    },
+    "noaaNWS": {
+      "url": "http://localhost:3032"
+    }
   },
   "databases": {
     "mongodb": {

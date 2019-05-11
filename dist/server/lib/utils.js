@@ -1,10 +1,5 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.isDev = exports.isProd = void 0;
-
 /**
  * Web API utilities and helpers.
  *
@@ -15,13 +10,21 @@ exports.isDev = exports.isProd = void 0;
 const crypto = require('crypto');
 
 const isProd = process.env.NODE_ENV === 'production';
-exports.isProd = isProd;
 const isDev = !isProd;
-/**
- * Simple, promise-based hash generator.
- */
+const UserRole = {
+  SYS_ADMIN: 'sys-admin',
+  USER: 'user'
+};
+const Visibility = {
+  RESTRICTED: 0,
+  METADATA: 1,
+  GRAPH: 2,
+  DOWNLOAD: 3
+  /**
+   * Simple, promise-based hash generator.
+   */
 
-exports.isDev = isDev;
+};
 
 function asyncHashDigest(data, algorithm = 'sha1', encoding = 'hex') {
   return new Promise(resolve => {
@@ -30,6 +33,10 @@ function asyncHashDigest(data, algorithm = 'sha1', encoding = 'hex') {
     });
   });
 }
+/**
+ * Returns a key and value formatter for 'compact' JSON timeseries data.
+ */
+
 
 function tKeyVal({
   local,
@@ -65,5 +72,9 @@ function tKeyVal({
 
 module.exports = {
   asyncHashDigest,
-  tKeyVal
+  isDev,
+  isProd,
+  tKeyVal,
+  UserRole,
+  Visibility
 };

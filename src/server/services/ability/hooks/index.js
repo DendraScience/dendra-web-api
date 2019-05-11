@@ -14,20 +14,16 @@ exports.before = {
       context => context.params.headers && context.params.headers.authorization,
       auth.hooks.authenticate('jwt')
     ),
-
     setAbility(),
 
     context => {
-      if (context.id !== 'current') {
+      if (context.id !== 'current')
         throw new errors.NotFound(`No record found for id '${context.id}'`)
-      }
 
       context.result = {
         _id: 'current',
         rules: context.params.ability.rules
       }
-
-      return context
     }
   ],
 

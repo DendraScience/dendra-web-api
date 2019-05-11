@@ -26,6 +26,8 @@ module.exports = (stages = []) => {
       throw new Error("The 'accessFind' hook requires params.ability.")
     }
 
+    if (!params.query) params.query = {}
+
     const accessQuery = toMongoQuery(ability, serviceName, 'access')
     if (accessQuery === null) params.query.$limit = 0
 

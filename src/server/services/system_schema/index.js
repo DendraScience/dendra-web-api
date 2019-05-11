@@ -44,11 +44,10 @@ class Service extends AdapterService {
   }
 
   async _find(params = {}) {
-    const { query, filters, paginate } = this.filterQuery(params)
+    const { query, filters } = this.filterQuery(params)
     let values = this._names
       .map(name => ({ [this.id]: name }))
       .filter(this.options.matcher(query))
-    const total = values.length
 
     if (filters.$sort !== undefined) {
       values.sort(this.options.sorter(filters.$sort))
@@ -62,18 +61,7 @@ class Service extends AdapterService {
       values = values.slice(0, filters.$limit)
     }
 
-    const result = {
-      total,
-      limit: filters.$limit,
-      skip: filters.$skip || 0,
-      data: values.map(value => _select(value, params))
-    }
-
-    if (!(paginate && paginate.default)) {
-      return result.data
-    }
-
-    return result
+    return values.map(value => _select(value, params))
   }
 
   async _get(id, params = {}) {

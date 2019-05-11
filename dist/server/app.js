@@ -27,7 +27,7 @@ const local = require('@feathersjs/authentication-local');
 
 const socketio = require('@feathersjs/socketio');
 
-const applications = require('./applications');
+const connections = require('./connections');
 
 const databases = require('./databases');
 
@@ -58,7 +58,7 @@ module.exports = async logger => {
   app.configure(jwt());
   app.configure(local());
   app.configure(socketio());
-  app.configure(applications);
+  app.configure(connections);
   app.configure(middleware);
   app.configure(schemas);
   app.configure(services);

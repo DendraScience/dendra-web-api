@@ -99,21 +99,22 @@ exports.after = {
         ? () => utcOffset
         : value => value[utcOffsetIndex] || utcOffset
 
-    const patchItem = savedQuery.coalesce
-      ? (item, value) => {
-          for (let [, i] of colsMap) {
-            if (value[i] !== null) {
-              item.v = value[i]
-              break
+    const patchItem =
+      savedQuery.coalesce || colsMap.size === 1 // TODO: Revisit this
+        ? (item, value) => {
+            for (let [, i] of colsMap) {
+              if (value[i] !== null) {
+                item.v = value[i]
+                break
+              }
             }
           }
-        }
-      : (item, value) => {
-          item.d = {}
-          for (let [key, i] of colsMap) {
-            item.d[key] = value[i]
+        : (item, value) => {
+            item.d = {}
+            for (let [key, i] of colsMap) {
+              item.d[key] = value[i]
+            }
           }
-        }
 
     // Reformat results asynchronously; 20 items at a time (hardcoded)
     for (let i = 0; i < values.length; i++) {

@@ -39,6 +39,9 @@ function asyncHashDigest(data, algorithm = 'sha1', encoding = 'hex') {
   })
 }
 
+/**
+ * Returns a key and value formatter for 'compact' JSON timeseries data.
+ */
 function tKeyVal({ local, t_int: tInt, t_local: tLocal }) {
   let key
   let val

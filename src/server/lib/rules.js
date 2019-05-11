@@ -18,6 +18,12 @@ const publicRules = ({ can, cannot }) => {
   can('access', 'datastreams', {
     'access_levels_resolved.public_level': { $gte: Visibility.METADATA }
   })
+  can('graph', 'datastreams', {
+    'access_levels_resolved.public_level': { $gte: Visibility.GRAPH }
+  })
+  can('download', 'datastreams', {
+    'access_levels_resolved.public_level': { $gte: Visibility.DOWNLOAD }
+  })
 
   // Persons
   can('read', 'persons', { is_enabled: true })
@@ -83,6 +89,12 @@ const userRulesByRole = {
     can('read', 'datastreams', { is_enabled: true })
     can('access', 'datastreams', {
       'access_levels_resolved.public_level': { $gte: Visibility.METADATA }
+    })
+    can('graph', 'datastreams', {
+      'access_levels_resolved.public_level': { $gte: Visibility.GRAPH }
+    })
+    can('download', 'datastreams', {
+      'access_levels_resolved.public_level': { $gte: Visibility.DOWNLOAD }
     })
 
     // Persons
