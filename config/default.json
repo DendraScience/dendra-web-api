@@ -48,7 +48,8 @@
           "$all",
           "$and",
           "$or",
-          "$text"
+          "$text",
+          "$search"
         ]
       }
     },

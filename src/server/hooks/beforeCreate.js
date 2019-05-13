@@ -27,7 +27,8 @@ module.exports = options => {
         'organization',
         'station',
         'updated_at',
-        'updated_by'
+        'updated_by',
+        'version_id'
       ),
       validateSchema(options.schemaName, ajv),
       setAbility(),
