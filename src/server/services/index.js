@@ -15,7 +15,7 @@ module.exports = function(app) {
     'datastream',
     'influx_select',
     'legacy_datavalue',
-    // 'membership',
+    'membership',
     'organization',
     'person',
     'place',

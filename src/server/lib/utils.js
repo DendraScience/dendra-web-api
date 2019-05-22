@@ -11,6 +11,12 @@ const crypto = require('crypto')
 const isProd = process.env.NODE_ENV === 'production'
 const isDev = !isProd
 
+const MembershipRole = {
+  ADMIN: 'admin',
+  CURATOR: 'curator',
+  MEMBER: 'member'
+}
+
 const UserRole = {
   SYS_ADMIN: 'sys-admin',
   USER: 'user'
@@ -76,6 +82,7 @@ module.exports = {
   isDev,
   isProd,
   tKeyVal,
+  MembershipRole,
   UserRole,
   Visibility
 }

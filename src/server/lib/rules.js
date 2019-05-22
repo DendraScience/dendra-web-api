@@ -1,4 +1,4 @@
-const { UserRole, Visibility } = require('./utils')
+const { MembershipRole, UserRole, Visibility } = require('./utils')
 
 const publicRules = ({ can, cannot }) => {
   // Organizations
@@ -45,11 +45,39 @@ const publicRules = ({ can, cannot }) => {
 }
 
 const membershipRulesByRole = {
-  admin: ({ can, cannot }, { membership }) => {},
+  [MembershipRole.ADMIN]: ({ can, cannot }, { membership }) => {
+    // Organizations
+    can('access', 'organizations', {
+      _id: membership.organization_id
+    })
+  },
 
-  curator: ({ can, cannot }, { membership }) => {},
+  [MembershipRole.CURATOR]: ({ can, cannot }, { membership }) => {
+    // Organizations
+    can('access', 'organizations', {
+      _id: membership.organization_id
+    })
+  },
 
-  member: ({ can, cannot }, { membership }) => {}
+  [MembershipRole.MEMBER]: ({ can, cannot }, { membership }) => {
+    // Organizations
+    can('access', 'organizations', {
+      'access_levels_resolved.member_level': { $gte: Visibility.METADATA },
+      _id: membership.organization_id
+    })
+
+    // Stations
+    can('access', 'stations', {
+      'access_levels_resolved.member_level': { $gte: Visibility.METADATA },
+      organization_id: membership.organization_id
+    })
+
+    // Datastreams
+    can('access', 'datastreams', {
+      'access_levels_resolved.member_level': { $gte: Visibility.METADATA },
+      organization_id: membership.organization_id
+    })
+  }
 }
 
 const userRulesByRole = {
@@ -96,6 +124,9 @@ const userRulesByRole = {
     can('download', 'datastreams', {
       'access_levels_resolved.public_level': { $gte: Visibility.DOWNLOAD }
     })
+
+    // Memberships
+    can('read', 'memberships')
 
     // Persons
     can('read', 'persons', { is_enabled: true })

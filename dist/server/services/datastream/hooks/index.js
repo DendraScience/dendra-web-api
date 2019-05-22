@@ -38,6 +38,7 @@ const defaultsMigrations = rec => {
     state: 'ready'
   });
 
+  delete rec.access_levels_resolved;
   delete rec.attributes_info;
   delete rec.convertible_to_uoms;
   delete rec.enabled;
@@ -45,6 +46,7 @@ const defaultsMigrations = rec => {
   delete rec.preferred_uoms;
   delete rec.tags;
   delete rec.tags_info;
+  delete rec.terms_info;
   delete rec.uom;
   delete rec.urls;
 };

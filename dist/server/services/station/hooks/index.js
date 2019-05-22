@@ -21,6 +21,7 @@ const defaultsMigrations = rec => {
     station_type: 'weather'
   });
 
+  delete rec.access_levels_resolved;
   delete rec.activated_at;
   delete rec.deactivated_at;
   delete rec.enabled;

@@ -1,27 +1,19 @@
 /**
- * Tests for datastream service
+ * Tests for membership service
  */
 
-const dataFile = 'demo.datastream'
-const servicePath = 'datastreams'
+const dataFile = 'demo.membership'
+const servicePath = 'memberships'
 
 describe(`Service ${servicePath}`, function() {
   const id = {}
 
   const cleanup = async () => {
-    await coll.datastreams.remove()
-    await coll.vocabularies.remove()
+    await coll.memberships.remove()
   }
 
   before(async function() {
     await cleanup()
-
-    const client = clients.sysAdmin
-    const service = client.service('vocabularies')
-    await service.create(await helper.getData('ds-aggregate.vocabulary'))
-    await service.create(await helper.getData('ds-medium.vocabulary'))
-    await service.create(await helper.getData('ds-variable.vocabulary'))
-    await service.create(await helper.getData('dt-unit.vocabulary'))
   })
 
   after(async function() {
@@ -66,8 +58,13 @@ describe(`Service ${servicePath}`, function() {
   })
 
   describe('#get()', function() {
-    it('guest should get without error', function() {
-      return helper.shouldGetWithoutError(clients.guest, servicePath, id.doc)
+    it('guest should get with error', function() {
+      return helper.shouldGetWithError(
+        clients.guest,
+        servicePath,
+        id.doc,
+        'NotFound'
+      )
     })
 
     it('user should get without error', function() {
@@ -81,7 +78,7 @@ describe(`Service ${servicePath}`, function() {
 
   describe('#find()', function() {
     it('guest should find without error', function() {
-      return helper.shouldFindWithoutError(clients.guest, servicePath)
+      return helper.shouldFindWithoutError(clients.guest, servicePath, {}, 0)
     })
 
     it('user should find without error', function() {
@@ -133,7 +130,7 @@ describe(`Service ${servicePath}`, function() {
           `${dataFile}.patch`
         )
         .then(({ retDoc }) => {
-          expect(retDoc).to.have.property('name', 'Demo Datastream - Patched')
+          expect(retDoc).to.have.nested.property('roles.0', 'curator')
         })
     })
   })
@@ -178,7 +175,7 @@ describe(`Service ${servicePath}`, function() {
           `${dataFile}.update`
         )
         .then(({ retDoc }) => {
-          expect(retDoc).to.have.property('name', 'Demo Datastream - Updated')
+          expect(retDoc).to.have.nested.property('roles.0', 'admin')
         })
     })
   })

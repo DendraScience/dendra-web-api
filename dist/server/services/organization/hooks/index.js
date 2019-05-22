@@ -16,6 +16,7 @@ const defaultsMigrations = rec => {
     sort_value: 0
   });
 
+  delete rec.access_levels_resolved;
   delete rec.enabled;
 };
 

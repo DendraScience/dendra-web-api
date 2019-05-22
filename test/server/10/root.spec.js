@@ -32,6 +32,7 @@ before(async function() {
 
   global.coll = [
     'datastreams',
+    'memberships',
     'organizations',
     'persons',
     'places',

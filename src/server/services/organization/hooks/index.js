@@ -14,6 +14,7 @@ const defaultsMigrations = rec => {
     }
   )
 
+  delete rec.access_levels_resolved
   delete rec.enabled
 }
 

@@ -152,8 +152,6 @@ async function shouldGetWithoutError(client, servicePath, id) {
   try {
     retDoc = await client.service(servicePath).get(id)
   } catch (err) {
-    /* eslint-disable-next-line no-console */
-    console.log(err.message)
     retErr = err
   }
 
@@ -366,6 +364,7 @@ global.expect = chai.expect
 
 global.helper = {
   getCode,
+  getData,
 
   loadData,
   loadJSON,

@@ -14,7 +14,7 @@
         "value": {
           "$set": {
             "properties": {
-              "roles": {"$ref": "types.json#/definitions/unset"}
+              "roles": {"$ref": "#/definitions/roles"}
             },
             "type": "object"
           }
