@@ -28,6 +28,11 @@ class Service {
     this.apis = options.apis || {};
   }
 
+  setup(app) {
+    this.app = app;
+    this.logger = app.logger;
+  }
+
   async find(params) {
     const query = params.query || {};
     const {
@@ -51,10 +56,12 @@ class Service {
     if (typeof limit !== 'undefined') parts.push(`LIMIT ${limit | 0}`); // Limited to only one series for now
 
     parts.push('SLIMIT 1');
+    const q = parts.join(' ');
+    this.logger.debug(`GET ${influxUrl}/query?db=${db}&q=${q}`);
     const response = await axios.get(`${influxUrl}/query`, {
       params: {
         db,
-        q: parts.join(' ')
+        q
       }
     });
     if (response.status !== 200) throw new errors.BadRequest(`Non-success status code ${response.status}`);

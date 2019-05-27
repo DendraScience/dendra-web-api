@@ -21,13 +21,14 @@ exports.before = {
     async ({ app, params }) => {
       if (!params.query) throw new errors.BadRequest('Expected query.')
 
-      const { ability, query } = params
+      const { ability, headers, query } = params
       let { datastream } = params
 
       if (!datastream && query.datastream_id) {
-        datastream = await app
-          .service('datastreams')
-          .get(query.datastream_id, { provider: params.provider })
+        datastream = await app.service('datastreams').get(query.datastream_id, {
+          ability: params.ability,
+          provider: params.provider
+        })
       }
 
       if (!datastream)
@@ -37,10 +38,13 @@ exports.before = {
       if (!Array.isArray(datastream.datapoints_config))
         throw new errors.GeneralError('Missing datastream.datapoints_config.')
 
+      // HACK: Allow if header is specified
+      const action =
+        headers['dendra-fetch-action'] === 'graph' ? 'graph' : 'download'
       datastream[TYPE_KEY] = 'datastreams'
-      if (ability.cannot('download', datastream)) {
+      if (ability.cannot(action, datastream)) {
         throw new errors.Forbidden(
-          `You are not allowed to download datapoints for the datastream.`
+          `You are not allowed to ${action} datapoints for the datastream.`
         )
       }
 

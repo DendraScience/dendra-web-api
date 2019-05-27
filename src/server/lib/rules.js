@@ -50,12 +50,32 @@ const membershipRulesByRole = {
     can('access', 'organizations', {
       _id: membership.organization_id
     })
+
+    // Stations
+    can('access', 'stations', {
+      organization_id: membership.organization_id
+    })
+
+    // Datastreams
+    can(['access', 'graph', 'download'], 'datastreams', {
+      organization_id: membership.organization_id
+    })
   },
 
   [MembershipRole.CURATOR]: ({ can, cannot }, { membership }) => {
     // Organizations
     can('access', 'organizations', {
       _id: membership.organization_id
+    })
+
+    // Stations
+    can('access', 'stations', {
+      organization_id: membership.organization_id
+    })
+
+    // Datastreams
+    can(['access', 'graph', 'download'], 'datastreams', {
+      organization_id: membership.organization_id
     })
   },
 
@@ -75,6 +95,14 @@ const membershipRulesByRole = {
     // Datastreams
     can('access', 'datastreams', {
       'access_levels_resolved.member_level': { $gte: Visibility.METADATA },
+      organization_id: membership.organization_id
+    })
+    can('graph', 'datastreams', {
+      'access_levels_resolved.member_level': { $gte: Visibility.GRAPH },
+      organization_id: membership.organization_id
+    })
+    can('download', 'datastreams', {
+      'access_levels_resolved.member_level': { $gte: Visibility.DOWNLOAD },
       organization_id: membership.organization_id
     })
   }

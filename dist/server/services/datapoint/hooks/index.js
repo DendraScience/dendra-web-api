@@ -30,6 +30,7 @@ exports.before = {
     if (!params.query) throw new errors.BadRequest('Expected query.');
     const {
       ability,
+      headers,
       query
     } = params;
     let {
@@ -38,16 +39,19 @@ exports.before = {
 
     if (!datastream && query.datastream_id) {
       datastream = await app.service('datastreams').get(query.datastream_id, {
+        ability: params.ability,
         provider: params.provider
       });
     }
 
     if (!datastream) throw new errors.BadRequest('Expected params.datastream or query.datastream_id.');
-    if (!Array.isArray(datastream.datapoints_config)) throw new errors.GeneralError('Missing datastream.datapoints_config.');
+    if (!Array.isArray(datastream.datapoints_config)) throw new errors.GeneralError('Missing datastream.datapoints_config.'); // HACK: Allow if header is specified
+
+    const action = headers['dendra-fetch-action'] === 'graph' ? 'graph' : 'download';
     datastream[TYPE_KEY] = 'datastreams';
 
-    if (ability.cannot('download', datastream)) {
-      throw new errors.Forbidden(`You are not allowed to download datapoints for the datastream.`);
+    if (ability.cannot(action, datastream)) {
+      throw new errors.Forbidden(`You are not allowed to ${action} datapoints for the datastream.`);
     } // Eval 'time_local' query field
 
 
