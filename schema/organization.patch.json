@@ -18,6 +18,7 @@
               "description": {"$ref": "#/definitions/description"},
               "email": {"$ref": "#/definitions/email"},
               "full_name": {"$ref": "#/definitions/full_name"},
+              "general_config": {"$ref": "types.json#/definitions/generalConfig"},
               "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
               "name": {"$ref": "#/definitions/name"},
               "slug": {"$ref": "#/definitions/slug"},
@@ -32,6 +33,7 @@
               "description": {"$ref": "types.json#/definitions/unset"},
               "email": {"$ref": "types.json#/definitions/unset"},
               "full_name": {"$ref": "types.json#/definitions/unset"},
+              "general_config": {"$ref": "types.json#/definitions/unset"},
               "slug": {"$ref": "types.json#/definitions/unset"},
               "sort_value": {"$ref": "types.json#/definitions/sortValue"},
               "url": {"$ref": "types.json#/definitions/unset"}

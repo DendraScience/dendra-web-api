@@ -20,6 +20,7 @@
               "name": {"$ref": "#/definitions/name"},
               "password": {"$ref": "#/definitions/password"},
               "person_id": {"$ref": "#/definitions/person_id"},
+              "preferences": {"$ref": "#/definitions/preferences"},
               "roles": {"$ref": "#/definitions/roles"}
             },
             "type": "object"
@@ -27,7 +28,8 @@
           "$unset": {
             "properties": {
               "full_name": {"$ref": "types.json#/definitions/unset"},
-              "person_id": {"$ref": "types.json#/definitions/unset"}
+              "person_id": {"$ref": "types.json#/definitions/unset"},
+              "preferences": {"$ref": "types.json#/definitions/unset"}
             },
             "type": "object"
           }

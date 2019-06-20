@@ -25,6 +25,7 @@ const defaultsMigrations = rec => {
   delete rec.activated_at;
   delete rec.deactivated_at;
   delete rec.enabled;
+  delete rec.general_config_resolved;
   delete rec.members;
 };
 
@@ -47,6 +48,9 @@ const stages = [{
         member_level: Visibility.DOWNLOAD,
         public_level: Visibility.DOWNLOAD
       }, '$organization.access_levels', '$access_levels']
+    },
+    general_config_resolved: {
+      $mergeObjects: [{}, '$organization.general_config', '$general_config']
     }
   }
 }, {

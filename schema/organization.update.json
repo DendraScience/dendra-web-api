@@ -13,6 +13,7 @@
           "description": {"$ref": "#/definitions/description"},
           "email": {"$ref": "#/definitions/email"},
           "full_name": {"$ref": "#/definitions/full_name"},
+          "general_config": {"$ref": "types.json#/definitions/generalConfig"},
           "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "name": {"$ref": "#/definitions/name"},
           "slug": {"$ref": "#/definitions/slug"},

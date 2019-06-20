@@ -18,6 +18,7 @@ const defaultsMigrations = rec => {
 
   delete rec.access_levels_resolved;
   delete rec.enabled;
+  delete rec.general_config_resolved;
 };
 
 const stages = [{
@@ -27,6 +28,9 @@ const stages = [{
         member_level: Visibility.DOWNLOAD,
         public_level: Visibility.DOWNLOAD
       }, '$access_levels']
+    },
+    general_config_resolved: {
+      $mergeObjects: [{}, '$general_config']
     }
   }
 }];

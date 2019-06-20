@@ -15,6 +15,7 @@
           "name": {"$ref": "#/definitions/name"},
           "password": {"$ref": "#/definitions/password"},
           "person_id": {"$ref": "#/definitions/person_id"},
+          "preferences": {"$ref": "#/definitions/preferences"},
           "roles": {"$ref": "#/definitions/roles"}
         }
       }

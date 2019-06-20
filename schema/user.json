@@ -28,6 +28,15 @@
       "$ref": "types.json#/definitions/personId",
       "description": "The person affiliated with this user account"
     },
+    "preferences": {
+      "type": "object",
+      "description": "Saved preferences for this user account",
+      "example": {
+        "web_ui": {
+          "datastream_search_fields": ["organization", "station"]
+        }
+      }
+    },
     "roles": {
       "type": "array",
       "description": "The user's roles within the system (e.g. 'sys-admin')",
@@ -50,6 +59,7 @@
     "name": {"$ref": "#/definitions/name"},
     "password": {"$ref": "#/definitions/password"},
     "person_id": {"$ref": "#/definitions/person_id"},
+    "preferences": {"$ref": "#/definitions/preferences"},
     "roles": {"$ref": "#/definitions/roles"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
     "updated_by": {"$ref": "types.json#/definitions/updatedBy"}
@@ -77,6 +87,7 @@
           "name": {"$ref": "#/definitions/name"},
           "password": {"$ref": "#/definitions/password"},
           "person_id": {"$ref": "#/definitions/person_id"},
+          "preferences": {"$ref": "#/definitions/preferences"},
           "roles": {"$ref": "#/definitions/roles"}
         },
         "required": [
@@ -104,6 +115,7 @@
           "name": {"$ref": "#/definitions/name"},
           "password": {"$ref": "#/definitions/password"},
           "person_id": {"$ref": "#/definitions/person_id"},
+          "preferences": {"$ref": "#/definitions/preferences"},
           "roles": {"$ref": "#/definitions/roles"}
         }
       },
@@ -125,6 +137,7 @@
           "name": {"$ref": "#/definitions/name"},
           "password": {"$ref": "#/definitions/password"},
           "person_id": {"$ref": "#/definitions/person_id"},
+          "preferences": {"$ref": "#/definitions/preferences"},
           "roles": {"$ref": "#/definitions/roles"}
         },
         "required": [

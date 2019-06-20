@@ -390,6 +390,13 @@
       "minItems": 1,
       "type": "array"
     },
+    "generalConfig": {
+      "description": "User-defined general configuration for various entities",
+      "example": {
+        "station_warning_threshold_minutes": 120
+      },
+      "type": "object"
+    },
     "geoLinearRing": {
       "description": "An array of four or more GeoJSON positions where the first equals the last",
       "items": {
