@@ -47,6 +47,7 @@
         "whitelist": [
           "$all",
           "$and",
+          "$exists",
           "$or",
           "$text",
           "$search"
