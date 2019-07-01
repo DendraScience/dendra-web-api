@@ -166,6 +166,36 @@ const stages = [
   }
 ]
 
+// TODO: Rename 'build' to 'job'?
+const createAnnotationBuild = async context => {
+  const now = new Date()
+  const method = 'assembleDatapointsConfig'
+  const connection = context.app.get('connections').annotationBuild
+
+  if (!connection) return context
+
+  await connection.app.service('builds').create({
+    _id: `${method}-${context.result._id}-${now.getTime()}-${Math.floor(
+      Math.random() * 10000
+    )}`,
+    method,
+    build_at: now,
+    expires_at: new Date(now.getTime() + 86400000), // 24 hours from now
+    spec: {
+      datastream: context.result
+    }
+  })
+
+  return context
+}
+
+const createAnnotationBuildKeys = [
+  'datapoints_config',
+  'is_enabled',
+  'source_type',
+  'station_ids'
+]
+
 exports.before = {
   // all: [],
 
@@ -238,8 +268,19 @@ exports.after = {
   // all: [],
   // find: [],
   // get: [],
-  // create: [],
-  // update: [],
-  // patch: [],
+
+  create: createAnnotationBuild,
+  update: createAnnotationBuild,
+
+  patch: context => {
+    if (
+      (context.data.$set &&
+        Object.keys(context.data.$set).includes(createAnnotationBuildKeys)) ||
+      (context.data.$unset &&
+        Object.keys(context.data.$unset).includes(createAnnotationBuildKeys))
+    )
+      return createAnnotationBuild(context)
+  }
+
   // remove: []
 }

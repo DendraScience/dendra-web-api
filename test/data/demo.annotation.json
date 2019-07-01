@@ -1,0 +1,59 @@
+{
+  "actions": [
+    {
+      "exclude": true
+    },
+    {
+      "flag": [
+        "X"
+      ]
+    }
+  ],
+  "created_at": "2018-11-01T22:29:11.000Z",
+  "datastream_ids": [
+    "5ae879acfe27f47f90102d71",
+    "5ae879acfe27f49de7102d6f",
+    "5ae879adfe27f4e744102d73",
+    "5ae879aefe27f41596102d77"
+  ],
+  "description": "Demo Annotation Description",
+  "external_refs": [
+    {
+      "identifier": "554",
+      "type": "odm.incidents.IncidentID"
+    },
+    {
+      "identifier": "SNARL",
+      "type": "odm.incidents.StationNames"
+    },
+    {
+      "identifier": "3142,3143,3144,3146",
+      "type": "odm.incidents.Datastream_Names"
+    },
+    {
+      "identifier": "493",
+      "type": "odm.qualifiers.QualifierID"
+    },
+    {
+      "identifier": "X IR_554",
+      "type": "odm.qualifiers.QualifierCode"
+    },
+    {
+      "identifier": "SNARL GeoNor service; see incident report IR_554",
+      "type": "odm.qualifiers.QualifierDescription"
+    }
+  ],
+  "intervals": [
+    {
+      "begins_at": "2018-10-23T14:30:00.000Z",
+      "ends_before": "2018-10-23T15:30:00.000Z"
+    }
+  ],
+  "is_enabled": true,
+  "organization_id": "592f155746a1b867a114e030",
+  "state": "pending",
+  "station_ids": [
+    "58e68cacdf5ce600012602d7"
+  ],
+  "title": "Demo Annotation"
+}

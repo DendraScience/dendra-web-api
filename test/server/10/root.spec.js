@@ -31,6 +31,7 @@ before(async function() {
   global.metadata = app.get('databases').mongodb.metadata
 
   global.coll = [
+    'annotations',
     'datastreams',
     'memberships',
     'organizations',

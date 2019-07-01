@@ -7,7 +7,6 @@ const {
 
 const TYPE_KEY = Symbol.for('type')
 
-Ability.addAlias('save', ['create', 'patch', 'update'])
 Ability.addAlias('read', ['get', 'find'])
 Ability.addAlias('delete', 'remove')
 

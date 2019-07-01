@@ -7,6 +7,12 @@ const publicRules = ({ can, cannot }) => {
     'access_levels_resolved.public_level': { $gte: Visibility.METADATA }
   })
 
+  // Annotations
+  can('read', 'annotations', { is_enabled: true })
+  can('access', 'annotations', {
+    'access_levels_resolved.public_level': { $gte: Visibility.METADATA }
+  })
+
   // Stations
   can('read', 'stations', { is_enabled: true })
   can('access', 'stations', {
@@ -47,17 +53,22 @@ const publicRules = ({ can, cannot }) => {
 const membershipRulesByRole = {
   [MembershipRole.ADMIN]: ({ can, cannot }, { membership }) => {
     // Organizations
-    can('access', 'organizations', {
+    can(['access', 'patch'], 'organizations', {
       _id: membership.organization_id
     })
 
+    // Annotations
+    can(['access', 'create', 'patch', 'remove'], 'annotations', {
+      organization_id: membership.organization_id
+    })
+
     // Stations
-    can('access', 'stations', {
+    can(['access', 'create', 'patch', 'remove'], 'stations', {
       organization_id: membership.organization_id
     })
 
     // Datastreams
-    can(['access', 'graph', 'download'], 'datastreams', {
+    can(['access', 'create', 'patch', 'remove'], 'datastreams', {
       organization_id: membership.organization_id
     })
   },
@@ -68,13 +79,18 @@ const membershipRulesByRole = {
       _id: membership.organization_id
     })
 
+    // Annotations
+    can(['access', 'create', 'patch'], 'annotations', {
+      organization_id: membership.organization_id
+    })
+
     // Stations
-    can('access', 'stations', {
+    can(['access', 'create', 'patch'], 'stations', {
       organization_id: membership.organization_id
     })
 
     // Datastreams
-    can(['access', 'graph', 'download'], 'datastreams', {
+    can(['access', 'create', 'patch', 'graph', 'download'], 'datastreams', {
       organization_id: membership.organization_id
     })
   },
@@ -84,6 +100,17 @@ const membershipRulesByRole = {
     can('access', 'organizations', {
       'access_levels_resolved.member_level': { $gte: Visibility.METADATA },
       _id: membership.organization_id
+    })
+
+    // Annotations
+    can(['create', 'patch'], 'annotations', {
+      is_enabled: true,
+      organization_id: membership.organization_id,
+      state: 'pending'
+    })
+    can('access', 'annotations', {
+      'access_levels_resolved.member_level': { $gte: Visibility.METADATA },
+      organization_id: membership.organization_id
     })
 
     // Stations
@@ -113,15 +140,15 @@ const userRulesByRole = {
     can('manage', 'all')
 
     // Users
-    cannot('save', 'users', {
+    cannot(['create', 'patch', 'update'], 'users', {
       roles: 'sys-admin',
       person_id: { $exists: true }
     })
-    cannot('save', 'users', {
+    cannot(['create', 'patch', 'update'], 'users', {
       roles: UserRole.USER,
       person_id: { $exists: false }
     })
-    cannot('save', 'users', {
+    cannot(['create', 'patch', 'update'], 'users', {
       _id: user._id,
       roles: { $ne: UserRole.SYS_ADMIN }
     })
@@ -132,6 +159,12 @@ const userRulesByRole = {
     // Organizations
     can('read', 'organizations', { is_enabled: true })
     can('access', 'organizations', {
+      'access_levels_resolved.public_level': { $gte: Visibility.METADATA }
+    })
+
+    // Annotations
+    can('read', 'annotations', { is_enabled: true })
+    can('access', 'annotations', {
       'access_levels_resolved.public_level': { $gte: Visibility.METADATA }
     })
 
