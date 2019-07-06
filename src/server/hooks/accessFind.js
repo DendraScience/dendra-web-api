@@ -19,7 +19,7 @@ module.exports = (stages = []) => {
 
     if (!context.params.provider) return context
 
-    const { params, service, path: serviceName } = context
+    const { app, params, service, path: serviceName } = context
     const { ability } = params
 
     if (!ability) {
@@ -104,6 +104,8 @@ module.exports = (stages = []) => {
     }
     if (params.collation) options.collation = params.collation
     if (params.hint) options.hint = params.hint
+
+    app.logger.debug('HOOK accessFind', { pipeline, serviceName })
 
     const result = await service.Model.aggregate(pipeline, options).toArray()
 

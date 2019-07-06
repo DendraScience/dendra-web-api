@@ -103,8 +103,8 @@ const membershipRulesByRole = {
     })
 
     // Annotations
+    can('read', 'annotations')
     can(['create', 'patch'], 'annotations', {
-      is_enabled: true,
       organization_id: membership.organization_id,
       state: 'pending'
     })
@@ -114,12 +114,14 @@ const membershipRulesByRole = {
     })
 
     // Stations
+    can('read', 'stations')
     can('access', 'stations', {
       'access_levels_resolved.member_level': { $gte: Visibility.METADATA },
       organization_id: membership.organization_id
     })
 
     // Datastreams
+    can('read', 'datastreams')
     can('access', 'datastreams', {
       'access_levels_resolved.member_level': { $gte: Visibility.METADATA },
       organization_id: membership.organization_id

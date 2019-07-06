@@ -23,6 +23,7 @@ module.exports = (stages = []) => {
 
     if (!context.params.provider) return context;
     const {
+      app,
       params,
       service,
       path: serviceName
@@ -127,6 +128,10 @@ module.exports = (stages = []) => {
     };
     if (params.collation) options.collation = params.collation;
     if (params.hint) options.hint = params.hint;
+    app.logger.debug('HOOK accessFind', {
+      pipeline,
+      serviceName
+    });
     const result = await service.Model.aggregate(pipeline, options).toArray();
     context.result = shapeResult(result);
     return context;

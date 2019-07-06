@@ -45,6 +45,7 @@
           "$all",
           "$and",
           "$exists",
+          "$in",
           "$or",
           "$text",
           "$search"

@@ -20,7 +20,7 @@ module.exports = (stages = []) => {
 
     if (!context.params.provider) return context
 
-    const { params, service, path: serviceName } = context
+    const { app, params, service, path: serviceName } = context
     const { ability } = params
 
     if (!ability) {
@@ -52,6 +52,8 @@ module.exports = (stages = []) => {
     const options = {
       allowDiskUse: true
     }
+
+    app.logger.debug('HOOK accessGet', { pipeline, serviceName })
 
     const result = await service.Model.aggregate(pipeline, options).toArray()
 

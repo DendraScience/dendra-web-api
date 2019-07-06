@@ -7,12 +7,18 @@
  * @license BSD-2-Clause-FreeBSD
  * @module server/main
  */
-const winston = require('winston');
+const isProd = process.env.NODE_ENV === 'production';
 
-const logger = winston.createLogger({
-  level: process.env.NODE_ENV === 'production' ? 'warning' : 'debug',
-  format: winston.format.json(),
-  transports: [new winston.transports.Console()]
+const {
+  createLogger,
+  format,
+  transports
+} = require('winston');
+
+const logger = createLogger({
+  level: isProd ? 'warning' : 'debug',
+  format: isProd ? format.json() : format.combine(format.timestamp(), format.prettyPrint()),
+  transports: [new transports.Console()]
 });
 process.on('uncaughtException', err => {
   logger.error(`An unexpected error occurred\n  ${err.stack}`);

@@ -27,6 +27,7 @@ module.exports = (stages = []) => {
 
     if (!context.params.provider) return context;
     const {
+      app,
       params,
       service,
       path: serviceName
@@ -67,6 +68,10 @@ module.exports = (stages = []) => {
     const options = {
       allowDiskUse: true
     };
+    app.logger.debug('HOOK accessGet', {
+      pipeline,
+      serviceName
+    });
     const result = await service.Model.aggregate(pipeline, options).toArray();
 
     if (!result.length) {
