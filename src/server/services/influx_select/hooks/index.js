@@ -1,5 +1,6 @@
 const apiHooks = require('@dendra-science/api-hooks-common')
 const commonHooks = require('feathers-hooks-common')
+const math = require('../../../lib/math')
 const {treeMap} = require('@dendra-science/utils')
 
 exports.before = {
@@ -73,6 +74,7 @@ exports.after = {
     // TODO: Move this into a global hook?
     const count = 20
     const data = hook.result.data
+    const code = hook.params.evaluate ? math.compile(hook.params.evaluate) : null
     const firstSeries = data.series && data.series[0]
     const columns = firstSeries ? firstSeries.columns : []
     const values = firstSeries ? firstSeries.values : []
@@ -112,6 +114,13 @@ exports.after = {
             } else {
               const d = newItem.d = {}
               item.forEach((val, key) => (d[key] = val))
+            }
+
+            if (code) {
+              try {
+                code.evaluate(newItem)
+              } catch (_) {
+              }
             }
 
             values[i] = newItem

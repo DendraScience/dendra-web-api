@@ -18,6 +18,19 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
+              "evaluate": {
+                "type": "string",
+                "example": "v = (v / 0.254) * 0.1"
+              }
+            },
+            "required": [
+              "evaluate"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
               "exclude": {
                 "type": "boolean",
                 "example": true,

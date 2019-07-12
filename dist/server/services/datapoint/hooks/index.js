@@ -1,13 +1,8 @@
 'use strict';
 
-var _math = require('@dendra-science/math');
-
-var _math2 = _interopRequireDefault(_math);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 const apiHooks = require('@dendra-science/api-hooks-common');
 const commonHooks = require('feathers-hooks-common');
+const math = require('../../../lib/math');
 const { errors } = require('feathers-errors');
 const { treeMap } = require('@dendra-science/utils');
 
@@ -150,7 +145,7 @@ exports.after = {
             const item = data[i];
             if (typeof item.v === 'number') {
               // Be cautious, bypass conversion if the same unit name
-              item.uv = sourceUnitName === targetUnitName ? item.v : _math2.default.unit(item.v, sourceUnitName).toNumber(targetUnitName);
+              item.uv = sourceUnitName === targetUnitName ? item.v : math.unit(item.v, sourceUnitName).toNumber(targetUnitName);
             }
           }
           resolve();

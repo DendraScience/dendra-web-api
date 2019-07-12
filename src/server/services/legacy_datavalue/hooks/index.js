@@ -1,5 +1,6 @@
 const apiHooks = require('@dendra-science/api-hooks-common')
 const commonHooks = require('feathers-hooks-common')
+const math = require('../../../lib/math')
 const {treeMap} = require('@dendra-science/utils')
 
 exports.before = {
@@ -56,13 +57,23 @@ exports.after = {
     // TODO: Move this into a global hook?
     const count = 20
     const data = hook.result.data
+    const code = hook.params.evaluate ? math.compile(hook.params.evaluate) : null
     const mapTask = function (start) {
       return new Promise(resolve => {
         setImmediate(() => {
           const len = Math.min(start + count, data.length)
           for (let i = start; i < len; i++) {
             const item = data[i]
-            data[i] = {t: item.utc_date_time, o: item.utc_offset_secs, v: item.value}
+            const newItem = {t: item.utc_date_time, o: item.utc_offset_secs, v: item.value}
+
+            if (code) {
+              try {
+                code.evaluate(newItem)
+              } catch (_) {
+              }
+            }
+
+            data[i] = newItem
           }
           resolve()
         })

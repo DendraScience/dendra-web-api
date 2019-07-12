@@ -1,7 +1,6 @@
-import math from '@dendra-science/math'
-
 const apiHooks = require('@dendra-science/api-hooks-common')
 const commonHooks = require('feathers-hooks-common')
+const math = require('../../../lib/math')
 const {errors} = require('feathers-errors')
 const {treeMap} = require('@dendra-science/utils')
 
