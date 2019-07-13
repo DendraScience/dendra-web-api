@@ -126,12 +126,7 @@ describe(`Service ${servicePath}`, function() {
     })
 
     it('user should get with error', function() {
-      return helper.shouldGetWithError(
-        clients.user,
-        servicePath,
-        id.doc,
-        'NotFound'
-      )
+      return helper.shouldGetWithoutError(clients.user, servicePath, id.doc)
     })
 
     it('demo user should get without error', function() {
@@ -149,22 +144,11 @@ describe(`Service ${servicePath}`, function() {
     })
 
     it('user should find without error', function() {
-      return helper
-        .shouldFindWithoutError(clients.user, servicePath, {}, 1)
-        .then(({ retRes }) => {
-          expect(retRes).to.have.nested.property(
-            'data.0._id',
-            `${testData.rootUser._id}`
-          )
-        })
+      return helper.shouldFindWithoutError(clients.user, servicePath, {}, 3)
     })
 
     it('demo user should find without error', function() {
-      return helper
-        .shouldFindWithoutError(demoClient, servicePath, {}, 1)
-        .then(({ retRes }) => {
-          expect(retRes).to.have.nested.property('data.0._id', id.doc)
-        })
+      return helper.shouldFindWithoutError(demoClient, servicePath, {}, 3)
     })
 
     it('sys admin should find without error', function() {
