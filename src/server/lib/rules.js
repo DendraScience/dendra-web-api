@@ -213,7 +213,7 @@ const userRulesByRole = {
     can('read', 'uoms')
 
     // Users
-    can('read', 'users', { _id: user._id, is_enabled: true })
+    can('read', 'users', { is_enabled: true })
     can('patch', 'users', { _id: user._id, is_enabled: true })
     can('assign', 'users')
     cannot('assign', 'users', [

@@ -2,6 +2,8 @@
 
 const apiHooks = require('@dendra-science/api-hooks-common');
 
+const math = require('mathjs');
+
 const {
   disallow,
   iff
@@ -76,6 +78,8 @@ exports.after = {
       result
     } = context;
     const {
+      actions,
+      annotationIds,
       savedQuery
     } = params;
     if (!savedQuery.compact) return;
@@ -105,7 +109,28 @@ exports.after = {
       for (let [key, i] of colsMap) {
         item.d[key] = value[i];
       }
-    }; // Reformat results asynchronously; 20 items at a time (hardcoded)
+    };
+    let code;
+
+    if (actions && actions.evaluate) {
+      try {
+        code = math.compile(actions.evaluate);
+      } catch (_) {}
+    }
+
+    let quality;
+
+    if (annotationIds) {
+      quality = {
+        annotation_ids: annotationIds
+      };
+    }
+
+    if (actions && actions.flag) {
+      if (!quality) quality = {};
+      quality.flag = actions.flag;
+    } // Reformat results asynchronously; 20 items at a time (hardcoded)
+
 
     for (let i = 0; i < values.length; i++) {
       const value = values[i];
@@ -115,6 +140,14 @@ exports.after = {
         o: offset
       };
       patchItem(item, value);
+
+      if (code) {
+        try {
+          code.evaluate(item);
+        } catch (_) {}
+      }
+
+      if (quality) item.q = quality;
       values[i] = item;
       if (!(i % 20)) await new Promise(resolve => setImmediate(resolve));
     }

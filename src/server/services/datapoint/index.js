@@ -67,12 +67,11 @@ class Service {
         )
       })
       .map(inst => {
+        const isConn =
+          typeof inst.connection === 'string' &&
+          this.connections[inst.connection]
         return {
-          connection:
-            typeof inst.connection === 'string' &&
-            this.connections[inst.connection]
-              ? this.connections[inst.connection]
-              : this,
+          connection: isConn ? this.connections[inst.connection] : this,
           beginsAt:
             inst.begins_at instanceof Date
               ? inst.begins_at.getTime()
@@ -81,7 +80,10 @@ class Service {
             inst.ends_before instanceof Date
               ? inst.ends_before.getTime()
               : MAX_TIME,
-          params: inst.params,
+          params1: inst.params,
+          params2: isConn
+            ? null
+            : { actions: inst.actions, annotationIds: inst.annotation_ids },
           path: inst.path
         }
       })
@@ -169,7 +171,9 @@ class Service {
        */
       if (result.data.length >= filters.$limit) break
 
-      const p = Object.assign({}, inst.params, { provider: null })
+      const p = Object.assign({}, inst.params1, inst.params2, {
+        provider: null
+      })
       const q = (p.query = Object.assign({}, p.query))
       q.$limit = filters.$limit - result.data.length
       q.$sort = filters.$sort

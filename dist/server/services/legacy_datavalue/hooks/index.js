@@ -2,6 +2,8 @@
 
 const apiHooks = require('@dendra-science/api-hooks-common');
 
+const math = require('mathjs');
+
 const {
   disallow,
   iff
@@ -70,19 +72,51 @@ exports.after = {
     result
   }) => {
     const {
+      actions,
+      annotationIds,
       savedQuery
     } = params;
     if (!savedQuery.compact) return;
     savedQuery.local = true;
-    const t = tKeyVal(savedQuery); // Reformat results asynchronously; 20 items at a time (hardcoded)
+    const t = tKeyVal(savedQuery);
+    let code;
+
+    if (actions && actions.evaluate) {
+      try {
+        code = math.compile(actions.evaluate);
+      } catch (_) {}
+    }
+
+    let quality;
+
+    if (annotationIds) {
+      quality = {
+        annotation_ids: annotationIds
+      };
+    }
+
+    if (actions && actions.flag) {
+      if (!quality) quality = {};
+      quality.flag = actions.flag;
+    } // Reformat results asynchronously; 20 items at a time (hardcoded)
+
 
     for (let i = 0; i < result.length; i++) {
-      const item = result[i];
-      result[i] = {
+      let item = result[i];
+      item = {
         [t.key]: t.val(item.local_date_time, item.utc_offset * 3600000),
         o: item.utc_offset * 3600,
         v: item.value
       };
+
+      if (code) {
+        try {
+          code.evaluate(item);
+        } catch (_) {}
+      }
+
+      if (quality) item.q = quality;
+      result[i] = item;
       if (!(i % 20)) await new Promise(resolve => setImmediate(resolve));
     }
   } // get: [],
