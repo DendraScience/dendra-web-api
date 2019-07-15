@@ -1,7 +1,6 @@
 const apiHooks = require('@dendra-science/api-hooks-common')
-const math = require('mathjs')
 const { disallow, iff } = require('feathers-hooks-common')
-const { isProd, tKeyVal } = require('../../../lib/utils')
+const { annotHelpers, isProd, tKeyVal } = require('../../../lib/utils')
 const { treeMap } = require('@dendra-science/utils')
 const _ = require('lodash')
 
@@ -77,11 +76,12 @@ exports.after = {
 
   find: async context => {
     const { params, result } = context
-    const { actions, annotationIds, savedQuery } = params
+    const { savedQuery } = params
 
     if (!savedQuery.compact) return
 
     const t = tKeyVal(savedQuery)
+    const h = annotHelpers(params)
 
     const firstSeries = result.series && result.series[0]
     const columns = firstSeries ? firstSeries.columns : []
@@ -100,7 +100,7 @@ exports.after = {
         ? () => utcOffset
         : value => value[utcOffsetIndex] || utcOffset
 
-    const patchItem =
+    const setData =
       savedQuery.coalesce || colsMap.size === 1 // TODO: Revisit this
         ? (item, value) => {
             for (let [, i] of colsMap) {
@@ -117,24 +117,6 @@ exports.after = {
             }
           }
 
-    let code
-    if (actions && actions.evaluate) {
-      try {
-        code = math.compile(actions.evaluate)
-      } catch (_) {}
-    }
-
-    let quality
-    if (annotationIds) {
-      quality = {
-        annotation_ids: annotationIds
-      }
-    }
-    if (actions && actions.flag) {
-      if (!quality) quality = {}
-      quality.flag = actions.flag
-    }
-
     // Reformat results asynchronously; 20 items at a time (hardcoded)
     for (let i = 0; i < values.length; i++) {
       const value = values[i]
@@ -145,14 +127,14 @@ exports.after = {
         o: offset
       }
 
-      patchItem(item, value)
+      setData(item, value)
 
-      if (code) {
+      if (h.code) {
         try {
-          code.evaluate(item)
+          h.code.evaluate(item)
         } catch (_) {}
       }
-      if (quality) item.q = quality
+      if (h.q) item.q = h.q
 
       values[i] = item
 

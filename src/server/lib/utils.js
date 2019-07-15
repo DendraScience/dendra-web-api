@@ -7,6 +7,7 @@
  */
 
 const crypto = require('crypto')
+const math = require('mathjs')
 
 const isProd = process.env.NODE_ENV === 'production'
 const isDev = !isProd
@@ -46,6 +47,31 @@ function asyncHashDigest(data, algorithm = 'sha1', encoding = 'hex') {
 }
 
 /**
+ * Returns annotation helpers for 'compact' JSON timeseries data.
+ */
+function annotHelpers({ actions, annotationIds }) {
+  let code
+  if (actions && actions.evaluate) {
+    try {
+      code = math.compile(actions.evaluate)
+    } catch (_) {}
+  }
+
+  let q
+  if (annotationIds) {
+    q = {
+      annotation_ids: annotationIds
+    }
+  }
+  if (actions && actions.flag) {
+    if (!q) q = {}
+    q.flag = actions.flag
+  }
+
+  return { code, q }
+}
+
+/**
  * Returns a key and value formatter for 'compact' JSON timeseries data.
  */
 function tKeyVal({ local, t_int: tInt, t_local: tLocal }) {
@@ -78,6 +104,7 @@ function tKeyVal({ local, t_int: tInt, t_local: tLocal }) {
 }
 
 module.exports = {
+  annotHelpers,
   asyncHashDigest,
   isDev,
   isProd,

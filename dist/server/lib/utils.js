@@ -9,6 +9,8 @@
  */
 const crypto = require('crypto');
 
+const math = require('mathjs');
+
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = !isProd;
 const MembershipRole = {
@@ -37,6 +39,41 @@ function asyncHashDigest(data, algorithm = 'sha1', encoding = 'hex') {
       resolve(crypto.createHash(algorithm).update(data).digest(encoding));
     });
   });
+}
+/**
+ * Returns annotation helpers for 'compact' JSON timeseries data.
+ */
+
+
+function annotHelpers({
+  actions,
+  annotationIds
+}) {
+  let code;
+
+  if (actions && actions.evaluate) {
+    try {
+      code = math.compile(actions.evaluate);
+    } catch (_) {}
+  }
+
+  let q;
+
+  if (annotationIds) {
+    q = {
+      annotation_ids: annotationIds
+    };
+  }
+
+  if (actions && actions.flag) {
+    if (!q) q = {};
+    q.flag = actions.flag;
+  }
+
+  return {
+    code,
+    q
+  };
 }
 /**
  * Returns a key and value formatter for 'compact' JSON timeseries data.
@@ -76,6 +113,7 @@ function tKeyVal({
 }
 
 module.exports = {
+  annotHelpers,
   asyncHashDigest,
   isDev,
   isProd,

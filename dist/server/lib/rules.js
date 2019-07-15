@@ -140,16 +140,18 @@ const membershipRulesByRole = {
     }); // Annotations
 
     can('read', 'annotations');
-    can(['create', 'patch'], 'annotations', {
-      organization_id: membership.organization_id,
-      state: 'pending'
-    });
     can('access', 'annotations', {
       'access_levels_resolved.member_level': {
         $gte: Visibility.METADATA
       },
       organization_id: membership.organization_id
-    }); // Stations
+    });
+    can(['create', 'patch'], 'annotations', {
+      organization_id: membership.organization_id,
+      state: 'pending'
+    });
+    can('assign', 'annotations');
+    cannot('assign', 'annotations', ['$set.state']); // Stations
 
     can('read', 'stations');
     can('access', 'stations', {

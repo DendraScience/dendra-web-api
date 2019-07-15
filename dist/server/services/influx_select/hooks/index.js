@@ -2,14 +2,13 @@
 
 const apiHooks = require('@dendra-science/api-hooks-common');
 
-const math = require('mathjs');
-
 const {
   disallow,
   iff
 } = require('feathers-hooks-common');
 
 const {
+  annotHelpers,
   isProd,
   tKeyVal
 } = require('../../../lib/utils');
@@ -78,12 +77,11 @@ exports.after = {
       result
     } = context;
     const {
-      actions,
-      annotationIds,
       savedQuery
     } = params;
     if (!savedQuery.compact) return;
     const t = tKeyVal(savedQuery);
+    const h = annotHelpers(params);
     const firstSeries = result.series && result.series[0];
     const columns = firstSeries ? firstSeries.columns : [];
     const values = firstSeries ? firstSeries.values : []; // Build a map between column names and value indexes
@@ -95,7 +93,7 @@ exports.after = {
     colsMap.delete('utc_offset');
     const utcOffset = savedQuery.utc_offset | 0;
     const getOffset = utcOffsetIndex === undefined ? () => utcOffset : value => value[utcOffsetIndex] || utcOffset;
-    const patchItem = savedQuery.coalesce || colsMap.size === 1 // TODO: Revisit this
+    const setData = savedQuery.coalesce || colsMap.size === 1 // TODO: Revisit this
     ? (item, value) => {
       for (let [, i] of colsMap) {
         if (value[i] !== null) {
@@ -109,28 +107,7 @@ exports.after = {
       for (let [key, i] of colsMap) {
         item.d[key] = value[i];
       }
-    };
-    let code;
-
-    if (actions && actions.evaluate) {
-      try {
-        code = math.compile(actions.evaluate);
-      } catch (_) {}
-    }
-
-    let quality;
-
-    if (annotationIds) {
-      quality = {
-        annotation_ids: annotationIds
-      };
-    }
-
-    if (actions && actions.flag) {
-      if (!quality) quality = {};
-      quality.flag = actions.flag;
-    } // Reformat results asynchronously; 20 items at a time (hardcoded)
-
+    }; // Reformat results asynchronously; 20 items at a time (hardcoded)
 
     for (let i = 0; i < values.length; i++) {
       const value = values[i];
@@ -139,15 +116,15 @@ exports.after = {
         [t.key]: t.val(new Date(value[timeIndex]), offset * 1000),
         o: offset
       };
-      patchItem(item, value);
+      setData(item, value);
 
-      if (code) {
+      if (h.code) {
         try {
-          code.evaluate(item);
+          h.code.evaluate(item);
         } catch (_) {}
       }
 
-      if (quality) item.q = quality;
+      if (h.q) item.q = h.q;
       values[i] = item;
       if (!(i % 20)) await new Promise(resolve => setImmediate(resolve));
     }

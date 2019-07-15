@@ -1,7 +1,6 @@
 const apiHooks = require('@dendra-science/api-hooks-common')
-const math = require('mathjs')
 const { disallow, iff } = require('feathers-hooks-common')
-const { isProd, tKeyVal } = require('../../../lib/utils')
+const { annotHelpers, isProd, tKeyVal } = require('../../../lib/utils')
 const { treeMap } = require('@dendra-science/utils')
 const _ = require('lodash')
 
@@ -61,30 +60,13 @@ exports.after = {
   // all: []
 
   find: async ({ params, result }) => {
-    const { actions, annotationIds, savedQuery } = params
+    const { savedQuery } = params
 
     if (!savedQuery.compact) return
 
     savedQuery.local = true
     const t = tKeyVal(savedQuery)
-
-    let code
-    if (actions && actions.evaluate) {
-      try {
-        code = math.compile(actions.evaluate)
-      } catch (_) {}
-    }
-
-    let quality
-    if (annotationIds) {
-      quality = {
-        annotation_ids: annotationIds
-      }
-    }
-    if (actions && actions.flag) {
-      if (!quality) quality = {}
-      quality.flag = actions.flag
-    }
+    const h = annotHelpers(params)
 
     // Reformat results asynchronously; 20 items at a time (hardcoded)
     for (let i = 0; i < result.length; i++) {
@@ -96,12 +78,12 @@ exports.after = {
         v: item.value
       }
 
-      if (code) {
+      if (h.code) {
         try {
-          code.evaluate(item)
+          h.code.evaluate(item)
         } catch (_) {}
       }
-      if (quality) item.q = quality
+      if (h.q) item.q = h.q
 
       result[i] = item
 
