@@ -11,36 +11,28 @@ const publicRules = ({
   cannot
 }) => {
   // Organizations
-  can('read', 'organizations', {
-    is_enabled: true
-  });
+  can('read', 'organizations');
   can('access', 'organizations', {
     'access_levels_resolved.public_level': {
       $gte: Visibility.METADATA
     }
   }); // Annotations
 
-  can('read', 'annotations', {
-    is_enabled: true
-  });
+  can('read', 'annotations');
   can('access', 'annotations', {
     'access_levels_resolved.public_level': {
       $gte: Visibility.METADATA
     }
   }); // Stations
 
-  can('read', 'stations', {
-    is_enabled: true
-  });
+  can('read', 'stations');
   can('access', 'stations', {
     'access_levels_resolved.public_level': {
       $gte: Visibility.METADATA
     }
   }); // Datastreams
 
-  can('read', 'datastreams', {
-    is_enabled: true
-  });
+  can('read', 'datastreams');
   can('access', 'datastreams', {
     'access_levels_resolved.public_level': {
       $gte: Visibility.METADATA
@@ -57,21 +49,13 @@ const publicRules = ({
     }
   }); // Persons
 
-  can('read', 'persons', {
-    is_enabled: true
-  }); // Places
+  can('read', 'persons'); // Places
 
-  can('read', 'places', {
-    is_enabled: true
-  }); // Schemes
+  can('read', 'places'); // Schemes
 
-  can('read', 'schemes', {
-    is_enabled: true
-  }); // Vocabularies
+  can('read', 'schemes'); // Vocabularies
 
-  can('read', 'vocabularies', {
-    is_enabled: true
-  }); // SOMs
+  can('read', 'vocabularies'); // SOMs
 
   can('read', 'soms'); // UOMs
 
@@ -92,7 +76,8 @@ const membershipRulesByRole = {
 
     can(['access', 'create', 'patch', 'remove'], 'annotations', {
       organization_id: membership.organization_id
-    }); // Stations
+    });
+    can('assign', 'annotations'); // Stations
 
     can(['access', 'create', 'patch', 'remove'], 'stations', {
       organization_id: membership.organization_id
@@ -115,7 +100,8 @@ const membershipRulesByRole = {
 
     can(['access', 'create', 'patch'], 'annotations', {
       organization_id: membership.organization_id
-    }); // Stations
+    });
+    can('assign', 'annotations'); // Stations
 
     can(['access', 'create', 'patch'], 'stations', {
       organization_id: membership.organization_id
@@ -139,7 +125,6 @@ const membershipRulesByRole = {
       _id: membership.organization_id
     }); // Annotations
 
-    can('read', 'annotations');
     can('access', 'annotations', {
       'access_levels_resolved.member_level': {
         $gte: Visibility.METADATA
@@ -151,9 +136,8 @@ const membershipRulesByRole = {
       state: 'pending'
     });
     can('assign', 'annotations');
-    cannot('assign', 'annotations', ['$set.state']); // Stations
+    cannot('assign', 'annotations', ['$set.is_enabled', '$set.is_hidden', '$set.state']); // Stations
 
-    can('read', 'stations');
     can('access', 'stations', {
       'access_levels_resolved.member_level': {
         $gte: Visibility.METADATA
@@ -161,7 +145,6 @@ const membershipRulesByRole = {
       organization_id: membership.organization_id
     }); // Datastreams
 
-    can('read', 'datastreams');
     can('access', 'datastreams', {
       'access_levels_resolved.member_level': {
         $gte: Visibility.METADATA
@@ -213,90 +196,26 @@ const userRulesByRole = {
       _id: user._id
     });
   },
-  [UserRole.USER]: ({
-    can,
-    cannot
-  }, {
+  [UserRole.USER]: (extract, {
     user
   }) => {
-    // Organizations
-    can('read', 'organizations', {
-      is_enabled: true
-    });
-    can('access', 'organizations', {
-      'access_levels_resolved.public_level': {
-        $gte: Visibility.METADATA
-      }
-    }); // Annotations
+    const {
+      can,
+      cannot
+    } = extract; // Start with public rules
 
-    can('read', 'annotations', {
-      is_enabled: true
-    });
-    can('access', 'annotations', {
-      'access_levels_resolved.public_level': {
-        $gte: Visibility.METADATA
-      }
-    }); // Stations
-
-    can('read', 'stations', {
-      is_enabled: true
-    });
-    can('access', 'stations', {
-      'access_levels_resolved.public_level': {
-        $gte: Visibility.METADATA
-      }
-    }); // Datastreams
-
-    can('read', 'datastreams', {
-      is_enabled: true
-    });
-    can('access', 'datastreams', {
-      'access_levels_resolved.public_level': {
-        $gte: Visibility.METADATA
-      }
-    });
-    can('graph', 'datastreams', {
-      'access_levels_resolved.public_level': {
-        $gte: Visibility.GRAPH
-      }
-    });
-    can('download', 'datastreams', {
-      'access_levels_resolved.public_level': {
-        $gte: Visibility.DOWNLOAD
-      }
-    }); // Memberships
+    publicRules(extract); // Memberships
 
     can('read', 'memberships'); // Persons
 
-    can('read', 'persons', {
-      is_enabled: true
-    });
     can('patch', 'persons', {
       _id: user.person_id,
       is_enabled: true
     });
     can('assign', 'persons');
-    cannot('assign', 'persons', ['$set.is_enabled']); // Places
+    cannot('assign', 'persons', ['$set.is_enabled']); // Users
 
-    can('read', 'places', {
-      is_enabled: true
-    }); // Schemes
-
-    can('read', 'schemes', {
-      is_enabled: true
-    }); // Vocabularies
-
-    can('read', 'vocabularies', {
-      is_enabled: true
-    }); // SOMs
-
-    can('read', 'soms'); // UOMs
-
-    can('read', 'uoms'); // Users
-
-    can('read', 'users', {
-      is_enabled: true
-    });
+    can('read', 'users');
     can('patch', 'users', {
       _id: user._id,
       is_enabled: true
