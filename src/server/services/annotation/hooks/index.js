@@ -50,20 +50,19 @@ const stages = [
   }
 ]
 
-// TODO: Rename 'build' to 'job'?
-const createAnnotationBuild = async context => {
+const dispatchAnnotationBuild = async context => {
   const now = new Date()
   const method = 'processAnnotation'
-  const connection = context.app.get('connections').annotationBuild
+  const connection = context.app.get('connections').annotationDispatch
 
   if (!connection) return context
 
-  await connection.app.service('builds').create({
+  await connection.app.service('annotation-builds').create({
     _id: `${method}-${context.result._id}-${now.getTime()}-${Math.floor(
       Math.random() * 10000
     )}`,
     method,
-    build_at: now,
+    dispatch_at: now,
     expires_at: new Date(now.getTime() + 86400000), // 24 hours from now
     spec: {
       annotation: context.result,
@@ -74,7 +73,7 @@ const createAnnotationBuild = async context => {
   return context
 }
 
-const createAnnotationBuildKeys = [
+const dispatchAnnotationBuildKeys = [
   'actions',
   'datastream_ids',
   'intervals',
@@ -124,18 +123,18 @@ exports.after = {
   // find: [],
   // get: [],
 
-  create: createAnnotationBuild,
-  update: createAnnotationBuild,
+  create: dispatchAnnotationBuild,
+  update: dispatchAnnotationBuild,
 
   patch: context => {
     if (
       (context.data.$set &&
-        Object.keys(context.data.$set).includes(createAnnotationBuildKeys)) ||
+        Object.keys(context.data.$set).includes(dispatchAnnotationBuildKeys)) ||
       (context.data.$unset &&
-        Object.keys(context.data.$unset).includes(createAnnotationBuildKeys))
+        Object.keys(context.data.$unset).includes(dispatchAnnotationBuildKeys))
     )
-      return createAnnotationBuild(context)
+      return dispatchAnnotationBuild(context)
   },
 
-  remove: createAnnotationBuild
+  remove: dispatchAnnotationBuild
 }

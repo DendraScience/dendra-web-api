@@ -3,14 +3,14 @@
     "secret": "WEB_API_SECRET"
   },
   "connections": {
-    "aggregateBuild": {
-      "url": "AGGREGATE_BUILD_API_URL"
+    "aggregateDispatch": {
+      "url": "AGGREGATE_DISPATCH_API_URL"
     },
     "aggregateStore": {
       "url": "AGGREGATE_JSON_API_URL"
     },
-    "annotationBuild": {
-      "url": "ANNOTATION_BUILD_API_URL"
+    "annotationDispatch": {
+      "url": "ANNOTATION_DISPATCH_API_URL"
     },
     "noaaNWS": {
       "url": "NOAA_NWS_API_URL"

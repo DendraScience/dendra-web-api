@@ -20,9 +20,6 @@
     "service": "users"
   },
   "connections": {
-    "aggregateBuild": {
-      "url": "http://localhost:3034"
-    },
     "aggregateStore": {
       "url": "http://localhost:3036"
     },
