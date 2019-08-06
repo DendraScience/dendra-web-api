@@ -23,6 +23,27 @@
     ],
     "type": "Point"
   },
+  "involved_parties": [
+    {
+      "organization_id": "592f155746a1b867a114e030",
+      "roles": [
+        "contact"
+      ]
+    },
+    {
+      "person_id": "592f155746a1b867a114e040",
+      "roles": [
+        "admin",
+        "contact"
+      ]
+    },
+    {
+      "roles": [
+        "contact"
+      ],
+      "team_id": "592f155746a1b867a114e0c0"
+    }
+  ],
   "is_active": true,
   "is_enabled": true,
   "is_geo_protected": false,
@@ -71,27 +92,6 @@
     }
   ],
   "name": "Demo Station",
-  "operational_roles": [
-    {
-      "organization_id": "592f155746a1b867a114e030",
-      "roles": [
-        "contact"
-      ]
-    },
-    {
-      "person_id": "592f155746a1b867a114e040",
-      "roles": [
-        "admin",
-        "contact"
-      ]
-    },
-    {
-      "roles": [
-        "contact"
-      ],
-      "team_id": "592f155746a1b867a114e0c0"
-    }
-  ],
   "organization_id": "592f155746a1b867a114e030",
   "place_id": "592f155746a1b867a114e050",
   "slug": "demo-station",

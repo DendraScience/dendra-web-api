@@ -14,6 +14,7 @@
           "description": {"$ref": "#/definitions/description"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
           "intervals": {"$ref": "#/definitions/intervals"},
+          "involved_parties": {"$ref": "types.json#/definitions/involvedParties"},
           "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
           "state": {"$ref": "#/definitions/state"},
