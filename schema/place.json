@@ -65,7 +65,8 @@
     "place_type": {"$ref": "#/definitions/place_type"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
     "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
-    "url": {"$ref": "#/definitions/url"}
+    "url": {"$ref": "#/definitions/url"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"}
   },
   "required": [
     "geo",

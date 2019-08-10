@@ -102,7 +102,7 @@ exports.after = {
   create: dispatchAnnotationBuild,
   update: dispatchAnnotationBuild,
   patch: context => {
-    if (context.data.$set && Object.keys(context.data.$set).includes(dispatchAnnotationBuildKeys) || context.data.$unset && Object.keys(context.data.$unset).includes(dispatchAnnotationBuildKeys)) return dispatchAnnotationBuild(context);
+    if (context.data.$set && _.intersection(dispatchAnnotationBuildKeys, Object.keys(context.data.$set)).length || context.data.$unset && _.intersection(dispatchAnnotationBuildKeys, Object.keys(context.data.$unset)).length) return dispatchAnnotationBuild(context);
   },
   remove: dispatchAnnotationBuild
 };

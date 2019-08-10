@@ -52,7 +52,8 @@
     "som_id": {"$ref": "#/definitions/som_id"},
     "unit_tags": {"$ref": "#/definitions/unit_tags"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
-    "updated_by": {"$ref": "types.json#/definitions/updatedBy"}
+    "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"}
   },
   "required": [
     "_id",

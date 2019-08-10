@@ -7,10 +7,16 @@ exports.before = {
 
   get: globalHooks.beforeGet(),
 
-  create: globalHooks.beforeCreate({ schemaName: 'uom.create.json' }),
+  create: globalHooks.beforeCreate({
+    schemaName: 'uom.create.json',
+    versionStamp: true
+  }),
 
   update: [
-    globalHooks.beforeUpdate({ schemaName: 'uom.update.json' }),
+    globalHooks.beforeUpdate({
+      schemaName: 'uom.update.json',
+      versionStamp: true
+    }),
 
     ({ data, params }) => {
       if (params.before) {
@@ -20,7 +26,10 @@ exports.before = {
     }
   ],
 
-  patch: globalHooks.beforePatch({ schemaName: 'uom.patch.json' }),
+  patch: globalHooks.beforePatch({
+    schemaName: 'uom.patch.json',
+    versionStamp: true
+  }),
 
   remove: globalHooks.beforeRemove()
 }

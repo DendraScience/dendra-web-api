@@ -129,9 +129,15 @@ exports.after = {
   patch: context => {
     if (
       (context.data.$set &&
-        Object.keys(context.data.$set).includes(dispatchAnnotationBuildKeys)) ||
+        _.intersection(
+          dispatchAnnotationBuildKeys,
+          Object.keys(context.data.$set)
+        ).length) ||
       (context.data.$unset &&
-        Object.keys(context.data.$unset).includes(dispatchAnnotationBuildKeys))
+        _.intersection(
+          dispatchAnnotationBuildKeys,
+          Object.keys(context.data.$unset)
+        ).length)
     )
       return dispatchAnnotationBuild(context)
   },

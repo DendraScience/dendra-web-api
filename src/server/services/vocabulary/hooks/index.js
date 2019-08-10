@@ -26,13 +26,15 @@ exports.before = {
 
   create: globalHooks.beforeCreate({
     alterItems: defaultsMigrations,
-    schemaName: 'vocabulary.create.json'
+    schemaName: 'vocabulary.create.json',
+    versionStamp: true
   }),
 
   update: [
     globalHooks.beforeUpdate({
       alterItems: defaultsMigrations,
-      schemaName: 'vocabulary.update.json'
+      schemaName: 'vocabulary.update.json',
+      versionStamp: true
     }),
 
     ({ data, params }) => {
@@ -43,7 +45,10 @@ exports.before = {
     }
   ],
 
-  patch: globalHooks.beforePatch({ schemaName: 'vocabulary.patch.json' }),
+  patch: globalHooks.beforePatch({
+    schemaName: 'vocabulary.patch.json',
+    versionStamp: true
+  }),
 
   remove: globalHooks.beforeRemove()
 }

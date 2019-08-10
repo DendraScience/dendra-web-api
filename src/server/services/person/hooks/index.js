@@ -24,13 +24,15 @@ exports.before = {
 
   create: globalHooks.beforeCreate({
     alterItems: defaultsMigrations,
-    schemaName: 'person.create.json'
+    schemaName: 'person.create.json',
+    versionStamp: true
   }),
 
   update: [
     globalHooks.beforeUpdate({
       alterItems: defaultsMigrations,
-      schemaName: 'person.update.json'
+      schemaName: 'person.update.json',
+      versionStamp: true
     }),
 
     ({ data, params }) => {
@@ -41,7 +43,10 @@ exports.before = {
     }
   ],
 
-  patch: globalHooks.beforePatch({ schemaName: 'person.patch.json' }),
+  patch: globalHooks.beforePatch({
+    schemaName: 'person.patch.json',
+    versionStamp: true
+  }),
 
   remove: globalHooks.beforeRemove()
 }

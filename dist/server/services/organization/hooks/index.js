@@ -40,11 +40,13 @@ exports.before = {
   get: [globalHooks.beforeGet(), globalHooks.accessGet(stages)],
   create: globalHooks.beforeCreate({
     alterItems: defaultsMigrations,
-    schemaName: 'organization.create.json'
+    schemaName: 'organization.create.json',
+    versionStamp: true
   }),
   update: [globalHooks.beforeUpdate({
     alterItems: defaultsMigrations,
-    schemaName: 'organization.update.json'
+    schemaName: 'organization.update.json',
+    versionStamp: true
   }), ({
     data,
     params
@@ -55,7 +57,8 @@ exports.before = {
     }
   }],
   patch: globalHooks.beforePatch({
-    schemaName: 'organization.patch.json'
+    schemaName: 'organization.patch.json',
+    versionStamp: true
   }),
   remove: globalHooks.beforeRemove()
 };

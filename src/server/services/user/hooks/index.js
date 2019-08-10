@@ -34,7 +34,8 @@ exports.before = {
 
     globalHooks.beforeCreate({
       alterItems: defaultsMigrations,
-      schemaName: 'user.create.json'
+      schemaName: 'user.create.json',
+      versionStamp: true
     })
   ],
 
@@ -43,7 +44,8 @@ exports.before = {
 
     globalHooks.beforeUpdate({
       alterItems: defaultsMigrations,
-      schemaName: 'user.update.json'
+      schemaName: 'user.update.json',
+      versionStamp: true
     }),
 
     ({ data, params }) => {
@@ -63,7 +65,8 @@ exports.before = {
 
     globalHooks.beforePatch({
       alterItems: rec => deleteByDot(rec, PATCH_CURRENT_PASSWORD),
-      schemaName: 'user.patch.json'
+      schemaName: 'user.patch.json',
+      versionStamp: true
     }),
 
     async ({ data, params }) => {

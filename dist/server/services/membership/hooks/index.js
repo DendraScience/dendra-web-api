@@ -7,10 +7,12 @@ exports.before = {
   find: globalHooks.beforeFind(),
   get: globalHooks.beforeGet(),
   create: globalHooks.beforeCreate({
-    schemaName: 'membership.create.json'
+    schemaName: 'membership.create.json',
+    versionStamp: true
   }),
   update: [globalHooks.beforeUpdate({
-    schemaName: 'membership.update.json'
+    schemaName: 'membership.update.json',
+    versionStamp: true
   }), ({
     data,
     params
@@ -21,7 +23,8 @@ exports.before = {
     }
   }],
   patch: globalHooks.beforePatch({
-    schemaName: 'membership.patch.json'
+    schemaName: 'membership.patch.json',
+    versionStamp: true
   }),
   remove: globalHooks.beforeRemove()
 };

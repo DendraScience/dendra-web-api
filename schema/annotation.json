@@ -78,7 +78,8 @@
     "station_ids": {"$ref": "#/definitions/station_ids"},
     "title": {"$ref": "#/definitions/title"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
-    "updated_by": {"$ref": "types.json#/definitions/updatedBy"}
+    "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"}
   },
   "required": [
     "is_enabled",

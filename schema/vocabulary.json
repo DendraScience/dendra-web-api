@@ -72,6 +72,7 @@
     "terms": {"$ref": "#/definitions/terms"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
     "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"},
     "vocabulary_type": {"$ref": "#/definitions/vocabulary_type"}
   },
   "required": [

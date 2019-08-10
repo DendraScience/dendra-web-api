@@ -18,11 +18,11 @@ module.exports = options => {
       auth.hooks.authenticate('jwt'),
       alterItems(options.alterItems),
       validateSchema(options.schemaName, ajv),
+      iff(() => options.versionStamp, versionStamp()),
       setAbility(),
       restrictToAbility(),
       apiHooks.timestamp(),
       apiHooks.userstamp(),
-      iff(() => options.versionStamp, versionStamp()),
       apiHooks.coerceQuery(),
       apiHooks.coerce()
     ).call(this, context)

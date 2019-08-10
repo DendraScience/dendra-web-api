@@ -31,11 +31,11 @@ module.exports = options => {
         'version_id'
       ),
       validateSchema(options.schemaName, ajv),
+      iff(() => options.versionStamp, versionStamp()),
       setAbility(),
       restrictToAbility(),
       apiHooks.timestamp(),
       apiHooks.userstamp(),
-      iff(() => options.versionStamp, versionStamp()),
       apiHooks.coerce()
     ).call(this, context)
 

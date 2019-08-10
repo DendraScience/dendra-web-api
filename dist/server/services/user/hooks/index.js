@@ -34,11 +34,13 @@ exports.before = {
   get: globalHooks.beforeGet(),
   create: [local.hooks.hashPassword(), globalHooks.beforeCreate({
     alterItems: defaultsMigrations,
-    schemaName: 'user.create.json'
+    schemaName: 'user.create.json',
+    versionStamp: true
   })],
   update: [local.hooks.hashPassword(), globalHooks.beforeUpdate({
     alterItems: defaultsMigrations,
-    schemaName: 'user.update.json'
+    schemaName: 'user.update.json',
+    versionStamp: true
   }), ({
     data,
     params
@@ -57,7 +59,8 @@ exports.before = {
     params.currentPassword = getByDot(data, PATCH_CURRENT_PASSWORD);
   }, globalHooks.beforePatch({
     alterItems: rec => deleteByDot(rec, PATCH_CURRENT_PASSWORD),
-    schemaName: 'user.patch.json'
+    schemaName: 'user.patch.json',
+    versionStamp: true
   }), async ({
     data,
     params

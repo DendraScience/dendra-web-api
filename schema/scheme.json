@@ -44,7 +44,8 @@
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
     "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
     "url": {"$ref": "#/definitions/url"},
-    "version": {"$ref": "#/definitions/version"}
+    "version": {"$ref": "#/definitions/version"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"}
   },
   "required": [
     "_id",

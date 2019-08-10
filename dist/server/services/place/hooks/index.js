@@ -20,11 +20,13 @@ exports.before = {
   get: globalHooks.beforeGet(),
   create: globalHooks.beforeCreate({
     alterItems: defaultsMigrations,
-    schemaName: 'place.create.json'
+    schemaName: 'place.create.json',
+    versionStamp: true
   }),
   update: [globalHooks.beforeUpdate({
     alterItems: defaultsMigrations,
-    schemaName: 'place.update.json'
+    schemaName: 'place.update.json',
+    versionStamp: true
   }), ({
     data,
     params
@@ -35,7 +37,8 @@ exports.before = {
     }
   }],
   patch: globalHooks.beforePatch({
-    schemaName: 'place.patch.json'
+    schemaName: 'place.patch.json',
+    versionStamp: true
   }),
   remove: globalHooks.beforeRemove()
 };
