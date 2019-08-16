@@ -105,11 +105,13 @@ const membershipRulesByRole = {
 
     can(['access', 'create', 'patch'], 'stations', {
       organization_id: membership.organization_id
-    }); // Datastreams
+    });
+    can('assign', 'stations'); // Datastreams
 
     can(['access', 'create', 'patch', 'graph', 'download'], 'datastreams', {
       organization_id: membership.organization_id
     });
+    can('assign', 'datastreams');
   },
   [MembershipRole.MEMBER]: ({
     can,
