@@ -161,6 +161,9 @@ const stages = [
           '$station.general_config',
           '$general_config'
         ]
+      },
+      station_lookup: {
+        name: '$station.name'
       }
     }
   }

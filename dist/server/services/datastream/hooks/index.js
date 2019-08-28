@@ -135,6 +135,9 @@ const stages = [{
     },
     general_config_resolved: {
       $mergeObjects: [{}, '$organization.general_config', '$station.general_config', '$general_config']
+    },
+    station_lookup: {
+      name: '$station.name'
     }
   }
 }];
