@@ -3,7 +3,7 @@
     "jwt": {
       "algorithm": "HS256",
       "audience": "https://dendra.science",
-      "expiresIn": "1d",
+      "expiresIn": "14d",
       "header": {
         "type": "access"
       },

@@ -38,12 +38,12 @@ const publicRules = ({
       $gte: Visibility.METADATA
     }
   });
-  can('graph', 'datastreams', {
+  can('graph', ['datastreams', 'stations', 'organizations'], {
     'access_levels_resolved.public_level': {
       $gte: Visibility.GRAPH
     }
   });
-  can('download', 'datastreams', {
+  can('download', ['datastreams', 'stations', 'organizations'], {
     'access_levels_resolved.public_level': {
       $gte: Visibility.DOWNLOAD
     }
@@ -94,7 +94,7 @@ const membershipRulesByRole = {
     membership
   }) => {
     // Organizations
-    can('access', 'organizations', {
+    can(['access', 'graph', 'download'], 'organizations', {
       _id: membership.organization_id
     }); // Annotations
 
@@ -103,7 +103,7 @@ const membershipRulesByRole = {
     });
     can('assign', 'annotations'); // Stations
 
-    can(['access', 'create', 'patch'], 'stations', {
+    can(['access', 'create', 'patch', 'graph', 'download'], 'stations', {
       organization_id: membership.organization_id
     });
     can('assign', 'stations'); // Datastreams
@@ -123,6 +123,18 @@ const membershipRulesByRole = {
     can('access', 'organizations', {
       'access_levels_resolved.member_level': {
         $gte: Visibility.METADATA
+      },
+      _id: membership.organization_id
+    });
+    can('graph', 'organizations', {
+      'access_levels_resolved.member_level': {
+        $gte: Visibility.GRAPH
+      },
+      _id: membership.organization_id
+    });
+    can('download', 'organizations', {
+      'access_levels_resolved.member_level': {
+        $gte: Visibility.DOWNLOAD
       },
       _id: membership.organization_id
     }); // Annotations
@@ -153,13 +165,13 @@ const membershipRulesByRole = {
       },
       organization_id: membership.organization_id
     });
-    can('graph', 'datastreams', {
+    can('graph', ['datastreams', 'stations'], {
       'access_levels_resolved.member_level': {
         $gte: Visibility.GRAPH
       },
       organization_id: membership.organization_id
     });
-    can('download', 'datastreams', {
+    can('download', ['datastreams', 'stations'], {
       'access_levels_resolved.member_level': {
         $gte: Visibility.DOWNLOAD
       },

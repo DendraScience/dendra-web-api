@@ -11,6 +11,15 @@ module.exports = function(app) {
     after: {
       // TODO: Move to an ability?
       create: iff(context => !context.params.user.is_enabled, disallow())
+    },
+
+    error: {
+      remove: [
+        ({ app, error, params }) => {
+          if (params.authenticated && error.name === 'TokenExpiredError')
+            app.service('users').emit('token-expired')
+        }
+      ]
     }
   })
 }

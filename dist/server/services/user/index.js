@@ -14,6 +14,7 @@ module.exports = function (app) {
     db
   } = metadata;
   app.use('/users', service({
+    events: ['token-expired'],
     Model: db.collection('users'),
     paginate: metadata.paginate,
     whitelist: metadata.whitelist
