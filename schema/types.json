@@ -39,6 +39,19 @@
         {
           "additionalProperties": false,
           "properties": {
+            "evaluate": {
+              "example": "v = (v / 0.254) * 0.1",
+              "type": "string"
+            }
+          },
+          "required": [
+            "evaluate"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "exclude": {
               "const": true,
               "example": true,
@@ -606,6 +619,35 @@
       "minItems": 1,
       "type": "array"
     },
+    "involvedParties": {
+      "description": "A list of involved party role assignments",
+      "example": [
+        {
+          "organization_id": "592f155746a1b867a114e030",
+          "roles": [
+            "contact"
+          ]
+        },
+        {
+          "person_id": "592f155746a1b867a114e040",
+          "roles": [
+            "admin",
+            "contact"
+          ]
+        },
+        {
+          "roles": [
+            "contact"
+          ],
+          "team_id": "592f155746a1b867a114e0c0"
+        }
+      ],
+      "items": {
+        "$ref": "#/definitions/involvedParty"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
     "involvedParty": {
       "description": "An involved party role assignment",
       "oneOf": [
@@ -658,35 +700,6 @@
           "type": "object"
         }
       ]
-    },
-    "involvedParties": {
-      "description": "A list of involved party role assignments",
-      "example": [
-        {
-          "organization_id": "592f155746a1b867a114e030",
-          "roles": [
-            "contact"
-          ]
-        },
-        {
-          "person_id": "592f155746a1b867a114e040",
-          "roles": [
-            "admin",
-            "contact"
-          ]
-        },
-        {
-          "roles": [
-            "contact"
-          ],
-          "team_id": "592f155746a1b867a114e0c0"
-        }
-      ],
-      "items": {
-        "$ref": "#/definitions/involvedParty"
-      },
-      "minItems": 1,
-      "type": "array"
     },
     "isEnabled": {
       "description": "Whether this document is enabled (functional) in the system",
@@ -973,9 +986,9 @@
       "example": "imp"
     },
     "sortValue": {
-      "type": "integer",
       "description": "A numeric value that controls how the document is ordered in lists",
-      "example": 10
+      "example": 10,
+      "type": "integer"
     },
     "stationId": {
       "$ref": "#/definitions/objectId",
