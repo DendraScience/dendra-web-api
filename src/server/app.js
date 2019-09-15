@@ -9,6 +9,7 @@
 const compress = require('compression')
 const cors = require('cors')
 const helmet = require('helmet')
+const qs = require('qs')
 
 const feathers = require('@feathersjs/feathers')
 const configuration = require('@feathersjs/configuration')
@@ -34,6 +35,12 @@ module.exports = async logger => {
   app.configure(configuration())
 
   await databases(app)
+
+  // Fix for big anotation worker queries
+  // SEE: https://github.com/expressjs/body-parser/issues/289
+  app.set('query parser', function(str) {
+    return qs.parse(str, { arrayLimit: 2000 })
+  })
 
   // Feathers setup
   app.use(cors())

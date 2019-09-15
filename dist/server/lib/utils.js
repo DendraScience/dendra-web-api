@@ -27,11 +27,10 @@ const Visibility = {
   METADATA: 1,
   GRAPH: 2,
   DOWNLOAD: 3
-  /**
-   * Simple, promise-based hash generator.
-   */
-
 };
+/**
+ * Simple, promise-based hash generator.
+ */
 
 function asyncHashDigest(data, algorithm = 'sha1', encoding = 'hex') {
   return new Promise(resolve => {
