@@ -218,10 +218,15 @@ async function shouldPatchWithoutError(
   id,
   dataOrFileName
 ) {
+  let beforeDoc
   let retDoc
   let retErr
 
   const data = await getData(dataOrFileName)
+
+  try {
+    beforeDoc = await client.service(servicePath).get(id)
+  } catch (err) {}
 
   try {
     retDoc = await client.service(servicePath).patch(id, data)
@@ -232,6 +237,16 @@ async function shouldPatchWithoutError(
   /* eslint-disable-next-line no-unused-expressions */
   expect(retErr).to.be.undefined
   expect(retDoc).to.have.property('_id')
+
+  if (beforeDoc.updated_at) {
+    expect(retDoc).to.have.property('updated_at')
+    expect(retDoc).to.not.have.property('updated_at', beforeDoc.updated_at)
+  }
+
+  if (beforeDoc.version_id) {
+    expect(retDoc).to.have.property('version_id')
+    expect(retDoc).to.not.have.property('version_id', beforeDoc.version_id)
+  }
 
   return { retDoc, retErr }
 }

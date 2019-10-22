@@ -36,7 +36,13 @@ module.exports = options => {
       restrictToAbility(),
       apiHooks.timestamp(),
       apiHooks.userstamp(),
-      apiHooks.coerce()
+      apiHooks.coerce(),
+      ({ data, params }) => {
+        if (params.before) {
+          data.created_at = params.before.created_at
+          data.created_by = params.before.created_by
+        }
+      }
     ).call(this, context)
 
     return newContext

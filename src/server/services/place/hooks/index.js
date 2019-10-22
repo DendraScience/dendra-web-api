@@ -28,20 +28,11 @@ exports.before = {
     versionStamp: true
   }),
 
-  update: [
-    globalHooks.beforeUpdate({
-      alterItems: defaultsMigrations,
-      schemaName: 'place.update.json',
-      versionStamp: true
-    }),
-
-    ({ data, params }) => {
-      if (params.before) {
-        data.created_at = params.before.created_at
-        data.created_by = params.before.created_by
-      }
-    }
-  ],
+  update: globalHooks.beforeUpdate({
+    alterItems: defaultsMigrations,
+    schemaName: 'place.update.json',
+    versionStamp: true
+  }),
 
   patch: globalHooks.beforePatch({
     schemaName: 'place.patch.json',

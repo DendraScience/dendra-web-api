@@ -13,6 +13,7 @@
         "path": "/properties",
         "value": {
           "$set": {
+            "additionalProperties": false,
             "properties": {
               "abbreviation": {"$ref": "#/definitions/abbreviation"},
               "attributes": {"$ref": "#/definitions/attributes"},
@@ -28,6 +29,7 @@
             "type": "object"
           },
           "$unset": {
+            "additionalProperties": false,
             "properties": {
               "abbreviation": {"$ref": "types.json#/definitions/unset"},
               "attributes": {"$ref": "types.json#/definitions/unset"},

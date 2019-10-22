@@ -41,15 +41,7 @@ exports.before = {
     alterItems: defaultsMigrations,
     schemaName: 'user.update.json',
     versionStamp: true
-  }), ({
-    data,
-    params
-  }) => {
-    if (params.before) {
-      data.created_at = params.before.created_at;
-      data.created_by = params.before.created_by;
-    }
-  }],
+  })],
   patch: [local.hooks.hashPassword({
     passwordField: PATCH_PASSWORD
   }), ({

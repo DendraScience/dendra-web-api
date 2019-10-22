@@ -125,7 +125,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('ys admin should patch with error', function() {
+    it('sys admin should patch with error', function() {
       return helper.shouldPatchWithError(
         clients.sysAdmin,
         servicePath,

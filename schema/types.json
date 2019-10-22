@@ -37,52 +37,76 @@
     "annotationAction": {
       "oneOf": [
         {
-          "additionalProperties": false,
-          "properties": {
-            "evaluate": {
-              "example": "v = (v / 0.254) * 0.1",
-              "type": "string"
-            }
-          },
-          "required": [
-            "evaluate"
-          ],
-          "type": "object"
+          "$ref": "#/definitions/annotationActionAttrib"
         },
         {
-          "additionalProperties": false,
-          "properties": {
-            "exclude": {
-              "const": true,
-              "example": true,
-              "type": "boolean"
-            }
-          },
-          "required": [
-            "exclude"
-          ],
-          "type": "object"
+          "$ref": "#/definitions/annotationActionEvaluate"
         },
         {
-          "additionalProperties": false,
-          "properties": {
-            "flag": {
-              "example": [
-                "X"
-              ],
-              "items": {
-                "type": "string"
-              },
-              "minItems": 1,
-              "type": "array"
-            }
-          },
-          "required": [
-            "flag"
-          ],
-          "type": "object"
+          "$ref": "#/definitions/annotationActionExclude"
+        },
+        {
+          "$ref": "#/definitions/annotationActionFlag"
         }
       ]
+    },
+    "annotationActionAttrib": {
+      "additionalProperties": false,
+      "properties": {
+        "attrib": {
+          "$ref": "#/definitions/datastreamAttributes"
+        }
+      },
+      "required": [
+        "attrib"
+      ],
+      "type": "object"
+    },
+    "annotationActionEvaluate": {
+      "additionalProperties": false,
+      "properties": {
+        "evaluate": {
+          "example": "v = (v / 0.254) * 0.1",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evaluate"
+      ],
+      "type": "object"
+    },
+    "annotationActionExclude": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "const": true,
+          "example": true,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "exclude"
+      ],
+      "type": "object"
+    },
+    "annotationActionFlag": {
+      "additionalProperties": false,
+      "properties": {
+        "flag": {
+          "example": [
+            "X"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "flag"
+      ],
+      "type": "object"
     },
     "annotationActions": {
       "description": "Specific actions to apply against the identified datapoints",
@@ -195,6 +219,13 @@
     "datapointsConfigInstance": {
       "additionalProperties": false,
       "properties": {
+        "actions": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/annotationActionEvaluate"
+            }
+          ]
+        },
         "begins_at": {
           "$ref": "#/definitions/isoDatetimeUTC"
         },

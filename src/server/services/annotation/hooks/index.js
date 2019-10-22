@@ -1,5 +1,5 @@
 const globalHooks = require('../../../hooks')
-const { Visibility } = require('../../../lib/utils')
+const { idRandom, Visibility } = require('../../../lib/utils')
 const _ = require('lodash')
 
 const defaultsMigrations = rec => {
@@ -57,12 +57,12 @@ const dispatchAnnotationBuild = async context => {
 
   if (!connection) return context
 
+  const { _id: id } = context.result
   await connection.app.service('annotation-builds').create({
-    _id: `${method}-${context.result._id}-${now.getTime()}-${Math.floor(
-      Math.random() * 10000
-    )}`,
+    _id: `${method}-${id}-${now.getTime()}-${idRandom}`,
     method,
     dispatch_at: now,
+    dispatch_key: id,
     expires_at: new Date(now.getTime() + 86400000), // 24 hours from now
     spec: {
       annotation: context.result,
@@ -95,20 +95,11 @@ exports.before = {
     versionStamp: true
   }),
 
-  update: [
-    globalHooks.beforeUpdate({
-      alterItems: defaultsMigrations,
-      schemaName: 'annotation.update.json',
-      versionStamp: true
-    }),
-
-    ({ data, params }) => {
-      if (params.before) {
-        data.created_at = params.before.created_at
-        data.created_by = params.before.created_by
-      }
-    }
-  ],
+  update: globalHooks.beforeUpdate({
+    alterItems: defaultsMigrations,
+    schemaName: 'annotation.update.json',
+    versionStamp: true
+  }),
 
   patch: globalHooks.beforePatch({
     schemaName: 'annotation.patch.json',

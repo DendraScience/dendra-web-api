@@ -13,6 +13,7 @@
         "path": "/properties",
         "value": {
           "$set": {
+            "additionalProperties": false,
             "properties": {
               "convertible_to_uom_ids": {"$ref": "#/definitions/convertible_to_uom_ids"},
               "library_config": {"$ref": "#/definitions/library_config"},
@@ -21,6 +22,7 @@
             "type": "object"
           },
           "$unset": {
+            "additionalProperties": false,
             "properties": {
               "convertible_to_uom_ids": {"$ref": "types.json#/definitions/unset"},
               "library_config": {"$ref": "types.json#/definitions/unset"},

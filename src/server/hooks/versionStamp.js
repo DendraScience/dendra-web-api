@@ -12,9 +12,16 @@ module.exports = () => {
     let items = getItems(context)
     if (!Array.isArray(items)) items = [items]
 
-    items.forEach(item => {
-      item.version_id = new ObjectID()
-    })
+    if (context.method === 'patch') {
+      items.forEach(item => {
+        if (!item.$set) item.$set = {}
+        item.$set.version_id = new ObjectID()
+      })
+    } else {
+      items.forEach(item => {
+        item.version_id = new ObjectID()
+      })
+    }
 
     return context
   }

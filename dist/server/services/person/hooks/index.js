@@ -23,19 +23,11 @@ exports.before = {
     schemaName: 'person.create.json',
     versionStamp: true
   }),
-  update: [globalHooks.beforeUpdate({
+  update: globalHooks.beforeUpdate({
     alterItems: defaultsMigrations,
     schemaName: 'person.update.json',
     versionStamp: true
-  }), ({
-    data,
-    params
-  }) => {
-    if (params.before) {
-      data.created_at = params.before.created_at;
-      data.created_by = params.before.created_by;
-    }
-  }],
+  }),
   patch: globalHooks.beforePatch({
     schemaName: 'person.patch.json',
     versionStamp: true

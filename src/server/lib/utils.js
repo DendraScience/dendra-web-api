@@ -72,6 +72,13 @@ function annotHelpers({ actions, annotationIds }) {
 }
 
 /**
+ * Returns a random value for id generation.
+ */
+function idRandom() {
+  return Math.floor(Math.random() * 10000)
+}
+
+/**
  * Returns a key and value formatter for 'compact' JSON timeseries data.
  */
 function tKeyVal({ local, t_int: tInt, t_local: tLocal }) {
@@ -106,6 +113,7 @@ function tKeyVal({ local, t_int: tInt, t_local: tLocal }) {
 module.exports = {
   annotHelpers,
   asyncHashDigest,
+  idRandom,
   isDev,
   isProd,
   tKeyVal,

@@ -13,6 +13,7 @@
         "path": "/properties",
         "value": {
           "$set": {
+            "additionalProperties": false,
             "properties": {
               "build_at": {"$ref": "#/definitions/build_at"},
               "build_every": {"$ref": "#/definitions/build_every"},
@@ -24,6 +25,7 @@
             "type": "object"
           },
           "$unset": {
+            "additionalProperties": false,
             "properties": {
               "build_at": {"$ref": "types.json#/definitions/unset"},
               "build_every": {"$ref": "types.json#/definitions/unset"},

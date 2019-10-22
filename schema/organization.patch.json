@@ -13,6 +13,7 @@
         "path": "/properties",
         "value": {
           "$set": {
+            "additionalProperties": false,
             "properties": {
               "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
               "description": {"$ref": "#/definitions/description"},
@@ -28,6 +29,7 @@
             "type": "object"
           },
           "$unset": {
+            "additionalProperties": false,
             "properties": {
               "access_levels": {"$ref": "types.json#/definitions/unset"},
               "description": {"$ref": "types.json#/definitions/unset"},

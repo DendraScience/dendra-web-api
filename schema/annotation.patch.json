@@ -13,6 +13,7 @@
         "path": "/properties",
         "value": {
           "$set": {
+            "additionalProperties": false,
             "properties": {
               "actions": {"$ref": "types.json#/definitions/annotationActions"},
               "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
@@ -28,6 +29,7 @@
             "type": "object"
           },
           "$unset": {
+            "additionalProperties": false,
             "properties": {
               "actions": {"$ref": "types.json#/definitions/unset"},
               "datastream_ids": {"$ref": "types.json#/definitions/unset"},

@@ -5,13 +5,14 @@ const errors = require('@feathersjs/errors');
 const globalHooks = require('../../../hooks');
 
 const {
+  idRandom,
   Visibility
 } = require('../../../lib/utils');
 
 const _ = require('lodash');
 
 const defaultsMigrations = rec => {
-  let terms; // Convert 1.x tags array to 2.x terms object
+  let terms = {}; // Convert 1.x tags array to 2.x terms object
 
   if (Array.isArray(rec.tags)) {
     terms = rec.tags.reduce((obj, tag) => {
@@ -147,10 +148,14 @@ const dispatchAnnotationBuild = async context => {
   const method = 'assembleDatapointsConfig';
   const connection = context.app.get('connections').annotationDispatch;
   if (!connection) return context;
+  const {
+    _id: id
+  } = context.result;
   await connection.app.service('annotation-builds').create({
-    _id: `${method}-${context.result._id}-${now.getTime()}-${Math.floor(Math.random() * 10000)}`,
+    _id: `${method}-${id}-${now.getTime()}-${idRandom}`,
     method,
     dispatch_at: now,
+    dispatch_key: id,
     expires_at: new Date(now.getTime() + 86400000),
     // 24 hours from now
     spec: {
@@ -160,7 +165,31 @@ const dispatchAnnotationBuild = async context => {
   return context;
 };
 
-const dispatchAnnotationBuildKeys = ['datapoints_config', 'is_enabled', 'source_type', 'station_ids'];
+const dispatchAnnotationBuildKeys = ['attributes', 'datapoints_config', 'is_enabled', 'source_type', 'station_ids'];
+
+const dispatchDerivedBuild = async context => {
+  const now = new Date();
+  const method = 'processDatastream';
+  const connection = context.app.get('connections').derivedDispatch;
+  if (!connection) return context;
+  const {
+    _id: id
+  } = context.result;
+  await connection.app.service('derived-builds').create({
+    _id: `${method}-${id}-${now.getTime()}-${idRandom}`,
+    method,
+    dispatch_at: now,
+    dispatch_key: id,
+    expires_at: new Date(now.getTime() + 86400000),
+    // 24 hours from now
+    spec: {
+      datastream: context.result
+    }
+  });
+  return context;
+};
+
+const dispatchDerivedBuildKeys = ['datapoints_config_built'];
 exports.before = {
   // all: [],
   find: [globalHooks.beforeFind(), globalHooks.accessFind(stages.concat({
@@ -186,15 +215,7 @@ exports.before = {
     alterItems: defaultsMigrations,
     schemaName: 'datastream.update.json',
     versionStamp: true
-  }), ({
-    data,
-    params
-  }) => {
-    if (params.before) {
-      data.created_at = params.before.created_at;
-      data.created_by = params.before.created_by;
-    }
-  }, setTermsInfo],
+  }), setTermsInfo],
   patch: [globalHooks.beforePatch({
     schemaName: 'datastream.patch.json',
     versionStamp: true
@@ -207,8 +228,10 @@ exports.after = {
   // get: [],
   create: dispatchAnnotationBuild,
   update: dispatchAnnotationBuild,
-  patch: context => {
+  patch: [context => {
     if (context.data.$set && _.intersection(dispatchAnnotationBuildKeys, Object.keys(context.data.$set)).length || context.data.$unset && _.intersection(dispatchAnnotationBuildKeys, Object.keys(context.data.$unset)).length) return dispatchAnnotationBuild(context);
-  } // remove: []
+  }, context => {
+    if (context.data.$set && _.intersection(dispatchDerivedBuildKeys, Object.keys(context.data.$set)).length || context.data.$unset && _.intersection(dispatchDerivedBuildKeys, Object.keys(context.data.$unset)).length) return dispatchDerivedBuild(context);
+  }] // remove: []
 
 };

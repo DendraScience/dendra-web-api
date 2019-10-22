@@ -22,7 +22,15 @@ const versionStamp = require('./versionStamp');
 
 module.exports = options => {
   return async context => {
-    const newContext = await combine(auth.hooks.authenticate('jwt'), alterItems(options.alterItems), discard('_include', 'created_at', 'created_by', 'datastream', 'hashes', 'organization', 'station', 'updated_at', 'updated_by', 'version_id'), validateSchema(options.schemaName, ajv), iff(() => options.versionStamp, versionStamp()), setAbility(), restrictToAbility(), apiHooks.timestamp(), apiHooks.userstamp(), apiHooks.coerce()).call(void 0, context);
+    const newContext = await combine(auth.hooks.authenticate('jwt'), alterItems(options.alterItems), discard('_include', 'created_at', 'created_by', 'datastream', 'hashes', 'organization', 'station', 'updated_at', 'updated_by', 'version_id'), validateSchema(options.schemaName, ajv), iff(() => options.versionStamp, versionStamp()), setAbility(), restrictToAbility(), apiHooks.timestamp(), apiHooks.userstamp(), apiHooks.coerce(), ({
+      data,
+      params
+    }) => {
+      if (params.before) {
+        data.created_at = params.before.created_at;
+        data.created_by = params.before.created_by;
+      }
+    }).call(void 0, context);
     return newContext;
   };
 };

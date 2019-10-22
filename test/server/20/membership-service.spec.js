@@ -121,6 +121,16 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
+    it('sys admin should patch bad data with error', function() {
+      return helper.shouldPatchWithError(
+        clients.sysAdmin,
+        servicePath,
+        id.doc,
+        'bad.patch',
+        'BadRequest'
+      )
+    })
+
     it('sys admin should patch without error', function() {
       return helper
         .shouldPatchWithoutError(

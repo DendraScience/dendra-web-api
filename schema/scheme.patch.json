@@ -13,6 +13,7 @@
         "path": "/properties",
         "value": {
           "$set": {
+            "additionalProperties": false,
             "properties": {
               "description": {"$ref": "#/definitions/description"},
               "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
@@ -24,6 +25,7 @@
             "type": "object"
           },
           "$unset": {
+            "additionalProperties": false,
             "properties": {
               "description": {"$ref": "types.json#/definitions/unset"},
               "priority": {"$ref": "types.json#/definitions/unset"},

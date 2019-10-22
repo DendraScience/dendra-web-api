@@ -13,6 +13,7 @@
         "path": "/properties",
         "value": {
           "$set": {
+            "additionalProperties": false,
             "properties": {
               "email": {"$ref": "#/definitions/email"},
               "full_name": {"$ref": "#/definitions/full_name"},
@@ -26,6 +27,7 @@
             "type": "object"
           },
           "$unset": {
+            "additionalProperties": false,
             "properties": {
               "full_name": {"$ref": "types.json#/definitions/unset"},
               "person_id": {"$ref": "types.json#/definitions/unset"},

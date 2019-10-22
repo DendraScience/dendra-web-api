@@ -13,12 +13,15 @@
         "path": "/properties",
         "value": {
           "$set": {
+            "additionalProperties": false,
             "properties": {
               "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
               "attributes": {"$ref": "types.json#/definitions/datastreamAttributes"},
+              "attributes_built": {"$ref": "#/definitions/attributes_built"},
               "datapoints_config": {"$ref": "types.json#/definitions/datapointsConfig"},
               "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"},
               "derivation_description": {"$ref": "#/definitions/derivation_description"},
+              "derivation_method": {"$ref": "#/definitions/derivation_method"},
               "derived_from_datastream_ids": {"$ref": "#/definitions/derived_from_datastream_ids"},
               "description": {"$ref": "#/definitions/description"},
               "external_refs": {"$ref": "#/definitions/external_refs"},
@@ -42,12 +45,15 @@
             "type": "object"
           },
           "$unset": {
+            "additionalProperties": false,
             "properties": {
               "access_levels": {"$ref": "types.json#/definitions/unset"},
               "attributes": {"$ref": "types.json#/definitions/unset"},
+              "attributes_built": {"$ref": "types.json#/definitions/unset"},
               "datapoints_config": {"$ref": "types.json#/definitions/unset"},
               "datapoints_config_built": {"$ref": "types.json#/definitions/unset"},
               "derivation_description": {"$ref": "types.json#/definitions/unset"},
+              "derivation_method": {"$ref": "types.json#/definitions/unset"},
               "derived_from_datastream_ids": {"$ref": "types.json#/definitions/unset"},
               "description": {"$ref": "types.json#/definitions/unset"},
               "external_refs": {"$ref": "types.json#/definitions/unset"},

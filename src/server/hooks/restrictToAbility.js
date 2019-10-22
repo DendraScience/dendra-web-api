@@ -82,16 +82,19 @@ module.exports = () => {
       /*
         Refactor the patch to use only allowed fields.
        */
-      context.data = {}
+      const newData = (context.data = {})
 
-      if (allowedData.$set) context.data.$set = allowedData.$set
-      if (allowedData.$unset) context.data.$unset = allowedData.$unset
+      if (allowedData.$set) {
+        newData.$set = allowedData.$set
 
-      // Ensure that patching is consistent
-      if (before.version_id && data.version_id)
-        params.query = Object.assign({}, params.query, {
-          version_id: { $in: [before.version_id, data.version_id] }
-        })
+        // Ensure that patching is consistent
+        if (before.version_id && newData.$set.version_id)
+          params.query = Object.assign({}, params.query, {
+            version_id: { $in: [before.version_id, newData.$set.version_id] }
+          })
+      }
+
+      if (allowedData.$unset) newData.$unset = allowedData.$unset
     }
 
     params.before = before

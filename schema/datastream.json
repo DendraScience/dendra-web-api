@@ -9,18 +9,12 @@
       "$ref": "types.json#/definitions/datastreamId"
     },
     "attributes_built": {
-      "type": "object",
       "description": "System generated attributes for the datastream",
-      "example": {
-        "height": {
-          "sort": {
-            "value1": 10,
-            "value2": 0
-          },
-          "text": "10",
-          "unit_tag": "dt_Unit_Meter",
-          "value": 10
-        }
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "example": {}
       }
     },
     "datapoints_config_built": {
@@ -35,6 +29,10 @@
     "derivation_description": {
       "type": "string",
       "example": "Calculated server-side based on the Celsius datastream."
+    },
+    "derivation_method": {
+      "type": "string",
+      "example": "deriveWYTotal"
     },
     "derived_from_datastream_ids": {
       "type": "array",
@@ -153,6 +151,7 @@
     "datapoints_config": {"$ref": "types.json#/definitions/datapointsConfig"},
     "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"},
     "derivation_description": {"$ref": "#/definitions/derivation_description"},
+    "derivation_method": {"$ref": "#/definitions/derivation_method"},
     "derived_from_datastream_ids": {"$ref": "#/definitions/derived_from_datastream_ids"},
     "description": {"$ref": "#/definitions/description"},
     "external_refs": {"$ref": "#/definitions/external_refs"},
@@ -197,9 +196,11 @@
         "properties": {
           "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
           "attributes": {"$ref": "types.json#/definitions/datastreamAttributes"},
+          "attributes_built": {"$ref": "#/definitions/attributes_built"},
           "datapoints_config": {"$ref": "types.json#/definitions/datapointsConfig"},
           "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"},
           "derivation_description": {"$ref": "#/definitions/derivation_description"},
+          "derivation_method": {"$ref": "#/definitions/derivation_method"},
           "derived_from_datastream_ids": {"$ref": "#/definitions/derived_from_datastream_ids"},
           "description": {"$ref": "#/definitions/description"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
@@ -241,9 +242,11 @@
         "properties": {
           "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
           "attributes": {"$ref": "types.json#/definitions/datastreamAttributes"},
+          "attributes_built": {"$ref": "#/definitions/attributes_built"},
           "datapoints_config": {"$ref": "types.json#/definitions/datapointsConfig"},
           "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"},
           "derivation_description": {"$ref": "#/definitions/derivation_description"},
+          "derivation_method": {"$ref": "#/definitions/derivation_method"},
           "derived_from_datastream_ids": {"$ref": "#/definitions/derived_from_datastream_ids"},
           "description": {"$ref": "#/definitions/description"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
@@ -279,9 +282,11 @@
           "_id": {"$ref": "#/definitions/_id"},
           "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
           "attributes": {"$ref": "types.json#/definitions/datastreamAttributes"},
+          "attributes_built": {"$ref": "#/definitions/attributes_built"},
           "datapoints_config": {"$ref": "types.json#/definitions/datapointsConfig"},
           "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"},
           "derivation_description": {"$ref": "#/definitions/derivation_description"},
+          "derivation_method": {"$ref": "#/definitions/derivation_method"},
           "derived_from_datastream_ids": {"$ref": "#/definitions/derived_from_datastream_ids"},
           "description": {"$ref": "#/definitions/description"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
