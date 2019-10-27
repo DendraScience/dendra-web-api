@@ -42,6 +42,7 @@ const defaultsMigrations = rec => {
   delete rec.general_config_resolved
   delete rec.members
   delete rec.preferred_uoms
+  delete rec.station_lookup
   delete rec.tags
   delete rec.tags_info
   delete rec.terms_info

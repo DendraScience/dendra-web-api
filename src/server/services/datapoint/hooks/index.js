@@ -1,7 +1,7 @@
 const apiHooks = require('@dendra-science/api-hooks-common')
 const auth = require('@feathersjs/authentication')
 const errors = require('@feathersjs/errors')
-const { disallow, iff } = require('feathers-hooks-common')
+const { disallow, iff, iffElse } = require('feathers-hooks-common')
 const { treeMap } = require('@dendra-science/utils')
 
 const setAbility = require('../../../hooks/setAbility')
@@ -16,7 +16,16 @@ exports.before = {
       auth.hooks.authenticate('jwt')
     ),
     setAbility(),
-    apiHooks.coerceQuery(),
+    apiHooks.coerceQuery({
+      bool: true,
+      id: true,
+      num: true
+    }),
+    iffElse(
+      context => context.params.query && context.params.query.time_local,
+      apiHooks.coerceQuery({ naive: true }),
+      apiHooks.coerceQuery({ utc: true })
+    ),
 
     async ({ app, params }) => {
       if (!params.query) throw new errors.BadRequest('Expected query.')
@@ -48,25 +57,40 @@ exports.before = {
         )
       }
 
-      // Eval 'time_local' query field
-      if (typeof query.time === 'object' && query.time_local) {
-        if (!datastream.station_id)
-          throw new errors.BadRequest(
-            'No datastream.station_id defined to allow query.time_local.'
-          )
+      // Eval 'time' query fields
+      if (query.time) {
+        if (typeof query.time !== 'object')
+          throw new errors.BadRequest('Invalid time parameter.')
 
-        const station = await app
-          .service('stations')
-          .get(datastream.station_id, { provider: null })
+        if (query.time_local) {
+          if (!datastream.station_id)
+            throw new errors.BadRequest(
+              'No datastream.station_id defined to allow query.time_local.'
+            )
 
-        // Convert station time to UTC for downstream use
-        const offset = station.utc_offset | 0
-        query.time = treeMap(query.time, obj => {
-          // Only map values that were coerced, i.e. in the correct format
-          if (obj instanceof Date)
-            return new Date(obj.getTime() - offset * 1000)
-          return obj
-        })
+          const station = await app
+            .service('stations')
+            .get(datastream.station_id, { provider: null })
+
+          // Convert local time to UTC for downstream use
+          const ms = (station.utc_offset | 0) * 1000
+          query.time = treeMap(query.time, obj => {
+            // Only permit date strings that were coerced
+            if (typeof obj === 'string')
+              throw new errors.BadRequest('Invalid local time format.')
+            if (typeof obj === 'number') return new Date(obj - ms)
+            if (obj instanceof Date) return new Date(obj.getTime() - ms)
+            return obj
+          })
+        } else {
+          query.time = treeMap(query.time, obj => {
+            // Only permit date strings that were coerced
+            if (typeof obj === 'string')
+              throw new errors.BadRequest('Invalid time format.')
+            if (typeof obj === 'number') return new Date(obj)
+            return obj
+          })
+        }
       }
 
       params.datastream = datastream

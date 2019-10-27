@@ -1,16 +1,16 @@
 const apiHooks = require('@dendra-science/api-hooks-common')
 const { disallow, iff } = require('feathers-hooks-common')
-const { annotHelpers, isProd, tKeyVal } = require('../../../lib/utils')
+const { annotHelpers, isProd, timeHelpers } = require('../../../lib/utils')
 const { treeMap } = require('@dendra-science/utils')
 const _ = require('lodash')
 
 /**
  * Timeseries services must:
- *   Support a 'compact' query parameter
- *   Support a 'time[]' query parameter with operators $gt, $gte, $lt and $lte
- *   Support a 'time[]' query parameter in simplified extended ISO format (ISO 8601)
- *   Support a '$sort[time]' query parameter
- *   Return a 't' or 'lt' field based on the query parameters t_int and t_local
+ *   Support the 'compact' query parameter
+ *   Support the 'time[]' query parameter with operators $gt, $gte, $lt and $lte
+ *   Support the 'time[]' query parameter in simplified extended ISO format (ISO 8601)
+ *   Support the '$sort[time]' query parameter
+ *   Support the 't_int' and 't_local' query parameters
  */
 
 exports.before = {
@@ -80,8 +80,9 @@ exports.after = {
 
     if (!savedQuery.compact) return
 
-    const t = tKeyVal(savedQuery)
-    const h = annotHelpers(params)
+    const { coalesce, t_local: tLocal } = savedQuery
+    const { lt, t } = timeHelpers(params)
+    const { code, q } = annotHelpers(params)
 
     const firstSeries = result.series && result.series[0]
     const columns = firstSeries ? firstSeries.columns : []
@@ -101,7 +102,7 @@ exports.after = {
         : value => value[utcOffsetIndex] || utcOffset
 
     const setData =
-      savedQuery.coalesce || colsMap.size === 1 // TODO: Revisit this
+      coalesce || colsMap.size === 1 // TODO: Revisit this
         ? (item, value) => {
             for (let [, i] of colsMap) {
               if (value[i] !== null) {
@@ -120,21 +121,28 @@ exports.after = {
     // Reformat results asynchronously; 20 items at a time (hardcoded)
     for (let i = 0; i < values.length; i++) {
       const value = values[i]
+      const dt = new Date(value[timeIndex])
       const offset = getOffset(value)
+      const ms = offset * 1000
 
-      const item = {
-        [t.key]: t.val(new Date(value[timeIndex]), offset * 1000),
-        o: offset
-      }
+      const item = tLocal
+        ? {
+            lt: lt(dt, ms),
+            o: offset
+          }
+        : {
+            lt: lt(dt, ms),
+            t: t(dt, ms)
+          }
 
       setData(item, value)
 
-      if (h.code) {
+      if (code) {
         try {
-          h.code.evaluate(item)
+          code.evaluate(item)
         } catch (_) {}
       }
-      if (h.q) item.q = h.q
+      if (q) item.q = q
 
       values[i] = item
 

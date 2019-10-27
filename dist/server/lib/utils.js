@@ -9,7 +9,7 @@
  */
 const crypto = require('crypto');
 
-const math = require('mathjs');
+const math = require('./math');
 
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = !isProd;
@@ -40,6 +40,14 @@ function asyncHashDigest(data, algorithm = 'sha1', encoding = 'hex') {
   });
 }
 /**
+ * Returns a random value for id generation.
+ */
+
+
+function idRandom() {
+  return Math.floor(Math.random() * 10000);
+}
+/**
  * Returns annotation helpers for 'compact' JSON timeseries data.
  */
 
@@ -49,14 +57,13 @@ function annotHelpers({
   annotationIds
 }) {
   let code;
+  let q;
 
   if (actions && actions.evaluate) {
     try {
       code = math.compile(actions.evaluate);
     } catch (_) {}
   }
-
-  let q;
 
   if (annotationIds) {
     q = {
@@ -75,47 +82,31 @@ function annotHelpers({
   };
 }
 /**
- * Returns a random value for id generation.
+ * Returns time helpers for 'compact' JSON timeseries data.
  */
 
 
-function idRandom() {
-  return Math.floor(Math.random() * 10000);
-}
-/**
- * Returns a key and value formatter for 'compact' JSON timeseries data.
- */
-
-
-function tKeyVal({
-  local,
-  t_int: tInt,
-  t_local: tLocal
+function timeHelpers({
+  savedQuery
 }) {
-  let key;
-  let val;
+  const {
+    local,
+    t_int: tInt
+  } = savedQuery;
+  let lt;
+  let t;
 
-  if (tLocal) {
-    key = 'lt';
-
-    if (local) {
-      val = tInt ? ldt => ldt.getTime() : ldt => ldt;
-    } else {
-      val = tInt ? (udt, ms) => udt.getTime() + ms : (udt, ms) => new Date(udt.getTime() + ms);
-    }
+  if (local) {
+    lt = tInt ? ldt => ldt.getTime() : ldt => ldt.toISOString().substring(0, 23);
+    t = tInt ? (ldt, ms) => ldt.getTime() - ms : (ldt, ms) => new Date(ldt.getTime() - ms);
   } else {
-    key = 't';
-
-    if (local) {
-      val = tInt ? (ldt, ms) => ldt.getTime() - ms : (ldt, ms) => new Date(ldt.getTime() - ms);
-    } else {
-      val = tInt ? udt => udt.getTime() : udt => udt;
-    }
+    lt = tInt ? (udt, ms) => udt.getTime() + ms : (udt, ms) => new Date(udt.getTime() + ms).toISOString().substring(0, 23);
+    t = tInt ? udt => udt.getTime() : udt => udt;
   }
 
   return {
-    key,
-    val
+    lt,
+    t
   };
 }
 
@@ -125,8 +116,8 @@ module.exports = {
   idRandom,
   isDev,
   isProd,
-  tKeyVal,
   MembershipRole,
+  timeHelpers,
   UserRole,
   Visibility
 };

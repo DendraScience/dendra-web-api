@@ -10,7 +10,7 @@ const {
 const {
   annotHelpers,
   isProd,
-  tKeyVal
+  timeHelpers
 } = require('../../../lib/utils');
 
 const {
@@ -20,11 +20,11 @@ const {
 const _ = require('lodash');
 /**
  * Timeseries services must:
- *   Support a 'compact' query parameter
- *   Support a 'time[]' query parameter with operators $gt, $gte, $lt and $lte
- *   Support a 'time[]' query parameter in simplified extended ISO format (ISO 8601)
- *   Support a '$sort[time]' query parameter
- *   Return a 't' or 'lt' field based on the query parameters t_int and t_local
+ *   Support the 'compact' query parameter
+ *   Support the 'time[]' query parameter with operators $gt, $gte, $lt and $lte
+ *   Support the 'time[]' query parameter in simplified extended ISO format (ISO 8601)
+ *   Support the '$sort[time]' query parameter
+ *   Support the 't_int' and 't_local' query parameters
  */
 
 
@@ -75,24 +75,39 @@ exports.after = {
     } = params;
     if (!savedQuery.compact) return;
     savedQuery.local = true;
-    const t = tKeyVal(savedQuery);
-    const h = annotHelpers(params); // Reformat results asynchronously; 20 items at a time (hardcoded)
+    const {
+      t_local: tLocal
+    } = savedQuery;
+    const {
+      lt,
+      t
+    } = timeHelpers(params);
+    const {
+      code,
+      q
+    } = annotHelpers(params); // Reformat results asynchronously; 20 items at a time (hardcoded)
 
     for (let i = 0; i < result.length; i++) {
       let item = result[i];
-      item = {
-        [t.key]: t.val(item.local_date_time, item.utc_offset * 3600000),
+      const ldt = item.local_date_time;
+      const ms = item.utc_offset * 3600000;
+      item = tLocal ? {
+        lt: lt(ldt, ms),
         o: item.utc_offset * 3600,
+        v: item.value
+      } : {
+        lt: lt(ldt, ms),
+        t: t(ldt, ms),
         v: item.value
       };
 
-      if (h.code) {
+      if (code) {
         try {
-          h.code.evaluate(item);
+          code.evaluate(item);
         } catch (_) {}
       }
 
-      if (h.q) item.q = h.q;
+      if (q) item.q = q;
       result[i] = item;
       if (!(i % 20)) await new Promise(resolve => setImmediate(resolve));
     }

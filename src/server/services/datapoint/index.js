@@ -52,11 +52,12 @@ class Service {
     let config = []
 
     if (typeof datastream === 'object') {
-      if (Array.isArray(datastream.datapoints_config_built)) {
-        config = datastream.datapoints_config_built
-      } else if (Array.isArray(datastream.datapoints_config)) {
-        config = datastream.datapoints_config
-      }
+      const hasConfig = Array.isArray(datastream.datapoints_config)
+      const hasBuilt = Array.isArray(datastream.datapoints_config_built)
+
+      if (query.config === 0 && hasConfig) config = datastream.datapoints_config
+      else if (hasBuilt) config = datastream.datapoints_config_built
+      else if (hasConfig) config = datastream.datapoints_config
     }
 
     config
@@ -178,9 +179,9 @@ class Service {
       q.$limit = filters.$limit - result.data.length
       q.$sort = filters.$sort
       q.compact = true
-      if (query.lat) q.lat = query.lat
-      if (query.lon) q.lon = query.lon
-      if (query.lng) q.lng = query.lng
+      if (query.lat !== undefined) q.lat = query.lat
+      if (query.lon !== undefined) q.lon = query.lon
+      if (query.lng !== undefined) q.lng = query.lng
       if (query.t_int) q.t_int = query.t_int
       if (query.t_local) q.t_local = query.t_local
       q.time = {}
