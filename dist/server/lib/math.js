@@ -10,5 +10,6 @@ module.exports = create({
 }, {
   matrix: 'Array',
   number: 'BigNumber',
-  precision: 32
+  precision: 15 // Hardcoded!
+
 });

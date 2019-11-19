@@ -12,6 +12,9 @@
     "annotationDispatch": {
       "url": "ANNOTATION_DISPATCH_API_URL"
     },
+    "derivedDispatch": {
+      "url": "DERIVED_DISPATCH_API_URL"
+    },
     "noaaNWS": {
       "url": "NOAA_NWS_API_URL"
     }

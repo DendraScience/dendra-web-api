@@ -294,9 +294,10 @@
     "datastreamSourceType": {
       "description": "The specific type of data producing entity",
       "enum": [
+        "deriver",
+        "procedure",
         "sensor",
-        "service",
-        "procedure"
+        "service"
       ],
       "example": "sensor",
       "type": "string"

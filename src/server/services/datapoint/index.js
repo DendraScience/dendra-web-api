@@ -159,7 +159,7 @@ class Service {
       data: []
     }
 
-    for (let inst of config) {
+    for (const inst of config) {
       // Intersect intervals; skip querying if empty
       const interval = queryInterval.intersect(
         new Interval(inst.beginsAt, inst.endsBefore, false, true)

@@ -3,11 +3,17 @@
 const globalHooks = require('../../../hooks');
 
 const {
+  iff
+} = require('feathers-hooks-common');
+
+const {
   idRandom,
   Visibility
 } = require('../../../lib/utils');
 
 const _ = require('lodash');
+
+const processAnnotationKeys = ['actions', 'datastream_ids', 'intervals', 'is_enabled', 'state', 'station_ids'];
 
 const defaultsMigrations = rec => {
   _.defaults(rec, {
@@ -19,6 +25,32 @@ const defaultsMigrations = rec => {
 
   delete rec.access_levels_resolved;
   delete rec.enabled;
+};
+
+const dispatchAnnotationBuild = method => {
+  return async context => {
+    const connection = context.app.get('connections').annotationDispatch;
+    if (!(connection && method)) return context;
+    const now = new Date();
+    const before = context.params.before || {};
+    const annotation = context.result;
+    const {
+      _id: id
+    } = annotation;
+    await connection.app.service('annotation-builds').create({
+      _id: `${method}-${id}-${now.getTime()}-${idRandom()}`,
+      method,
+      dispatch_at: now,
+      dispatch_key: id,
+      expires_at: new Date(now.getTime() + 86400000),
+      // 24 hours from now
+      spec: {
+        annotation,
+        annotation_before: before
+      }
+    });
+    return context;
+  };
 };
 
 const stages = [{
@@ -47,31 +79,6 @@ const stages = [{
     organization: false
   }
 }];
-
-const dispatchAnnotationBuild = async context => {
-  const now = new Date();
-  const method = 'processAnnotation';
-  const connection = context.app.get('connections').annotationDispatch;
-  if (!connection) return context;
-  const {
-    _id: id
-  } = context.result;
-  await connection.app.service('annotation-builds').create({
-    _id: `${method}-${id}-${now.getTime()}-${idRandom}`,
-    method,
-    dispatch_at: now,
-    dispatch_key: id,
-    expires_at: new Date(now.getTime() + 86400000),
-    // 24 hours from now
-    spec: {
-      annotation: context.result,
-      annotation_before: context.params.before || {}
-    }
-  });
-  return context;
-};
-
-const dispatchAnnotationBuildKeys = ['actions', 'datastream_ids', 'intervals', 'is_enabled', 'state', 'station_ids'];
 exports.before = {
   // all: [],
   find: [globalHooks.beforeFind(), globalHooks.accessFind(stages)],
@@ -96,10 +103,10 @@ exports.after = {
   // all: [],
   // find: [],
   // get: [],
-  create: dispatchAnnotationBuild,
-  update: dispatchAnnotationBuild,
-  patch: context => {
-    if (context.data.$set && _.intersection(dispatchAnnotationBuildKeys, Object.keys(context.data.$set)).length || context.data.$unset && _.intersection(dispatchAnnotationBuildKeys, Object.keys(context.data.$unset)).length) return dispatchAnnotationBuild(context);
-  },
-  remove: dispatchAnnotationBuild
+  create: dispatchAnnotationBuild('processAnnotation'),
+  update: dispatchAnnotationBuild('processAnnotation'),
+  patch: iff(({
+    data
+  }) => data.$set && _.intersection(processAnnotationKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(processAnnotationKeys, Object.keys(data.$unset)).length, dispatchAnnotationBuild('processAnnotation')),
+  remove: dispatchAnnotationBuild('processAnnotation')
 };

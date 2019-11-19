@@ -83,9 +83,7 @@ exports.before = {
         });
       } else {
         query.time = treeMap(query.time, obj => {
-          /* eslint-disable-next-line no-console */
-          console.log('>>> obj', obj); // Only permit date strings that were coerced
-
+          // Only permit date strings that were coerced
           if (typeof obj === 'string') throw new errors.BadRequest('Invalid time format.');
           if (typeof obj === 'number') return new Date(obj);
           return obj;

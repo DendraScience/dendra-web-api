@@ -5,11 +5,19 @@ const errors = require('@feathersjs/errors');
 const globalHooks = require('../../../hooks');
 
 const {
+  iff
+} = require('feathers-hooks-common');
+
+const {
   idRandom,
   Visibility
 } = require('../../../lib/utils');
 
 const _ = require('lodash');
+
+const assembleDatapointsConfigKeys = ['attributes', 'datapoints_config', 'is_enabled', 'source_type', 'station_ids'];
+const initDerivedDatastreamKeys = ['derivation_method', 'derived_from_datastream_ids', 'is_enabled', 'source_type'];
+const processDatastreamKeys = ['datapoints_config_built'];
 
 const defaultsMigrations = rec => {
   let terms = {}; // Convert 1.x tags array to 2.x terms object
@@ -46,11 +54,60 @@ const defaultsMigrations = rec => {
   delete rec.general_config_resolved;
   delete rec.members;
   delete rec.preferred_uoms;
+  delete rec.station_lookup;
   delete rec.tags;
   delete rec.tags_info;
   delete rec.terms_info;
   delete rec.uom;
   delete rec.urls;
+};
+
+const dispatchAnnotationBuild = method => {
+  return async context => {
+    const connection = context.app.get('connections').annotationDispatch;
+    if (!(connection && method)) return context;
+    const now = new Date();
+    const datastream = context.result;
+    const {
+      _id: id
+    } = datastream;
+    await connection.app.service('annotation-builds').create({
+      _id: `${method}-${id}-${now.getTime()}-${idRandom()}`,
+      method,
+      dispatch_at: now,
+      dispatch_key: id,
+      expires_at: new Date(now.getTime() + 86400000),
+      // 24 hours from now
+      spec: {
+        datastream
+      }
+    });
+    return context;
+  };
+};
+
+const dispatchDerivedBuild = method => {
+  return async context => {
+    const connection = context.app.get('connections').derivedDispatch;
+    if (!(connection && method)) return context;
+    const now = new Date();
+    const datastream = context.result;
+    const {
+      _id: id
+    } = datastream;
+    await connection.app.service('derived-builds').create({
+      _id: `${method}-${id}-${now.getTime()}-${idRandom()}`,
+      method,
+      dispatch_at: now,
+      dispatch_key: id,
+      expires_at: new Date(now.getTime() + 86400000),
+      // 24 hours from now
+      spec: {
+        datastream
+      }
+    });
+    return context;
+  };
 };
 
 const setTermsInfo = async context => {
@@ -142,54 +199,6 @@ const stages = [{
     }
   }
 }];
-
-const dispatchAnnotationBuild = async context => {
-  const now = new Date();
-  const method = 'assembleDatapointsConfig';
-  const connection = context.app.get('connections').annotationDispatch;
-  if (!connection) return context;
-  const {
-    _id: id
-  } = context.result;
-  await connection.app.service('annotation-builds').create({
-    _id: `${method}-${id}-${now.getTime()}-${idRandom}`,
-    method,
-    dispatch_at: now,
-    dispatch_key: id,
-    expires_at: new Date(now.getTime() + 86400000),
-    // 24 hours from now
-    spec: {
-      datastream: context.result
-    }
-  });
-  return context;
-};
-
-const dispatchAnnotationBuildKeys = ['attributes', 'datapoints_config', 'is_enabled', 'source_type', 'station_ids'];
-
-const dispatchDerivedBuild = async context => {
-  const now = new Date();
-  const method = 'processDatastream';
-  const connection = context.app.get('connections').derivedDispatch;
-  if (!connection) return context;
-  const {
-    _id: id
-  } = context.result;
-  await connection.app.service('derived-builds').create({
-    _id: `${method}-${id}-${now.getTime()}-${idRandom}`,
-    method,
-    dispatch_at: now,
-    dispatch_key: id,
-    expires_at: new Date(now.getTime() + 86400000),
-    // 24 hours from now
-    spec: {
-      datastream: context.result
-    }
-  });
-  return context;
-};
-
-const dispatchDerivedBuildKeys = ['datapoints_config_built'];
 exports.before = {
   // all: [],
   find: [globalHooks.beforeFind(), globalHooks.accessFind(stages.concat({
@@ -226,12 +235,17 @@ exports.after = {
   // all: [],
   // find: [],
   // get: [],
-  create: dispatchAnnotationBuild,
-  update: dispatchAnnotationBuild,
-  patch: [context => {
-    if (context.data.$set && _.intersection(dispatchAnnotationBuildKeys, Object.keys(context.data.$set)).length || context.data.$unset && _.intersection(dispatchAnnotationBuildKeys, Object.keys(context.data.$unset)).length) return dispatchAnnotationBuild(context);
-  }, context => {
-    if (context.data.$set && _.intersection(dispatchDerivedBuildKeys, Object.keys(context.data.$set)).length || context.data.$unset && _.intersection(dispatchDerivedBuildKeys, Object.keys(context.data.$unset)).length) return dispatchDerivedBuild(context);
-  }] // remove: []
-
+  create: [iff(context => context.result.source_type === 'sensor', dispatchAnnotationBuild('assembleDatapointsConfig')), iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('initDerivedDatastream'))],
+  update: [iff(context => context.result.source_type === 'sensor', dispatchAnnotationBuild('assembleDatapointsConfig')), iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('initDerivedDatastream'))],
+  patch: [iff(({
+    data,
+    result
+  }) => result.source_type === 'sensor' && (data.$set && _.intersection(assembleDatapointsConfigKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(assembleDatapointsConfigKeys, Object.keys(data.$unset)).length), dispatchAnnotationBuild('assembleDatapointsConfig')), iff(({
+    data,
+    result
+  }) => result.source_type === 'sensor' && (data.$set && _.intersection(processDatastreamKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(processDatastreamKeys, Object.keys(data.$unset)).length), dispatchDerivedBuild('processDatastream')), iff(({
+    data,
+    result
+  }) => result.source_type === 'deriver' && (data.$set && _.intersection(initDerivedDatastreamKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(initDerivedDatastreamKeys, Object.keys(data.$unset)).length), dispatchDerivedBuild('initDerivedDatastream'))],
+  remove: [iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('destroyDerivedDatastream'))]
 };
