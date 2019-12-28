@@ -122,14 +122,16 @@ const setTermsInfo = async context => {
     class_tags: []
   }; // TODO: Implement caching
 
-  const vocabularies = (await context.app.service('vocabularies').find({
-    is_enabled: true,
-    scheme_id: {
-      $in: schemeIds
+  const vocabularies = await context.app.service('vocabularies').find({
+    paginate: false,
+    provider: null,
+    query: {
+      is_enabled: true,
+      scheme_id: {
+        $in: schemeIds
+      }
     }
-  }, {
-    provider: null
-  })).data;
+  });
   schemeIds.forEach(schemeId => {
     const keys = [schemeId];
     const spec = terms[schemeId];

@@ -117,7 +117,7 @@ exports.after = {
       for (const [key, i] of colsMap) {
         item.d[key] = value[i];
       }
-    }; // Reformat results asynchronously; 20 items at a time (hardcoded)
+    }; // Reformat results asynchronously; 24 items at a time (hardcoded)
 
     for (let i = 0; i < values.length; i++) {
       const value = values[i];
@@ -141,7 +141,7 @@ exports.after = {
 
       if (q) item.q = q;
       values[i] = item;
-      if (!(i % 20)) await new Promise(resolve => setImmediate(resolve));
+      if (!(i % 24)) await new Promise(resolve => setImmediate(resolve));
     }
 
     context.result = values;

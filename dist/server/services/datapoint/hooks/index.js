@@ -16,11 +16,15 @@ const {
   treeMap
 } = require('@dendra-science/utils');
 
+const _ = require('lodash');
+
 const setAbility = require('../../../hooks/setAbility');
 
 const {
   TYPE_KEY
 } = require('../../../lib/ability');
+
+const math = require('../../../lib/math');
 
 exports.before = {
   // all: [],
@@ -89,6 +93,36 @@ exports.before = {
           return obj;
         });
       }
+    } // Eval 'uom_id' query field
+
+
+    if (query.uom_id) {
+      // Get target unit of measure
+      const targetUom = await app.service('uoms').get(query.uom_id, {
+        provider: null
+      });
+      if (!(datastream.terms_info && datastream.terms_info.unit_tag)) throw new errors.BadRequest('No datastream.terms_info.unit_tag defined to allow unit conversion.'); // Find source unit of measure based on unit tag
+
+      const unitTag = datastream.terms_info.unit_tag;
+      const uoms = await app.service('uoms').find({
+        paginate: false,
+        provider: null,
+        query: {
+          unit_tags: unitTag,
+          $limit: 1
+        }
+      });
+      if (!uoms.length) throw new errors.BadRequest(`No unit of measure (uom) found for '${unitTag}'.`); // Ensure that we have Math.js library settings
+
+      const sourceUom = uoms[0];
+
+      const sourceUnitName = _.get(sourceUom, 'library_config.mathjs.unit_name');
+
+      const targetUnitName = _.get(targetUom, 'library_config.mathjs.unit_name');
+
+      if (!(sourceUnitName && targetUnitName)) throw new errors.BadRequest('No library_config.mathjs.unit_name defined to allow unit conversion.');
+      params.sourceUnitName = sourceUnitName;
+      params.targetUnitName = targetUnitName;
     }
 
     params.datastream = datastream;
@@ -99,11 +133,31 @@ exports.before = {
   patch: disallow(),
   remove: disallow()
 };
-exports.after = {// all: [],
-  // find: [],
-  // get: [],
+exports.after = {
+  // all: [],
+  find: async ({
+    params,
+    result
+  }) => {
+    const {
+      sourceUnitName,
+      targetUnitName
+    } = params;
+    const {
+      data
+    } = result;
+    if (!(data && sourceUnitName && targetUnitName)) return; // Convert results asynchronously; 24 items at a time (hardcoded)
+
+    for (let i = 0; i < data.length; i++) {
+      const item = data[i];
+      if (typeof item.v === 'number') item.uv = sourceUnitName === targetUnitName // Simulate conversion if the same unit name
+      ? item.v : math.unit(item.v, sourceUnitName).toNumber(targetUnitName);
+      if (!(i % 24)) await new Promise(resolve => setImmediate(resolve));
+    }
+  } // get: [],
   // create: [],
   // update: [],
   // patch: [],
   // remove: []
+
 };

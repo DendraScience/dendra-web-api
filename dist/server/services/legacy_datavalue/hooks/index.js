@@ -85,7 +85,7 @@ exports.after = {
     const {
       code,
       q
-    } = annotHelpers(params); // Reformat results asynchronously; 20 items at a time (hardcoded)
+    } = annotHelpers(params); // Reformat results asynchronously; 24 items at a time (hardcoded)
 
     for (let i = 0; i < result.length; i++) {
       let item = result[i];
@@ -109,7 +109,7 @@ exports.after = {
 
       if (q) item.q = q;
       result[i] = item;
-      if (!(i % 20)) await new Promise(resolve => setImmediate(resolve));
+      if (!(i % 24)) await new Promise(resolve => setImmediate(resolve));
     }
   } // get: [],
   // create: [],
