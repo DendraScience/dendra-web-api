@@ -14,10 +14,8 @@ const hooks = require('./hooks');
  *   fc - from clause (defaults to 'logger_data')
  *   wc - where clause (optional)
  *   gbc - group by clause (optional)
-
  *   $sort[time] - pass (-1) to return the most recent timestamps first
  *   $limit - return the first N points
-
  *   api - config key pointing to an InfluxDB HTTP API (defaults to 'default')
  *   db - database name (required)
  */
@@ -53,7 +51,7 @@ class Service {
     if (typeof wc === 'string') parts.push(`WHERE ${wc}`);
     if (typeof gbc === 'string') parts.push(`GROUP BY ${gbc}`);
     if (sort && sort.time === -1) parts.push('ORDER BY time DESC');
-    if (typeof limit !== 'undefined') parts.push(`LIMIT ${limit | 0}`); // Limited to only one series for now
+    if (limit !== undefined) parts.push(`LIMIT ${limit | 0}`); // Limited to only one series for now
 
     parts.push('SLIMIT 1');
     const q = parts.join(' ');

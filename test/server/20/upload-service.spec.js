@@ -1,25 +1,18 @@
 /**
- * Tests for user service
+ * Tests for upload service
  */
 
-const dataFile = 'demo-user.user'
-const servicePath = 'users'
+const dataFile = 'demo.upload'
+const servicePath = 'uploads'
 
 describe(`Service ${servicePath}`, function() {
-  this.timeout(10000)
-
   const id = {}
 
-  let demoClient
-  let demoUser
-
   const cleanup = async () => {
-    await coll.users.remove({ email: demoUser.email })
+    await coll.uploads.remove()
   }
 
   before(async function() {
-    demoUser = await helper.loadData(dataFile)
-
     await cleanup()
   })
 
@@ -64,59 +57,6 @@ describe(`Service ${servicePath}`, function() {
     })
   })
 
-  describe('auth', function() {
-    it('demo user (disabled) should authenticate with error', async function() {
-      let retApp
-      let retErr
-
-      await coll.users.updateOne(
-        { email: demoUser.email },
-        { $set: { is_enabled: false } }
-      )
-
-      try {
-        retApp = await helper.authenticate({
-          email: demoUser.email,
-          password: demoUser.password
-        })
-      } catch (err) {
-        retErr = err
-      }
-
-      /* eslint-disable-next-line no-unused-expressions */
-      expect(retApp).to.be.undefined
-      expect(retErr).to.have.property(
-        'code',
-        helper.getCode('MethodNotAllowed')
-      )
-    })
-
-    it('demo user (enabled) should authenticate without error', async function() {
-      let retApp
-      let retErr
-
-      await coll.users.updateOne(
-        { email: demoUser.email },
-        { $set: { is_enabled: true } }
-      )
-
-      try {
-        retApp = await helper.authenticate({
-          email: demoUser.email,
-          password: demoUser.password
-        })
-      } catch (err) {
-        retErr = err
-      }
-
-      /* eslint-disable-next-line no-unused-expressions */
-      expect(retErr).to.be.undefined
-      expect(retApp).to.have.property('service')
-
-      demoClient = retApp
-    })
-  })
-
   describe('#get()', function() {
     it('guest should get with error', function() {
       return helper.shouldGetWithError(
@@ -128,11 +68,12 @@ describe(`Service ${servicePath}`, function() {
     })
 
     it('user should get with error', function() {
-      return helper.shouldGetWithoutError(clients.user, servicePath, id.doc)
-    })
-
-    it('demo user should get without error', function() {
-      return helper.shouldGetWithoutError(demoClient, servicePath, id.doc)
+      return helper.shouldGetWithError(
+        clients.user,
+        servicePath,
+        id.doc,
+        'NotFound'
+      )
     })
 
     it('sys admin should get without error', function() {
@@ -146,15 +87,11 @@ describe(`Service ${servicePath}`, function() {
     })
 
     it('user should find without error', function() {
-      return helper.shouldFindWithoutError(clients.user, servicePath, {}, 3)
-    })
-
-    it('demo user should find without error', function() {
-      return helper.shouldFindWithoutError(demoClient, servicePath, {}, 3)
+      return helper.shouldFindWithoutError(clients.user, servicePath, {}, 0)
     })
 
     it('sys admin should find without error', function() {
-      return helper.shouldFindWithoutError(clients.sysAdmin, servicePath, {}, 3)
+      return helper.shouldFindWithoutError(clients.sysAdmin, servicePath)
     })
   })
 
@@ -177,22 +114,6 @@ describe(`Service ${servicePath}`, function() {
         `${dataFile}.patch`,
         'Forbidden'
       )
-    })
-
-    it('demo user should patch without error', function() {
-      return helper
-        .shouldPatchWithoutError(
-          demoClient,
-          servicePath,
-          id.doc,
-          `${dataFile}.patch.demo-user`
-        )
-        .then(({ retDoc }) => {
-          expect(retDoc).to.have.property(
-            'full_name',
-            'Demo User - Patched - Demo User'
-          )
-        })
     })
 
     it('sys admin should patch multiple with error', function() {
@@ -224,7 +145,10 @@ describe(`Service ${servicePath}`, function() {
           `${dataFile}.patch`
         )
         .then(({ retDoc }) => {
-          expect(retDoc).to.have.property('full_name', 'Demo User - Patched')
+          expect(retDoc).to.have.nested.property(
+            'spec.comment',
+            'Demo Upload - Patched'
+          )
         })
     })
   })
@@ -243,16 +167,6 @@ describe(`Service ${servicePath}`, function() {
     it('user should update with error', function() {
       return helper.shouldUpdateWithError(
         clients.user,
-        servicePath,
-        id.doc,
-        `${dataFile}.update`,
-        'Forbidden'
-      )
-    })
-
-    it('demo user should update with error', function() {
-      return helper.shouldUpdateWithError(
-        demoClient,
         servicePath,
         id.doc,
         `${dataFile}.update`,
@@ -279,7 +193,10 @@ describe(`Service ${servicePath}`, function() {
           `${dataFile}.update`
         )
         .then(({ retDoc }) => {
-          expect(retDoc).to.have.property('full_name', 'Demo User - Updated')
+          expect(retDoc).to.have.nested.property(
+            'spec.comment',
+            'Demo Upload - Updated'
+          )
         })
     })
   })
@@ -297,15 +214,6 @@ describe(`Service ${servicePath}`, function() {
     it('user should remove with error', function() {
       return helper.shouldRemoveWithError(
         clients.user,
-        servicePath,
-        id.doc,
-        'Forbidden'
-      )
-    })
-
-    it('demo user should remove with error', function() {
-      return helper.shouldRemoveWithError(
-        demoClient,
         servicePath,
         id.doc,
         'Forbidden'

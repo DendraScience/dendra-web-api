@@ -42,7 +42,8 @@ class Service {
       paginate: this.options.paginate
     });
     const {
-      datastream
+      datastream,
+      queryDepth
     } = params;
     /*
       Efficiently merge config instances in a linear traversal by evaluating each
@@ -104,7 +105,7 @@ class Service {
     }); // Points can only be sorted by 'time' (default DESC)
 
     filters.$sort = {
-      time: typeof filters.$sort === 'object' && typeof filters.$sort.time !== 'undefined' ? filters.$sort.time : -1
+      time: typeof filters.$sort === 'object' && filters.$sort.time !== undefined ? filters.$sort.time : -1
     };
     config = filters.$sort.time === -1 ? stack.reverse() : stack;
     /*
@@ -154,12 +155,14 @@ class Service {
 
       if (result.data.length >= filters.$limit) break;
       const p = Object.assign({}, inst.params1, inst.params2, {
-        provider: null
+        provider: null,
+        queryDepth: queryDepth === undefined ? 1 : queryDepth + 1
       });
       const q = p.query = Object.assign({}, p.query);
       q.$limit = filters.$limit - result.data.length;
       q.$sort = filters.$sort;
       q.compact = true;
+      if (datastream.derived_from_datastream_ids) q.datastream_ids = datastream.derived_from_datastream_ids;
       if (query.lat !== undefined) q.lat = query.lat;
       if (query.lon !== undefined) q.lon = query.lon;
       if (query.lng !== undefined) q.lng = query.lng;

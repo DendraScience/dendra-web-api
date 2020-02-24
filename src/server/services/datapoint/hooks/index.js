@@ -31,14 +31,16 @@ exports.before = {
 
     async ({ app, params }) => {
       if (!params.query) throw new errors.BadRequest('Expected query.')
+      if (params.queryDepth > 3)
+        throw new errors.BadRequest('Query depth exceeded.')
 
-      const { ability, headers, query } = params
+      const { ability, headers, provider, query } = params
       let { datastream } = params
 
       if (!datastream && query.datastream_id) {
         datastream = await app.service('datastreams').get(query.datastream_id, {
-          ability: params.ability,
-          provider: params.provider
+          ability,
+          provider
         })
       }
 
@@ -49,14 +51,18 @@ exports.before = {
       if (!Array.isArray(datastream.datapoints_config))
         throw new errors.GeneralError('Missing datastream.datapoints_config.')
 
-      // HACK: Allow if header is specified
-      const action =
-        headers['dendra-fetch-action'] === 'graph' ? 'graph' : 'download'
-      datastream[TYPE_KEY] = 'datastreams'
-      if (ability.cannot(action, datastream)) {
-        throw new errors.Forbidden(
-          `You are not allowed to ${action} datapoints for the datastream.`
-        )
+      if (provider) {
+        // HACK: Allow if header is specified
+        const action =
+          headers && headers['dendra-fetch-action'] === 'graph'
+            ? 'graph'
+            : 'download'
+        datastream[TYPE_KEY] = 'datastreams'
+        if (ability.cannot(action, datastream)) {
+          throw new errors.Forbidden(
+            `You are not allowed to ${action} datapoints for the datastream.`
+          )
+        }
       }
 
       // Eval 'time' query fields

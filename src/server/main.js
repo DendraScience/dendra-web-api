@@ -32,12 +32,29 @@ process.on('unhandledRejection', err => {
   process.exit(1)
 })
 
-// TODO: Handle SIGTERM gracefully for Docker
-// SEE: http://joseoncode.com/2014/07/21/graceful-shutdown-in-node-dot-js/
 require('./app')(logger)
   .then(app => {
     const port = app.get('port')
     const server = app.listen(port)
+
+    process.on('SIGTERM', () => {
+      // Handle SIGTERM gracefully for Docker
+      // SEE: http://joseoncode.com/2014/07/21/graceful-shutdown-in-node-dot-js/
+
+      new Promise(resolve => server.close(resolve))
+        .then(() => {
+          server.unref()
+
+          const pools = app.get('pools')
+          if (pools)
+            return Promise.all(
+              Object.keys(pools).map(key => pools[key].destroy())
+            )
+        })
+        .then(() => {
+          process.exit(0)
+        })
+    })
 
     return new Promise((resolve, reject) => {
       server.once('error', reject)

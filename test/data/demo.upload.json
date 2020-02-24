@@ -1,0 +1,18 @@
+{
+  "organization_id": "592f155746a1b867a114e030",
+  "result": {
+    "records": 10000
+  },
+  "spec": {
+    "comment": "Demo Upload",
+    "method": "csvStream"
+  },
+  "spec_type": "file/import",
+  "station_id": "58e68cacdf5ce600012602d7",
+  "storage": {
+    "method": "local",
+    "options": {
+      "path": "/"
+    }
+  }
+}

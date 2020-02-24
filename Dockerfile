@@ -1,4 +1,4 @@
-FROM node:10.15.1
+FROM node:12.14
 
 MAINTAINER J. Scott Smith <scott@newleafsolutionsinc.com>
 

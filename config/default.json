@@ -19,14 +19,7 @@
     "secret": "ThYncCxLbjhin7YZBtZgda7nm0KSeT4rM0UsvpCnJXPA6sTVq6NKvsDoHjzyjkMKnB4gKDqsUx8Gg7mYsRbV9Q==",
     "service": "users"
   },
-  "connections": {
-    "aggregateStore": {
-      "url": "http://localhost:3036"
-    },
-    "noaaNWS": {
-      "url": "http://localhost:3032"
-    }
-  },
+  "connections": {},
   "databases": {
     "mongodb": {
       "defaultLogger": {

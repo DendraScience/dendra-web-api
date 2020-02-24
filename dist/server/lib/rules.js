@@ -85,6 +85,10 @@ const membershipRulesByRole = {
 
     can(['access', 'create', 'patch', 'remove'], 'datastreams', {
       organization_id: membership.organization_id
+    }); // Uploads
+
+    can(['create', 'read'], 'uploads', {
+      organization_id: membership.organization_id
     });
   },
   [MembershipRole.CURATOR]: ({
@@ -111,7 +115,11 @@ const membershipRulesByRole = {
     can(['access', 'create', 'patch', 'graph', 'download'], 'datastreams', {
       organization_id: membership.organization_id
     });
-    can('assign', 'datastreams');
+    can('assign', 'datastreams'); // Uploads
+
+    can(['create', 'read'], 'uploads', {
+      organization_id: membership.organization_id
+    });
   },
   [MembershipRole.MEMBER]: ({
     can,

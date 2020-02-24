@@ -15,6 +15,9 @@
     "derivedDispatch": {
       "url": "DERIVED_DISPATCH_API_URL"
     },
+    "fileDispatch": {
+      "url": "FILE_DISPATCH_API_URL"
+    },
     "noaaNWS": {
       "url": "NOAA_NWS_API_URL"
     }
@@ -38,6 +41,9 @@
   "services": {
     "influx_select": {
       "apis": {
+        "chi": {
+          "url": "CHI_INFLUXDB_API_URL"
+        },
         "default": {
           "url": "DEFAULT_INFLUXDB_API_URL"
         },

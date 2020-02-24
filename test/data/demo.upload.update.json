@@ -1,0 +1,22 @@
+{
+  "created_at": "2017-07-21T03:16:36.664Z",
+  "created_by": "592f155746a1b867a114e010",
+  "organization_id": "592f155746a1b867a114e030",
+  "result": {
+    "records": 10000
+  },
+  "spec": {
+    "comment": "Demo Upload - Updated",
+    "method": "csvStream"
+  },
+  "spec_type": "file/import",
+  "station_id": "58e68cacdf5ce600012602d7",
+  "storage": {
+    "method": "local",
+    "options": {
+      "path": "/"
+    }
+  },
+  "updated_at": "2017-07-21T03:16:36.664Z",
+  "updated_by": "592f155746a1b867a114e010"
+}

@@ -13,6 +13,7 @@ module.exports = function(app) {
     'datapoint',
     // 'datastream_lookup', // Route must precede datastream
     'datastream',
+    'dendra_datapoint',
     'influx_select',
     'legacy_datavalue',
     'membership',
@@ -28,6 +29,7 @@ module.exports = function(app) {
     // 'team',
     // 'thing',
     'uom',
+    'upload',
     'user',
     'vocabulary'
   ]

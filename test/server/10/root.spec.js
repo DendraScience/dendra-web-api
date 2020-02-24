@@ -41,6 +41,7 @@ before(async function() {
     'soms',
     'stations',
     'uoms',
+    'uploads',
     'users',
     'vocabularies'
   ].reduce((obj, name) => {
@@ -117,6 +118,10 @@ after(async function() {
     server.close(err => (err ? reject(err) : resolve()))
   )
   server.unref()
+
+  const pools = app.get('pools')
+  if (pools)
+    await Promise.all(Object.keys(pools).map(key => pools[key].destroy()))
 
   await coll.users.remove({ email: testData.rootSysAdmin.email })
   await coll.users.remove({ email: testData.rootUser.email })

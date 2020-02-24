@@ -41,6 +41,8 @@ const services = require('./services');
 
 const channels = require('./channels');
 
+const pools = require('./pools');
+
 module.exports = async logger => {
   const app = express(feathers());
   app.logger = logger; // Configure
@@ -72,6 +74,7 @@ module.exports = async logger => {
   app.configure(schemas);
   app.configure(services);
   app.configure(channels);
+  app.configure(pools);
   app.use(express.notFound());
   app.use(express.errorHandler({
     logger

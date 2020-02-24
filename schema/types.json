@@ -28,12 +28,6 @@
       },
       "type": "object"
     },
-    "aggregateId": {
-      "description": "The unique aggregate identifier",
-      "example": "rollupDatapoints-0C97-4378-F4DA-A1FD-7353-EFBB-B379-9CBD-4B78-1927-44D2-790D-25BA-A086-BCEC-0D93",
-      "maxLength": 120,
-      "type": "string"
-    },
     "annotationAction": {
       "oneOf": [
         {
@@ -127,29 +121,6 @@
     "createdBy": {
       "$ref": "#/definitions/objectId",
       "description": "Identifier of user that created this document"
-    },
-    "cssClasses": {
-      "description": "One or more CSS class names to apply to the entity",
-      "example": [
-        "first-class",
-        "second-class"
-      ],
-      "items": {
-        "type": "string"
-      },
-      "minItems": 1,
-      "type": "array"
-    },
-    "cssStyle": {
-      "description": "One or more CSS style name/value pairs to apply to the entity",
-      "example": {
-        "backgroundColor": "white"
-      },
-      "type": "object"
-    },
-    "dashboardId": {
-      "$ref": "#/definitions/objectId",
-      "example": "592f155746a1b867a114e090"
     },
     "datapointPaginationMeta": {
       "properties": {
@@ -774,6 +745,32 @@
       "maxLength": 50,
       "type": "string"
     },
+    "loadSpec": {
+      "additionalProperties": false,
+      "description": "Specifications for file loading",
+      "properties": {
+        "comment": {
+          "$ref": "#/definitions/description"
+        },
+        "method": {
+          "type": "string"
+        },
+        "notify": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "options": {
+          "$ref": "#/definitions/options"
+        }
+      },
+      "required": [
+        "method"
+      ],
+      "type": "object"
+    },
     "media": {
       "description": "Image and video resources at specific sizes and pixel densities",
       "example": [
@@ -896,6 +893,10 @@
       "pattern": "^[a-fA-F0-9]{24}$",
       "type": "string"
     },
+    "options": {
+      "description": "Key/value pairs to further configure this item",
+      "type": "object"
+    },
     "organizationId": {
       "$ref": "#/definitions/objectId",
       "example": "592f155746a1b867a114e030"
@@ -931,7 +932,7 @@
     },
     "personId": {
       "$ref": "#/definitions/objectId",
-      "example": "592f155746a1b867a114e040"
+      "example": "592f155746a1b867a114e041"
     },
     "placeId": {
       "$ref": "#/definitions/objectId",
@@ -996,6 +997,10 @@
       ],
       "example": 1
     },
+    "result": {
+      "description": "Processing information returned by the system",
+      "type": "object"
+    },
     "roles": {
       "items": {
         "type": "string"
@@ -1025,6 +1030,30 @@
     "stationId": {
       "$ref": "#/definitions/objectId",
       "example": "592f155746a1b867a114e060"
+    },
+    "storageMethod": {
+      "description": "The location where files will be accessed or managed",
+      "enum": [
+        "local"
+      ],
+      "example": "local",
+      "type": "string"
+    },
+    "storageSpec": {
+      "additionalProperties": false,
+      "description": "Storage specifications for file loading",
+      "properties": {
+        "method": {
+          "$ref": "#/definitions/storageMethod"
+        },
+        "options": {
+          "$ref": "#/definitions/options"
+        }
+      },
+      "required": [
+        "method"
+      ],
+      "type": "object"
     },
     "stringId": {
       "description": "The unique document identifier",
@@ -1095,6 +1124,10 @@
     "updatedBy": {
       "$ref": "#/definitions/objectId",
       "description": "Identifier of user that updated this document"
+    },
+    "uploadId": {
+      "$ref": "#/definitions/objectId",
+      "example": "592f155746a1b867a114e0e0"
     },
     "url": {
       "format": "uri",
