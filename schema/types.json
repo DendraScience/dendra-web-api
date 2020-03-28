@@ -580,9 +580,6 @@
             },
             "ends_before": {
               "$ref": "types.json#/definitions/isoDatetimeUTC"
-            },
-            "time_zone": {
-              "$ref": "types.json#/definitions/timeZoneAbbr"
             }
           },
           "required": [
@@ -596,9 +593,6 @@
           "properties": {
             "begins_at": {
               "$ref": "types.json#/definitions/isoDatetimeUTC"
-            },
-            "time_zone": {
-              "$ref": "types.json#/definitions/timeZoneAbbr"
             }
           },
           "required": [
@@ -611,9 +605,6 @@
           "properties": {
             "ends_before": {
               "$ref": "types.json#/definitions/isoDatetimeUTC"
-            },
-            "time_zone": {
-              "$ref": "types.json#/definitions/timeZoneAbbr"
             }
           },
           "required": [
