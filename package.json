@@ -62,6 +62,7 @@
     "lodash": "^4.17.15",
     "mathjs": "^6.6.1",
     "mongodb": "^3.5.5",
+    "mongoose": "^5.9.6",
     "mysql2": "^1.7.0",
     "passport": "^0.4.1",
     "poolifier": "^1.0.0",
