@@ -245,7 +245,6 @@ exports.before = {
     globalHooks.accessFind(
       stages.concat({
         $project: {
-          attributes_built: false,
           datapoints_config_built: false,
           organization: false,
           station: false

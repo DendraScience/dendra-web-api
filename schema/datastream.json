@@ -8,15 +8,6 @@
     "_id": {
       "$ref": "types.json#/definitions/datastreamId"
     },
-    "attributes_built": {
-      "description": "System generated attributes for the datastream",
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "object",
-        "example": {}
-      }
-    },
     "datapoints_config_built": {
       "description": "System generated service configuration for fetching datapoints",
       "type": "array",
@@ -145,7 +136,6 @@
     "_id": {"$ref": "#/definitions/_id"},
     "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
     "attributes": {"$ref": "types.json#/definitions/datastreamAttributes"},
-    "attributes_built": {"$ref": "#/definitions/attributes_built"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
     "created_by": {"$ref": "types.json#/definitions/createdBy"},
     "datapoints_config": {"$ref": "types.json#/definitions/datapointsConfig"},
@@ -196,7 +186,6 @@
         "properties": {
           "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
           "attributes": {"$ref": "types.json#/definitions/datastreamAttributes"},
-          "attributes_built": {"$ref": "#/definitions/attributes_built"},
           "datapoints_config": {"$ref": "types.json#/definitions/datapointsConfig"},
           "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"},
           "derivation_description": {"$ref": "#/definitions/derivation_description"},
@@ -242,7 +231,6 @@
         "properties": {
           "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
           "attributes": {"$ref": "types.json#/definitions/datastreamAttributes"},
-          "attributes_built": {"$ref": "#/definitions/attributes_built"},
           "datapoints_config": {"$ref": "types.json#/definitions/datapointsConfig"},
           "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"},
           "derivation_description": {"$ref": "#/definitions/derivation_description"},
@@ -282,7 +270,6 @@
           "_id": {"$ref": "#/definitions/_id"},
           "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
           "attributes": {"$ref": "types.json#/definitions/datastreamAttributes"},
-          "attributes_built": {"$ref": "#/definitions/attributes_built"},
           "datapoints_config": {"$ref": "types.json#/definitions/datapointsConfig"},
           "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"},
           "derivation_description": {"$ref": "#/definitions/derivation_description"},

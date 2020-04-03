@@ -11,7 +11,6 @@
           "_id": {"$ref": "#/definitions/_id"},
           "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
           "attributes": {"$ref": "types.json#/definitions/datastreamAttributes"},
-          "attributes_built": {"$ref": "#/definitions/attributes_built"},
           "datapoints_config": {"$ref": "types.json#/definitions/datapointsConfig"},
           "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"},
           "derivation_description": {"$ref": "#/definitions/derivation_description"},

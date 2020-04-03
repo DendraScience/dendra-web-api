@@ -16,6 +16,7 @@
             "additionalProperties": false,
             "properties": {
               "actions": {"$ref": "types.json#/definitions/annotationActions"},
+              "affected_station_ids": {"$ref": "#/definitions/station_ids"},
               "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
               "description": {"$ref": "#/definitions/description"},
               "external_refs": {"$ref": "#/definitions/external_refs"},
@@ -32,6 +33,7 @@
             "additionalProperties": false,
             "properties": {
               "actions": {"$ref": "types.json#/definitions/unset"},
+              "affected_station_ids": {"$ref": "types.json#/definitions/unset"},
               "datastream_ids": {"$ref": "types.json#/definitions/unset"},
               "description": {"$ref": "types.json#/definitions/unset"},
               "external_refs": {"$ref": "types.json#/definitions/unset"},

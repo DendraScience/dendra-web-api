@@ -153,38 +153,6 @@
           }
         ]
       }
-    },
-    {
-      "title": "Lookup datapoints",
-      "description": "Find datapoints for up to 100 datastreams based on the query parameters.",
-      "rel": "instances",
-      "href": "datapoints/lookup",
-      "method": "GET",
-      "schema": {
-        "allOf": [
-          {"$ref": "types.json#/definitions/datastreamLookupParameters"},
-          {"$ref": "types.json#/definitions/datapointQueryParameters"}
-        ]
-      },
-      "targetSchema": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "_id": {"$ref": "types.json#/definitions/datastreamId"},
-            "attributes": {"$ref": "types.json#/definitions/datastreamAttributes"},
-            "attributes_built": {"$ref": "types.json#/definitions/datastreamAttributesBuilt"},
-            "source": {"$ref": "types.json#/definitions/datastreamSource"},
-            "station_id": {"$ref": "types.json#/definitions/stationId"},
-            "terms": {"$ref": "types.json#/definitions/datastreamTerms"},
-            "terms_info": {"$ref": "types.json#/definitions/datastreamTermsInfo"},
-            "datapoints": {
-              "type": "array",
-              "items": {"rel": "self"}
-            }
-          }
-        }
-      }
     }
   ]
 }
