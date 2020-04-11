@@ -49,6 +49,7 @@ const defaultsMigrations = rec => {
 
   delete rec.access_levels_resolved;
   delete rec.attributes_info;
+  delete rec.config_built_lookup;
   delete rec.convertible_to_uoms;
   delete rec.enabled;
   delete rec.general_config_resolved;
@@ -196,8 +197,18 @@ const stages = [{
     general_config_resolved: {
       $mergeObjects: [{}, '$organization.general_config', '$station.general_config', '$general_config']
     },
+    config_built_lookup: {
+      first: {
+        $arrayElemAt: ['$datapoints_config_built', 0]
+      },
+      last: {
+        $arrayElemAt: ['$datapoints_config_built', -1]
+      }
+    },
     station_lookup: {
-      name: '$station.name'
+      name: '$station.name',
+      time_zone: '$station.time_zone',
+      utc_offset: '$station.utc_offset'
     }
   }
 }];

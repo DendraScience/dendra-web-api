@@ -77,10 +77,15 @@ exports.before = {
       if (typeof query.time !== 'object') throw new errors.BadRequest('Invalid time parameter.');
 
       if (query.time_local) {
-        if (!datastream.station_id) throw new errors.BadRequest('No datastream.station_id defined to allow query.time_local.');
-        const station = await app.service('stations').get(datastream.station_id, {
-          provider: null
-        }); // Convert local time to UTC for downstream use
+        let station = datastream.station_lookup;
+
+        if (!station) {
+          if (!datastream.station_id) throw new errors.BadRequest('No datastream.station_id defined to allow query.time_local.');
+          station = await app.service('stations').get(datastream.station_id, {
+            provider: null
+          });
+        } // Convert local time to UTC for downstream use
+
 
         const ms = (station.utc_offset | 0) * 1000;
         query.time = treeMap(query.time, obj => {
