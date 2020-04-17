@@ -17,6 +17,7 @@
           "derivation_method": {"$ref": "#/definitions/derivation_method"},
           "derived_from_datastream_ids": {"$ref": "#/definitions/derived_from_datastream_ids"},
           "description": {"$ref": "#/definitions/description"},
+          "extent": {"$ref": "types.json#/definitions/interval"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
           "general_config": {"$ref": "types.json#/definitions/generalConfig"},
           "geo": {"$ref": "types.json#/definitions/geoPoint"},

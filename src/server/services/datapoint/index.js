@@ -1,13 +1,8 @@
 const { filterQuery } = require('@feathersjs/adapter-commons')
 const { Interval } = require('@dendra-science/utils')
+const { mergeConfig, MAX_TIME, MIN_TIME } = require('../../lib/datapoints')
 
 const hooks = require('./hooks')
-
-// Reasonable min and max dates to perform low-level querying
-// NOTE: Didn't use min/max integer since db date conversion could choke
-// NOTE: Revised to be within InfluxDB default dates
-const MIN_TIME = Date.UTC(1800, 1, 2)
-const MAX_TIME = Date.UTC(2200, 1, 2)
 
 /**
  * High-level service that provides a standard facade to retrieve datapoints.
@@ -36,19 +31,14 @@ class Service {
     })
     const { datastream, queryDepth } = params
 
-    /*
-      Efficiently merge config instances in a linear traversal by evaluating each
-      instance's date/time interval [begins_at, ends_before).
+    // Points can only be sorted by 'time' (default DESC)
+    filters.$sort = {
+      time:
+        typeof filters.$sort === 'object' && filters.$sort.time !== undefined
+          ? filters.$sort.time
+          : -1
+    }
 
-      Steps:
-      1. Filter instances based on required fields, enabled, etc.
-      2. Convert begins_at/ends_before to time; deal with nulls
-      3. Sort instances by beginsAt
-      4. Exclude, merge or adjust intervals
-      5. Do a final reorder based on $sort.time
-     */
-
-    const stack = []
     let config = []
 
     if (typeof datastream === 'object') {
@@ -60,69 +50,10 @@ class Service {
       else if (hasConfig) config = datastream.datapoints_config
     }
 
-    config
-      .filter(inst => {
-        return (
-          typeof inst.path === 'string' &&
-          !(inst.actions && inst.actions.exclude === true)
-        )
-      })
-      .map(inst => {
-        const isConn =
-          typeof inst.connection === 'string' &&
-          this.connections[inst.connection]
-        return {
-          connection: isConn ? this.connections[inst.connection] : this,
-          beginsAt:
-            inst.begins_at instanceof Date
-              ? inst.begins_at.getTime()
-              : MIN_TIME,
-          endsBefore:
-            inst.ends_before instanceof Date
-              ? inst.ends_before.getTime()
-              : MAX_TIME,
-          params1: inst.params,
-          params2: isConn
-            ? null
-            : { actions: inst.actions, annotationIds: inst.annotation_ids },
-          path: inst.path
-        }
-      })
-      .sort((a, b) => {
-        if (a.beginsAt < b.beginsAt) return -1
-        if (a.beginsAt > b.beginsAt) return 1
-        return 0
-      })
-      .forEach(inst => {
-        if (inst.endsBefore <= inst.beginsAt) {
-          // Exclude: inverted interval
-        } else if (stack.length === 0) {
-          stack.push(inst) // Init stack
-        } else {
-          const top = stack[stack.length - 1]
-
-          if (inst.beginsAt >= top.endsBefore) {
-            stack.push(inst)
-          } else if (inst.endsBefore <= top.endsBefore) {
-            // Exclude: instance interval is within top interval
-          } else if (inst.beginsAt === top.beginsAt) {
-            stack.pop()
-            stack.push(inst)
-          } else {
-            top.endsBefore = inst.beginsAt
-            stack.push(inst)
-          }
-        }
-      })
-
-    // Points can only be sorted by 'time' (default DESC)
-    filters.$sort = {
-      time:
-        typeof filters.$sort === 'object' && filters.$sort.time !== undefined
-          ? filters.$sort.time
-          : -1
-    }
-    config = filters.$sort.time === -1 ? stack.reverse() : stack
+    config = mergeConfig(config, {
+      reverse: filters.$sort.time === -1,
+      service: this
+    })
 
     /*
       Construct a query interval based on 'time' query field.
