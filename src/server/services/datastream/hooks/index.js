@@ -1,6 +1,7 @@
 const errors = require('@feathersjs/errors')
 const globalHooks = require('../../../hooks')
 const { iff } = require('feathers-hooks-common')
+const { mergeConfig } = require('../../../lib/datapoints')
 const { idRandom, Visibility } = require('../../../lib/utils')
 const _ = require('lodash')
 
@@ -55,7 +56,6 @@ const defaultsMigrations = rec => {
 
   delete rec.access_levels_resolved
   delete rec.attributes_info
-  delete rec.config_built_lookup
   delete rec.convertible_to_uoms
   delete rec.enabled
   delete rec.general_config_resolved
@@ -117,6 +117,22 @@ const dispatchDerivedBuild = method => {
 
     return context
   }
+}
+
+const setExtent = async context => {
+  const data = context.method === 'patch' ? context.data.$set : context.data
+
+  if (!(data && data.datapoints_config_built)) return context
+
+  const config = mergeConfig(data.datapoints_config_built)
+
+  if (config.length)
+    data.extent = {
+      begins_at: new Date(config[0].beginsAt),
+      ends_before: new Date(config[config.length - 1].endsBefore)
+    }
+
+  return context
 }
 
 const setTermsInfo = async context => {
@@ -231,10 +247,6 @@ const stages = [
           '$general_config'
         ]
       },
-      config_built_lookup: {
-        first: { $arrayElemAt: ['$datapoints_config_built', 0] },
-        last: { $arrayElemAt: ['$datapoints_config_built', -1] }
-      },
       station_lookup: {
         name: '$station.name',
         time_zone: '$station.time_zone',
@@ -279,6 +291,7 @@ exports.before = {
       versionStamp: true
     }),
 
+    setExtent,
     setTermsInfo
   ],
 
@@ -289,6 +302,7 @@ exports.before = {
       versionStamp: true
     }),
 
+    setExtent,
     setTermsInfo
   ],
 
@@ -298,6 +312,7 @@ exports.before = {
       versionStamp: true
     }),
 
+    setExtent,
     setTermsInfo
   ],
 
