@@ -70,7 +70,7 @@ const membershipRulesByRole = {
     membership
   }) => {
     // Organizations
-    can(['access', 'patch'], 'organizations', {
+    can(['access', 'patch', 'graph', 'download'], 'organizations', {
       _id: membership.organization_id
     }); // Annotations
 
@@ -79,13 +79,15 @@ const membershipRulesByRole = {
     });
     can('assign', 'annotations'); // Stations
 
-    can(['access', 'create', 'patch', 'remove'], 'stations', {
+    can(['access', 'create', 'patch', 'remove', 'graph', 'download'], 'stations', {
       organization_id: membership.organization_id
-    }); // Datastreams
+    });
+    can('assign', 'stations'); // Datastreams
 
-    can(['access', 'create', 'patch', 'remove'], 'datastreams', {
+    can(['access', 'create', 'patch', 'remove', 'graph', 'download'], 'datastreams', {
       organization_id: membership.organization_id
-    }); // Uploads
+    });
+    can('assign', 'datastreams'); // Uploads
 
     can(['create', 'read'], 'uploads', {
       organization_id: membership.organization_id

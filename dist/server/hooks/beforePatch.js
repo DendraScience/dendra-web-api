@@ -10,6 +10,7 @@ const {
   alterItems,
   combine,
   iff,
+  paramsFromClient,
   validateSchema
 } = require('feathers-hooks-common');
 
@@ -21,7 +22,7 @@ const versionStamp = require('./versionStamp');
 
 module.exports = options => {
   return async context => {
-    const newContext = await combine(auth.hooks.authenticate('jwt'), alterItems(options.alterItems), validateSchema(options.schemaName, ajv), iff(() => options.versionStamp, versionStamp()), setAbility(), restrictToAbility(), apiHooks.timestamp(), apiHooks.userstamp(), apiHooks.coerceQuery(), apiHooks.coerce()).call(void 0, context);
+    const newContext = await combine(auth.hooks.authenticate('jwt'), alterItems(options.alterItems), validateSchema(options.schemaName, ajv), iff(() => options.versionStamp, versionStamp()), apiHooks.coerceQuery(), paramsFromClient('dispatchAnnotationBuild', 'dispatchDerivedBuild'), setAbility(), restrictToAbility(), apiHooks.timestamp(), apiHooks.userstamp(), apiHooks.coerce()).call(void 0, context);
     return newContext;
   };
 };

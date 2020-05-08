@@ -8,11 +8,6 @@ const globalHooks = require('../../../hooks');
 
 const local = require('@feathersjs/authentication-local');
 
-const {
-  deleteByDot,
-  getByDot
-} = require('feathers-hooks-common');
-
 const _ = require('lodash');
 
 const PATCH_CURRENT_PASSWORD = '$set.current_password';
@@ -48,16 +43,16 @@ exports.before = {
     data,
     params
   }) => {
-    params.currentPassword = getByDot(data, PATCH_CURRENT_PASSWORD);
+    params.currentPassword = _.get(data, PATCH_CURRENT_PASSWORD);
   }, globalHooks.beforePatch({
-    alterItems: rec => deleteByDot(rec, PATCH_CURRENT_PASSWORD),
+    alterItems: rec => _.unset(rec, PATCH_CURRENT_PASSWORD),
     schemaName: 'user.patch.json',
     versionStamp: true
   }), async ({
     data,
     params
   }) => {
-    const newPassword = getByDot(data, PATCH_PASSWORD);
+    const newPassword = _.get(data, PATCH_PASSWORD);
 
     if (newPassword && !(await bcrypt.compare(params.currentPassword, params.before.password))) {
       throw new errors.Forbidden('The current password is not valid.');

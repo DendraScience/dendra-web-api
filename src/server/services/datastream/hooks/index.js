@@ -71,6 +71,8 @@ const defaultsMigrations = rec => {
 
 const dispatchAnnotationBuild = method => {
   return async context => {
+    context.app.logger.debug('dispatchAnnotationBuild')
+
     const connection = context.app.get('connections').annotationDispatch
 
     if (!(connection && method)) return context
@@ -96,6 +98,8 @@ const dispatchAnnotationBuild = method => {
 
 const dispatchDerivedBuild = method => {
   return async context => {
+    context.app.logger.debug('dispatchDerivedBuild')
+
     const connection = context.app.get('connections').derivedDispatch
 
     if (!(connection && method)) return context
@@ -360,11 +364,13 @@ exports.after = {
 
   patch: [
     iff(
-      ({ data, result }) =>
+      ({ data, params, result }) =>
         result.source_type === 'sensor' &&
-        ((data.$set &&
-          _.intersection(assembleDatapointsConfigKeys, Object.keys(data.$set))
-            .length) ||
+        params.dispatchAnnotationBuild !== false &&
+        (params.dispatchAnnotationBuild === true ||
+          (data.$set &&
+            _.intersection(assembleDatapointsConfigKeys, Object.keys(data.$set))
+              .length) ||
           (data.$unset &&
             _.intersection(
               assembleDatapointsConfigKeys,
@@ -374,11 +380,13 @@ exports.after = {
     ),
 
     iff(
-      ({ data, result }) =>
+      ({ data, params, result }) =>
         result.source_type === 'sensor' &&
-        ((data.$set &&
-          _.intersection(processDatastreamKeys, Object.keys(data.$set))
-            .length) ||
+        params.dispatchDerivedBuild !== false &&
+        (params.dispatchDerivedBuild === true ||
+          (data.$set &&
+            _.intersection(processDatastreamKeys, Object.keys(data.$set))
+              .length) ||
           (data.$unset &&
             _.intersection(processDatastreamKeys, Object.keys(data.$unset))
               .length)),
@@ -386,11 +394,13 @@ exports.after = {
     ),
 
     iff(
-      ({ data, result }) =>
+      ({ data, params, result }) =>
         result.source_type === 'deriver' &&
-        ((data.$set &&
-          _.intersection(initDerivedDatastreamKeys, Object.keys(data.$set))
-            .length) ||
+        params.dispatchDerivedBuild !== false &&
+        (params.dispatchDerivedBuild === true ||
+          (data.$set &&
+            _.intersection(initDerivedDatastreamKeys, Object.keys(data.$set))
+              .length) ||
           (data.$unset &&
             _.intersection(initDerivedDatastreamKeys, Object.keys(data.$unset))
               .length)),

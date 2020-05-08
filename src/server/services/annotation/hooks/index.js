@@ -31,6 +31,8 @@ const defaultsMigrations = rec => {
 
 const dispatchAnnotationBuild = method => {
   return async context => {
+    context.app.logger.debug('dispatchAnnotationBuild')
+
     const connection = context.app.get('connections').annotationDispatch
 
     if (!(connection && method)) return context
@@ -125,11 +127,15 @@ exports.after = {
   update: dispatchAnnotationBuild('processAnnotation'),
 
   patch: iff(
-    ({ data }) =>
-      (data.$set &&
-        _.intersection(processAnnotationKeys, Object.keys(data.$set)).length) ||
-      (data.$unset &&
-        _.intersection(processAnnotationKeys, Object.keys(data.$unset)).length),
+    ({ data, params }) =>
+      params.dispatchAnnotationBuild !== false &&
+      (params.dispatchAnnotationBuild === true ||
+        (data.$set &&
+          _.intersection(processAnnotationKeys, Object.keys(data.$set))
+            .length) ||
+        (data.$unset &&
+          _.intersection(processAnnotationKeys, Object.keys(data.$unset))
+            .length)),
     dispatchAnnotationBuild('processAnnotation')
   ),
 

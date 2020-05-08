@@ -68,6 +68,7 @@ const defaultsMigrations = rec => {
 
 const dispatchAnnotationBuild = method => {
   return async context => {
+    context.app.logger.debug('dispatchAnnotationBuild');
     const connection = context.app.get('connections').annotationDispatch;
     if (!(connection && method)) return context;
     const now = new Date();
@@ -92,6 +93,7 @@ const dispatchAnnotationBuild = method => {
 
 const dispatchDerivedBuild = method => {
   return async context => {
+    context.app.logger.debug('dispatchDerivedBuild');
     const connection = context.app.get('connections').derivedDispatch;
     if (!(connection && method)) return context;
     const now = new Date();
@@ -257,13 +259,16 @@ exports.after = {
   update: [iff(context => context.result.source_type === 'sensor', dispatchAnnotationBuild('assembleDatapointsConfig')), iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('initDerivedDatastream'))],
   patch: [iff(({
     data,
+    params,
     result
-  }) => result.source_type === 'sensor' && (data.$set && _.intersection(assembleDatapointsConfigKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(assembleDatapointsConfigKeys, Object.keys(data.$unset)).length), dispatchAnnotationBuild('assembleDatapointsConfig')), iff(({
+  }) => result.source_type === 'sensor' && params.dispatchAnnotationBuild !== false && (params.dispatchAnnotationBuild === true || data.$set && _.intersection(assembleDatapointsConfigKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(assembleDatapointsConfigKeys, Object.keys(data.$unset)).length), dispatchAnnotationBuild('assembleDatapointsConfig')), iff(({
     data,
+    params,
     result
-  }) => result.source_type === 'sensor' && (data.$set && _.intersection(processDatastreamKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(processDatastreamKeys, Object.keys(data.$unset)).length), dispatchDerivedBuild('processDatastream')), iff(({
+  }) => result.source_type === 'sensor' && params.dispatchDerivedBuild !== false && (params.dispatchDerivedBuild === true || data.$set && _.intersection(processDatastreamKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(processDatastreamKeys, Object.keys(data.$unset)).length), dispatchDerivedBuild('processDatastream')), iff(({
     data,
+    params,
     result
-  }) => result.source_type === 'deriver' && (data.$set && _.intersection(initDerivedDatastreamKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(initDerivedDatastreamKeys, Object.keys(data.$unset)).length), dispatchDerivedBuild('initDerivedDatastream'))],
+  }) => result.source_type === 'deriver' && params.dispatchDerivedBuild !== false && (params.dispatchDerivedBuild === true || data.$set && _.intersection(initDerivedDatastreamKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(initDerivedDatastreamKeys, Object.keys(data.$unset)).length), dispatchDerivedBuild('initDerivedDatastream'))],
   remove: [iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('destroyDerivedDatastream'))]
 };

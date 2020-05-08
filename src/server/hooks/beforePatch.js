@@ -5,6 +5,7 @@ const {
   alterItems,
   combine,
   iff,
+  paramsFromClient,
   validateSchema
 } = require('feathers-hooks-common')
 
@@ -19,11 +20,12 @@ module.exports = options => {
       alterItems(options.alterItems),
       validateSchema(options.schemaName, ajv),
       iff(() => options.versionStamp, versionStamp()),
+      apiHooks.coerceQuery(),
+      paramsFromClient('dispatchAnnotationBuild', 'dispatchDerivedBuild'),
       setAbility(),
       restrictToAbility(),
       apiHooks.timestamp(),
       apiHooks.userstamp(),
-      apiHooks.coerceQuery(),
       apiHooks.coerce()
     ).call(this, context)
 
