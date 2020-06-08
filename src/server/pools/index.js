@@ -1,6 +1,6 @@
 const { FixedThreadPool } = require('poolifier')
 
-module.exports = function(app) {
+module.exports = function (app) {
   const dendraDatapointMerge = new FixedThreadPool(
     // TODO: Make configurable!!!
     5,

@@ -1,15 +1,15 @@
 /**
- * Tests for person service
+ * Tests for thing type service
  */
 
-const dataFile = 'demo.person'
-const servicePath = 'persons'
+const dataFile = 'demo.thing-type'
+const servicePath = 'thing-types'
 
 describe(`Service ${servicePath}`, function () {
   const id = {}
 
   const cleanup = async () => {
-    await coll.persons.remove()
+    await coll.thing_types.remove()
   }
 
   before(async function () {
@@ -135,7 +135,7 @@ describe(`Service ${servicePath}`, function () {
           `${dataFile}.patch`
         )
         .then(({ retDoc }) => {
-          expect(retDoc).to.have.property('full_name', 'Demo Person - Patched')
+          expect(retDoc).to.have.property('name', 'Demo Thing Type - Patched')
         })
     })
   })
@@ -180,7 +180,7 @@ describe(`Service ${servicePath}`, function () {
           `${dataFile}.update`
         )
         .then(({ retDoc }) => {
-          expect(retDoc).to.have.property('full_name', 'Demo Person - Updated')
+          expect(retDoc).to.have.property('name', 'Demo Thing Type - Updated')
         })
     })
   })

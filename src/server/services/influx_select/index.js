@@ -81,7 +81,7 @@ class Service {
   }
 }
 
-module.exports = function(app) {
+module.exports = function (app) {
   const services = app.get('services')
 
   if (!services.influx_select) return

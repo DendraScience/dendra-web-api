@@ -9,7 +9,7 @@ const log = console
 
 let server
 
-before(async function() {
+before(async function () {
   this.timeout(20000)
 
   app = await app(log)
@@ -40,6 +40,7 @@ before(async function() {
     'schemes',
     'soms',
     'stations',
+    'thing_types',
     'uoms',
     'uploads',
     'users',
@@ -111,7 +112,7 @@ before(async function() {
   }
 })
 
-after(async function() {
+after(async function () {
   this.timeout(20000)
 
   await new Promise((resolve, reject) =>

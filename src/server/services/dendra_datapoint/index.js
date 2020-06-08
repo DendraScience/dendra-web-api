@@ -54,7 +54,7 @@ class Service {
   }
 }
 
-module.exports = function(app) {
+module.exports = function (app) {
   app.use('/dendra/datapoints', new Service())
 
   // Get the wrapped service object, bind hooks

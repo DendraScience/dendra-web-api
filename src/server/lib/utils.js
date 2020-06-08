@@ -36,12 +36,7 @@ const Visibility = {
 function asyncHashDigest(data, algorithm = 'sha1', encoding = 'hex') {
   return new Promise(resolve => {
     setImmediate(() => {
-      resolve(
-        crypto
-          .createHash(algorithm)
-          .update(data)
-          .digest(encoding)
-      )
+      resolve(crypto.createHash(algorithm).update(data).digest(encoding))
     })
   })
 }

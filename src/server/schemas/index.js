@@ -2,7 +2,7 @@ const ajv = require('../lib/ajv')
 const fs = require('fs')
 const path = require('path')
 
-module.exports = function(app) {
+module.exports = function (app) {
   const schemaPath = path.resolve(__dirname, '../../../schema')
   const names = fs.readdirSync(schemaPath).filter(name => {
     return name.endsWith('.json')

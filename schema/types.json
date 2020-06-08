@@ -278,6 +278,10 @@
       "example": "Data is a precious thing and will last longer than the systems themselves (Tim Berners-Lee).",
       "type": "string"
     },
+    "downloadId": {
+      "$ref": "#/definitions/objectId",
+      "example": "592f155746a1b867a114e0f0"
+    },
     "email": {
       "description": "The primary contact email address",
       "example": "collin@berkeley.edu",

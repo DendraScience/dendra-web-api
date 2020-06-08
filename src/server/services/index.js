@@ -1,6 +1,6 @@
 const path = require('path')
 
-module.exports = function(app) {
+module.exports = function (app) {
   const names = [
     'ability',
     'authentication',
@@ -28,6 +28,7 @@ module.exports = function(app) {
     'system_timezone',
     // 'team',
     // 'thing',
+    'thing-type',
     'uom',
     'upload',
     'user',

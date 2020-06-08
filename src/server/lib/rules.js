@@ -41,6 +41,9 @@ const publicRules = ({ can, cannot }) => {
   // Schemes
   can('read', 'schemes')
 
+  // Thing Types
+  can('read', 'thing-types')
+
   // Vocabularies
   can('read', 'vocabularies')
 

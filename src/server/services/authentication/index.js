@@ -1,7 +1,7 @@
 const auth = require('@feathersjs/authentication')
 const { disallow, iff } = require('feathers-hooks-common')
 
-module.exports = function(app) {
+module.exports = function (app) {
   app.service('authentication').hooks({
     before: {
       create: auth.hooks.authenticate(['jwt', 'local']),

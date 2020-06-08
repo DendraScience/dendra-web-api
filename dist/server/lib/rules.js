@@ -53,7 +53,9 @@ const publicRules = ({
 
   can('read', 'places'); // Schemes
 
-  can('read', 'schemes'); // Vocabularies
+  can('read', 'schemes'); // Thing Types
+
+  can('read', 'thing-types'); // Vocabularies
 
   can('read', 'vocabularies'); // SOMs
 

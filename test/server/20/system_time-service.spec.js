@@ -4,13 +4,13 @@
 
 const servicePath = 'system/time'
 
-describe(`Service ${servicePath}`, function() {
+describe(`Service ${servicePath}`, function () {
   const id = {
     doc: 'America/Los_Angeles'
   }
 
-  describe('#create()', function() {
-    it('guest should create with error', function() {
+  describe('#create()', function () {
+    it('guest should create with error', function () {
       return helper.shouldCreateWithError(
         clients.guest,
         servicePath,
@@ -19,7 +19,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('user should create with error', function() {
+    it('user should create with error', function () {
       return helper.shouldCreateWithError(
         clients.user,
         servicePath,
@@ -28,7 +28,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('sys admin should create multiple with error', function() {
+    it('sys admin should create multiple with error', function () {
       return helper.shouldCreateWithError(
         clients.sysAdmin,
         servicePath,
@@ -37,7 +37,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('sys admin should create with error', function() {
+    it('sys admin should create with error', function () {
       return helper.shouldCreateWithError(
         clients.sysAdmin,
         servicePath,
@@ -47,8 +47,8 @@ describe(`Service ${servicePath}`, function() {
     })
   })
 
-  describe('#get()', function() {
-    it('guest should get without error', function() {
+  describe('#get()', function () {
+    it('guest should get without error', function () {
       return helper
         .shouldGetWithoutError(clients.guest, servicePath, id.doc)
         .then(({ retDoc }) => {
@@ -56,7 +56,7 @@ describe(`Service ${servicePath}`, function() {
         })
     })
 
-    it('user should get without error', function() {
+    it('user should get without error', function () {
       return helper
         .shouldGetWithoutError(clients.user, servicePath, id.doc)
         .then(({ retDoc }) => {
@@ -64,7 +64,7 @@ describe(`Service ${servicePath}`, function() {
         })
     })
 
-    it('sys admin should get without error', function() {
+    it('sys admin should get without error', function () {
       return helper
         .shouldGetWithoutError(clients.sysAdmin, servicePath, id.doc)
         .then(({ retDoc }) => {
@@ -73,8 +73,8 @@ describe(`Service ${servicePath}`, function() {
     })
   })
 
-  describe('#find()', function() {
-    it('guest should find with error', function() {
+  describe('#find()', function () {
+    it('guest should find with error', function () {
       return helper.shouldFindWithError(
         clients.guest,
         servicePath,
@@ -83,7 +83,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('user should find with error', function() {
+    it('user should find with error', function () {
       return helper.shouldFindWithError(
         clients.user,
         servicePath,
@@ -92,7 +92,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('sys admin should find with error', function() {
+    it('sys admin should find with error', function () {
       return helper.shouldFindWithError(
         clients.sysAdmin,
         servicePath,
@@ -102,8 +102,8 @@ describe(`Service ${servicePath}`, function() {
     })
   })
 
-  describe('#patch()', function() {
-    it('guest should patch with error', function() {
+  describe('#patch()', function () {
+    it('guest should patch with error', function () {
       return helper.shouldPatchWithError(
         clients.guest,
         servicePath,
@@ -113,7 +113,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('user should patch with error', function() {
+    it('user should patch with error', function () {
       return helper.shouldPatchWithError(
         clients.user,
         servicePath,
@@ -123,7 +123,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('sys admin should patch multiple with error', function() {
+    it('sys admin should patch multiple with error', function () {
       return helper.shouldPatchMultipleWithError(
         clients.sysAdmin,
         servicePath,
@@ -133,7 +133,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('sys admin should patch with error', function() {
+    it('sys admin should patch with error', function () {
       return helper.shouldPatchWithError(
         clients.sysAdmin,
         servicePath,
@@ -144,8 +144,8 @@ describe(`Service ${servicePath}`, function() {
     })
   })
 
-  describe('#update()', function() {
-    it('guest should update with error', function() {
+  describe('#update()', function () {
+    it('guest should update with error', function () {
       return helper.shouldUpdateWithError(
         clients.guest,
         servicePath,
@@ -155,7 +155,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('user should update with error', function() {
+    it('user should update with error', function () {
       return helper.shouldUpdateWithError(
         clients.user,
         servicePath,
@@ -165,7 +165,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('sys admin should update multiple with error', function() {
+    it('sys admin should update multiple with error', function () {
       return helper.shouldUpdateMultipleWithError(
         clients.sysAdmin,
         servicePath,
@@ -175,7 +175,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('sys admin should update with error', function() {
+    it('sys admin should update with error', function () {
       return helper.shouldUpdateWithError(
         clients.sysAdmin,
         servicePath,
@@ -186,8 +186,8 @@ describe(`Service ${servicePath}`, function() {
     })
   })
 
-  describe('#remove()', function() {
-    it('guest should remove with error', function() {
+  describe('#remove()', function () {
+    it('guest should remove with error', function () {
       return helper.shouldRemoveWithError(
         clients.guest,
         servicePath,
@@ -196,7 +196,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('user should remove with error', function() {
+    it('user should remove with error', function () {
       return helper.shouldRemoveWithError(
         clients.user,
         servicePath,
@@ -205,7 +205,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('sys admin should remove multiple with error', function() {
+    it('sys admin should remove multiple with error', function () {
       return helper.shouldRemoveMultipleWithError(
         clients.sysAdmin,
         servicePath,
@@ -214,7 +214,7 @@ describe(`Service ${servicePath}`, function() {
       )
     })
 
-    it('sys admin should remove with error', function() {
+    it('sys admin should remove with error', function () {
       return helper.shouldRemoveWithError(
         clients.sysAdmin,
         servicePath,

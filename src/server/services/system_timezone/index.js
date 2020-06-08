@@ -76,7 +76,7 @@ class Service extends AdapterService {
   }
 }
 
-module.exports = function(app) {
+module.exports = function (app) {
   app.use('/system/timezones', new Service())
 
   // Get the wrapped service object, bind hooks

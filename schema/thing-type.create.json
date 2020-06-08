@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "thing-type.create.json",
+  "$patch": {
+    "source": {"$ref": "thing-type.json#"},
+    "with": [
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "_id": {"$ref": "#/definitions/_id"},
+          "description": {"$ref": "#/definitions/description"},
+          "external_links": {"$ref": "#/definitions/external_links"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "manufacturer_tag": {"$ref": "#/definitions/manufacturer_tag"},
+          "model": {"$ref": "#/definitions/model"},
+          "name": {"$ref": "#/definitions/name"}
+        }
+      }
+    ]
+  }
+}

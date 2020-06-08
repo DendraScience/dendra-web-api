@@ -118,9 +118,7 @@ async function shouldFindWithoutError(
   /* eslint-disable-next-line no-unused-expressions */
   expect(retErr).to.be.undefined
   if (paginate) {
-    expect(retRes)
-      .to.have.property('data')
-      .lengthOf(length)
+    expect(retRes).to.have.property('data').lengthOf(length)
   } else {
     expect(retRes).to.have.lengthOf(length)
   }

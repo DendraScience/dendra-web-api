@@ -39,7 +39,7 @@ module.exports = async logger => {
 
   // Fix for big anotation worker queries
   // SEE: https://github.com/expressjs/body-parser/issues/289
-  app.set('query parser', function(str) {
+  app.set('query parser', function (str) {
     return qs.parse(str, { arrayLimit: 2000 })
   })
 

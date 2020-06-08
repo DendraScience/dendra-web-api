@@ -10,13 +10,13 @@ module.exports = function (app) {
   const { db } = metadata
 
   const mongoService = service({
-    Model: db.collection('uploads'),
+    Model: db.collection('thing_types'),
     paginate: metadata.paginate,
     whitelist: metadata.whitelist
   })
 
-  app.use('/uploads', mongoService)
+  app.use('/thing-types', mongoService)
 
   // Get the wrapped service object, bind hooks
-  app.service('uploads').hooks(hooks)
+  app.service('thing-types').hooks(hooks)
 }

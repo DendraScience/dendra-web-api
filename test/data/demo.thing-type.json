@@ -1,0 +1,23 @@
+{
+  "description": "Demo Thing Type Description",
+  "external_links": [
+    {
+      "title": "Manufacturer",
+      "url": "http://www.youngusa.com/products/7/5.html"
+    },
+    {
+      "title": "Manual",
+      "url": "https://s.campbellsci.com/documents/us/manuals/05103.pdf"
+    }
+  ],
+  "external_refs": [
+    {
+      "identifier": "2952",
+      "type": "odm.methods.MethodID"
+    }
+  ],
+  "is_enabled": true,
+  "manufacturer_tag": "dl_Manufacturer_RMYoung",
+  "model": "05103",
+  "name": "Demo Thing Type"
+}
