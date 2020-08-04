@@ -30,11 +30,6 @@
         }
       ]
     },
-    "manufacturer_tag": {
-      "type": "string",
-      "description": "Manufacturer vocabulary tag to identify the make",
-      "example": "dl_Manufacturer_RMYoung"
-    },
     "model": {
       "type": "string",
       "description": "The manufacturer's model number",
@@ -54,16 +49,16 @@
     "external_links": {"$ref": "#/definitions/external_links"},
     "external_refs": {"$ref": "#/definitions/external_refs"},
     "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
-    "manufacturer_tag": {"$ref": "#/definitions/manufacturer_tag"},
     "model": {"$ref": "#/definitions/model"},
     "name": {"$ref": "#/definitions/name"},
+    "oem_company_id": {"$ref": "types.json#/definitions/companyId"},
+    "reseller_company_id": {"$ref": "types.json#/definitions/companyId"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
     "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
     "version_id": {"$ref": "types.json#/definitions/versionId"}
   },
   "required": [
     "is_enabled",
-    "manufacturer_tag",
     "model",
     "name"
   ],
@@ -81,13 +76,13 @@
           "external_links": {"$ref": "#/definitions/external_links"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
           "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
-          "manufacturer_tag": {"$ref": "#/definitions/manufacturer_tag"},
           "model": {"$ref": "#/definitions/model"},
-          "name": {"$ref": "#/definitions/name"}
+          "name": {"$ref": "#/definitions/name"},
+          "oem_company_id": {"$ref": "types.json#/definitions/companyId"},
+          "reseller_company_id": {"$ref": "types.json#/definitions/companyId"}
         },
         "required": [
           "is_enabled",
-          "manufacturer_tag",
           "model",
           "name"
         ]
@@ -107,9 +102,10 @@
           "external_links": {"$ref": "#/definitions/external_links"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
           "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
-          "manufacturer_tag": {"$ref": "#/definitions/manufacturer_tag"},
           "model": {"$ref": "#/definitions/model"},
-          "name": {"$ref": "#/definitions/name"}
+          "name": {"$ref": "#/definitions/name"},
+          "oem_company_id": {"$ref": "types.json#/definitions/companyId"},
+          "reseller_company_id": {"$ref": "types.json#/definitions/companyId"}
         }
       },
       "targetSchema": {"rel": "self"}
@@ -128,13 +124,13 @@
           "external_links": {"$ref": "#/definitions/external_links"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
           "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
-          "manufacturer_tag": {"$ref": "#/definitions/manufacturer_tag"},
           "model": {"$ref": "#/definitions/model"},
-          "name": {"$ref": "#/definitions/name"}
+          "name": {"$ref": "#/definitions/name"},
+          "oem_company_id": {"$ref": "types.json#/definitions/companyId"},
+          "reseller_company_id": {"$ref": "types.json#/definitions/companyId"}
         },
         "required": [
           "is_enabled",
-          "manufacturer_tag",
           "model",
           "name"
         ]

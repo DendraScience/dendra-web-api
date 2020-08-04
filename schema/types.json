@@ -114,6 +114,10 @@
       "$ref": "#/definitions/objectId",
       "example": "592f155746a1b867a114e0a0"
     },
+    "companyId": {
+      "$ref": "#/definitions/objectId",
+      "example": "592f155746a1b867a114e100"
+    },
     "createdAt": {
       "$ref": "#/definitions/isoDatetimeUTC",
       "description": "Timestamp of when the document was created"

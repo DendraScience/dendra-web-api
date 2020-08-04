@@ -19,9 +19,10 @@
     }
   ],
   "is_enabled": true,
-  "manufacturer_tag": "dl_Manufacturer_RMYoung",
   "model": "05103",
   "name": "Demo Thing Type - Updated",
+  "oem_company_id": "592f155746a1b867a114e100",
+  "reseller_company_id": "592f155746a1b867a114e100",
   "updated_at": "2017-07-21T03:16:36.664Z",
   "updated_by": "592f155746a1b867a114e010"
 }

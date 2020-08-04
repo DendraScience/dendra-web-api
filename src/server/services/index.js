@@ -8,6 +8,7 @@ module.exports = function (app) {
     // 'aggregate_request',
     // 'aggregate_result',
     'annotation',
+    'company',
     // 'dashboard',
     // 'datapoint_lookup', // Route must precede datapoint
     'datapoint',

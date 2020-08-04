@@ -1,22 +1,20 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "thing-type.update.json",
+  "$id": "company.update.json",
   "$patch": {
-    "source": {"$ref": "thing-type.json#"},
+    "source": {"$ref": "company.json#"},
     "with": [
       {
         "op": "replace",
         "path": "/properties",
         "value": {
           "_id": {"$ref": "#/definitions/_id"},
+          "company_type": {"$ref": "#/definitions/company_type"},
           "description": {"$ref": "#/definitions/description"},
-          "external_links": {"$ref": "#/definitions/external_links"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
-          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
-          "model": {"$ref": "#/definitions/model"},
+          "full_name": {"$ref": "#/definitions/full_name"},
           "name": {"$ref": "#/definitions/name"},
-          "oem_company_id": {"$ref": "types.json#/definitions/companyId"},
-          "reseller_company_id": {"$ref": "types.json#/definitions/companyId"}
+          "url": {"$ref": "#/definitions/url"}
         }
       }
     ]

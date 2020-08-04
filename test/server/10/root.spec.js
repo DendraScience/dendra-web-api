@@ -32,6 +32,7 @@ before(async function () {
 
   global.coll = [
     'annotations',
+    'companies',
     'datastreams',
     'memberships',
     'organizations',
