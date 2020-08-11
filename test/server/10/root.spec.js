@@ -34,6 +34,7 @@ before(async function () {
     'annotations',
     'companies',
     'datastreams',
+    'downloads',
     'memberships',
     'organizations',
     'persons',

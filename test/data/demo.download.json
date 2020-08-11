@@ -1,0 +1,17 @@
+{
+  "requester_email": "requester@test.dendra.science",
+  "result": {
+    "records": 10000
+  },
+  "spec": {
+    "comment": "Demo Download",
+    "method": "csvStream"
+  },
+  "spec_type": "file/export",
+  "storage": {
+    "method": "gdrive",
+    "options": {
+      "folder_id": "0BxmJYIxm-ULtLWVWVWVjUjRNNTg"
+    }
+  }
+}

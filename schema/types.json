@@ -1042,7 +1042,9 @@
     "storageMethod": {
       "description": "The location where files will be accessed or managed",
       "enum": [
-        "local"
+        "gdrive",
+        "local",
+        "minio"
       ],
       "example": "local",
       "type": "string"

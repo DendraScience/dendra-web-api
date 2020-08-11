@@ -214,6 +214,10 @@ const userRulesByRole = {
     can('assign', 'persons')
     cannot('assign', 'persons', ['$set.is_enabled'])
 
+    // Downloads
+    can('create', 'downloads')
+    can('read', 'downloads', { created_by: user._id })
+
     // Users
     can('read', 'users')
     can('patch', 'users', { _id: user._id, is_enabled: true })

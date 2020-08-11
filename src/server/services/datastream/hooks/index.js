@@ -60,6 +60,7 @@ const defaultsMigrations = rec => {
   delete rec.enabled
   delete rec.general_config_resolved
   delete rec.members
+  delete rec.organization_lookup
   delete rec.preferred_uoms
   delete rec.station_lookup
   delete rec.tags
@@ -251,8 +252,13 @@ const stages = [
           '$general_config'
         ]
       },
+      organization_lookup: {
+        name: '$organization.name',
+        slug: '$organization.slug'
+      },
       station_lookup: {
         name: '$station.name',
+        slug: '$station.slug',
         time_zone: '$station.time_zone',
         utc_offset: '$station.utc_offset'
       }

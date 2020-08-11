@@ -2,7 +2,7 @@
  * Tests for system/schema service
  */
 
-const findLength = 63
+const findLength = 66
 const servicePath = 'system/schemas'
 
 describe(`Service ${servicePath}`, function () {

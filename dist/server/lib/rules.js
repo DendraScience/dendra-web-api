@@ -241,7 +241,12 @@ const userRulesByRole = {
       is_enabled: true
     });
     can('assign', 'persons');
-    cannot('assign', 'persons', ['$set.is_enabled']); // Users
+    cannot('assign', 'persons', ['$set.is_enabled']); // Downloads
+
+    can('create', 'downloads');
+    can('read', 'downloads', {
+      created_by: user._id
+    }); // Users
 
     can('read', 'users');
     can('patch', 'users', {

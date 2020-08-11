@@ -15,6 +15,7 @@ module.exports = function (app) {
     // 'datastream_lookup', // Route must precede datastream
     'datastream',
     'dendra_datapoint',
+    'download',
     'influx_select',
     'legacy_datavalue',
     'membership',

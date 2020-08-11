@@ -25,6 +25,7 @@ const defaultsMigrations = rec => {
   delete rec.enabled
   delete rec.general_config_resolved
   delete rec.members
+  delete rec.organization_lookup
 }
 
 const stages = [
@@ -53,6 +54,10 @@ const stages = [
       },
       general_config_resolved: {
         $mergeObjects: [{}, '$organization.general_config', '$general_config']
+      },
+      organization_lookup: {
+        name: '$organization.name',
+        slug: '$organization.slug'
       }
     }
   },
