@@ -26,7 +26,8 @@ exports.before = {
 }
 
 exports.after = {
-  // all: [],
+  all: globalHooks.signalBackend()
+
   // find: [],
   // get: [],
   // create: [],

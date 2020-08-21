@@ -2,6 +2,9 @@
   "authentication": {
     "secret": "WEB_API_SECRET"
   },
+  "backend": {
+    "url": "BACKEND_GATEWAY_API_URL"
+  },
   "connections": {
     "aggregateDispatch": {
       "url": "AGGREGATE_DISPATCH_API_URL"

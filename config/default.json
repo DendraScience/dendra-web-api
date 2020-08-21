@@ -19,6 +19,12 @@
     "secret": "ThYncCxLbjhin7YZBtZgda7nm0KSeT4rM0UsvpCnJXPA6sTVq6NKvsDoHjzyjkMKnB4gKDqsUx8Gg7mYsRbV9Q==",
     "service": "users"
   },
+  "backend": {
+    "jwt": {
+      "expiresIn": "2m"
+    },
+    "url": "http://localhost:3040"
+  },
   "connections": {},
   "databases": {
     "mongodb": {

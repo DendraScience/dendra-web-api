@@ -20,11 +20,12 @@ exports.before = {
   }),
   remove: globalHooks.beforeRemove()
 };
-exports.after = {// all: [],
-  // find: [],
+exports.after = {
+  all: globalHooks.signalBackend() // find: [],
   // get: [],
   // create: [],
   // update: [],
   // patch: [],
   // remove: []
+
 };

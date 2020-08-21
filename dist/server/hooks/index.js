@@ -33,6 +33,8 @@ const restrictToAbility = require('./restrictToAbility');
 
 const setAbility = require('./setAbility');
 
+const signalBackend = require('./signalBackend');
+
 const versionStamp = require('./versionStamp');
 
 module.exports = {
@@ -47,5 +49,6 @@ module.exports = {
   restrictQueryToAbility,
   restrictToAbility,
   setAbility,
+  signalBackend,
   versionStamp
 };
