@@ -261,8 +261,8 @@ exports.after = {
   // all: [],
   // find: [],
   // get: [],
-  create: [iff(context => context.result.source_type === 'sensor', dispatchAnnotationBuild('assembleDatapointsConfig')), iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('initDerivedDatastream'))],
-  update: [iff(context => context.result.source_type === 'sensor', dispatchAnnotationBuild('assembleDatapointsConfig')), iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('initDerivedDatastream'))],
+  create: [iff(context => context.result.source_type === 'sensor', dispatchAnnotationBuild('assembleDatapointsConfig')), iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('initDerivedDatastream')), globalHooks.signalBackend()],
+  update: [iff(context => context.result.source_type === 'sensor', dispatchAnnotationBuild('assembleDatapointsConfig')), iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('initDerivedDatastream')), globalHooks.signalBackend()],
   patch: [iff(({
     data,
     params,
@@ -275,6 +275,6 @@ exports.after = {
     data,
     params,
     result
-  }) => result.source_type === 'deriver' && params.dispatchDerivedBuild !== false && (params.dispatchDerivedBuild === true || data.$set && _.intersection(initDerivedDatastreamKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(initDerivedDatastreamKeys, Object.keys(data.$unset)).length), dispatchDerivedBuild('initDerivedDatastream'))],
-  remove: [iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('destroyDerivedDatastream'))]
+  }) => result.source_type === 'deriver' && params.dispatchDerivedBuild !== false && (params.dispatchDerivedBuild === true || data.$set && _.intersection(initDerivedDatastreamKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(initDerivedDatastreamKeys, Object.keys(data.$unset)).length), dispatchDerivedBuild('initDerivedDatastream')), globalHooks.signalBackend()],
+  remove: [iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('destroyDerivedDatastream')), globalHooks.signalBackend()]
 };

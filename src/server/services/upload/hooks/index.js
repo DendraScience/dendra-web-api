@@ -60,18 +60,22 @@ exports.after = {
   // find: [],
   // get: [],
 
-  create: dispatchFileImport('processUpload'),
+  create: [dispatchFileImport('processUpload'), globalHooks.signalBackend()],
 
-  update: dispatchFileImport('processUpload'),
+  update: [dispatchFileImport('processUpload'), globalHooks.signalBackend()],
 
-  patch: iff(
-    ({ data }) =>
-      (data.$set &&
-        _.intersection(processUploadKeys, Object.keys(data.$set)).length) ||
-      (data.$unset &&
-        _.intersection(processUploadKeys, Object.keys(data.$unset)).length),
-    dispatchFileImport('processUpload')
-  )
+  patch: [
+    iff(
+      ({ data }) =>
+        (data.$set &&
+          _.intersection(processUploadKeys, Object.keys(data.$set)).length) ||
+        (data.$unset &&
+          _.intersection(processUploadKeys, Object.keys(data.$unset)).length),
+      dispatchFileImport('processUpload')
+    ),
 
-  // remove: []
+    globalHooks.signalBackend()
+  ],
+
+  remove: globalHooks.signalBackend()
 }

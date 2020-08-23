@@ -21,11 +21,11 @@ exports.before = {
   remove: globalHooks.beforeRemove()
 };
 exports.after = {
-  all: globalHooks.signalBackend() // find: [],
+  // all: [],
+  // find: [],
   // get: [],
-  // create: [],
-  // update: [],
-  // patch: [],
-  // remove: []
-
+  create: globalHooks.signalBackend(),
+  update: globalHooks.signalBackend(),
+  patch: globalHooks.signalBackend(),
+  remove: globalHooks.signalBackend()
 };

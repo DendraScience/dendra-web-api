@@ -105,11 +105,11 @@ exports.after = {
   // all: [],
   // find: [],
   // get: [],
-  create: dispatchAnnotationBuild('processAnnotation'),
-  update: dispatchAnnotationBuild('processAnnotation'),
-  patch: iff(({
+  create: [dispatchAnnotationBuild('processAnnotation'), globalHooks.signalBackend()],
+  update: [dispatchAnnotationBuild('processAnnotation'), globalHooks.signalBackend()],
+  patch: [iff(({
     data,
     params
-  }) => params.dispatchAnnotationBuild !== false && (params.dispatchAnnotationBuild === true || data.$set && _.intersection(processAnnotationKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(processAnnotationKeys, Object.keys(data.$unset)).length), dispatchAnnotationBuild('processAnnotation')),
-  remove: dispatchAnnotationBuild('processAnnotation')
+  }) => params.dispatchAnnotationBuild !== false && (params.dispatchAnnotationBuild === true || data.$set && _.intersection(processAnnotationKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(processAnnotationKeys, Object.keys(data.$unset)).length), dispatchAnnotationBuild('processAnnotation')), globalHooks.signalBackend()],
+  remove: [dispatchAnnotationBuild('processAnnotation'), globalHooks.signalBackend()]
 };

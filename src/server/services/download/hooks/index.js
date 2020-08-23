@@ -26,12 +26,15 @@ exports.before = {
 }
 
 exports.after = {
-  all: globalHooks.signalBackend()
-
+  // all: [],
   // find: [],
   // get: [],
-  // create: [],
-  // update: [],
-  // patch: [],
-  // remove: []
+
+  create: globalHooks.signalBackend(),
+
+  update: globalHooks.signalBackend(),
+
+  patch: globalHooks.signalBackend(),
+
+  remove: globalHooks.signalBackend()
 }

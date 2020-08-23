@@ -348,7 +348,9 @@ exports.after = {
     iff(
       context => context.result.source_type === 'deriver',
       dispatchDerivedBuild('initDerivedDatastream')
-    )
+    ),
+
+    globalHooks.signalBackend()
   ],
 
   update: [
@@ -365,7 +367,9 @@ exports.after = {
     iff(
       context => context.result.source_type === 'deriver',
       dispatchDerivedBuild('initDerivedDatastream')
-    )
+    ),
+
+    globalHooks.signalBackend()
   ],
 
   patch: [
@@ -411,7 +415,9 @@ exports.after = {
             _.intersection(initDerivedDatastreamKeys, Object.keys(data.$unset))
               .length)),
       dispatchDerivedBuild('initDerivedDatastream')
-    )
+    ),
+
+    globalHooks.signalBackend()
   ],
 
   remove: [
@@ -423,6 +429,8 @@ exports.after = {
     iff(
       context => context.result.source_type === 'deriver',
       dispatchDerivedBuild('destroyDerivedDatastream')
-    )
+    ),
+
+    globalHooks.signalBackend()
   ]
 }

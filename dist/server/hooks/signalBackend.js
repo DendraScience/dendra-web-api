@@ -1,86 +1,72 @@
 "use strict";
 
-// const errors = require('@feathersjs/errors')
-// const merge = require('lodash.merge')
+const errors = require('@feathersjs/errors');
+
+const axios = require('axios');
+
+const _ = require('lodash'); // TODO: Migrate to a Feathers event listener!
+
+
+const EVENTS = {
+  create: 'created',
+  patch: 'patched',
+  remove: 'removed',
+  update: 'updated'
+};
+
 module.exports = event => {
   return async context => {
     if (context.type !== 'after') {
       throw new Error("The 'signalBackend' hook should only be used as an 'after' hook.");
     }
 
-    const backend = context.app.get('backend');
-    if (!(backend && backend.url && context.params.provider)) return context;
+    const event = EVENTS[context.method];
+    if (!event) return context;
     const {
       app,
-      method,
       params
     } = context;
-    if (method === 'find' || method === 'get') return context;
+    const backend = app.get('backend');
+    if (!(backend && backend.url)) return context;
+    const headers = {
+      'Dendra-Event': `${_.kebabCase(context.path)}.${event}`
+    };
+    if (params.provider) headers['Dendra-Provider'] = params.provider;
+    if (params.user && params.user._id) headers['Dendra-User-Id'] = `${params.user._id}`;
+    const message = {};
+    if (params.before) message.before = params.before;
+    if (context.result) message.result = context.result;
 
     if (params.headers && params.headers.authorization) {
       /*
         Exchange authorization for a short-lived auth token.
        */
-      const result = await app.service('authentication').create({
-        accessToken: params.headers.authorization
-      }, {
-        authenticated: false,
-        jwt: backend.jwt,
-        provider: params.provider
-      });
-      /* eslint-disable-next-line no-console */
+      try {
+        const auth = await app.service('authentication').create({
+          accessToken: params.headers.authorization
+        }, {
+          authenticated: false,
+          jwt: backend.jwt,
+          provider: params.provider
+        });
+        if (auth.accessToken) headers['Dendra-Access-Token'] = auth.accessToken;
+      } catch (err) {
+        app.logger.error(err);
+      }
+    }
+    /*
+      POST an event to the backend webhook.
+     */
 
-      console.log('result', result); // const methodMap = {
-      //   find: 'GET',
-      //   get: 'GET',
-      //   create: 'POST',
-      //   update: 'PUT',
-      //   patch: 'PATCH',
-      //   remove: 'DELETE'
-      // }
-      // const request = {
-      //   query: {}, // context.data,
-      //   body: {}, // context.data,
-      //   params: {}, // context.params,
-      //   path: '', // context.path,
-      //   method: methodMap[context.method] || context.method,
-      //   headers: params.headers || {},
-      //   cookies: params.cookies || {},
-      //   session: {}
-      // }
-      // const strategy = 'jwt'
-      // const strategyOptions = merge({}, app.passport.options(strategy))
-      // /* eslint-disable-next-line no-console */
-      // console.log('strategyOptions', strategyOptions)
-      // return app
-      //   .authenticate(
-      //     strategy,
-      //     strategyOptions
-      //   )(request)
-      //   .then((result = {}) => {
-      //     /* eslint-disable-next-line no-console */
-      //     console.log('request', request)
-      //     /* eslint-disable-next-line no-console */
-      //     console.log('result', result)
-      //     return context
-      //   })
-    } // const { method: action, params, path: serviceName } = context
-    // const { ability } = params
-    // if (!ability) {
-    //   throw new Error(
-    //     "The 'restrictQueryToAbility' hook requires params.ability."
-    //   )
-    // }
-    // const query = toMongoQuery(ability, serviceName, action)
-    // if (!params.query) params.query = {}
-    // if (query !== null) {
-    //   params.query.$and = (params.query.$and || []).concat(query)
-    // } else if (action === 'find') {
-    //   params.query.$limit = 0
-    // } else {
-    //   throw new errors.NotFound(`No record found for id '${context.id}'.`)
-    // }
 
+    try {
+      const response = await axios.post(backend.url, message, _.merge({}, backend.config, {
+        headers
+      }));
+      if (!(response.status === 200 || response.status === 201)) throw new errors.BadRequest(`The backend returned a non-success status code ${response.status}`);
+    } catch (err) {
+      app.logger.error(err);
+    }
 
     return context;
   };
