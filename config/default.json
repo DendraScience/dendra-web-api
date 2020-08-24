@@ -22,9 +22,8 @@
   "backend": {
     "config": {},
     "jwt": {
-      "expiresIn": "2h"
-    },
-    "url": "http://localhost:3040/api/webhooks/frontend"
+      "expiresIn": "12h"
+    }
   },
   "connections": {},
   "databases": {

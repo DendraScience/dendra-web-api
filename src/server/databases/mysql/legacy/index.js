@@ -1,11 +1,12 @@
 const Sequelize = require('sequelize')
 const models = require('./models')
+const _ = require('lodash')
 
 module.exports = async app => {
   const { legacy } = app.get('databases').mysql
 
   // Configure a new instance
-  const opts = {
+  const opts = _.merge({}, legacy.options, {
     define: {
       timestamps: false,
       underscored: true
@@ -17,7 +18,7 @@ module.exports = async app => {
         message
       })
     }
-  }
+  })
   const sequelize = new Sequelize(legacy.url, opts)
 
   legacy.Sequelize = Sequelize

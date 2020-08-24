@@ -3,7 +3,7 @@
     "secret": "WEB_API_SECRET"
   },
   "backend": {
-    "url": "BACKEND_GATEWAY_API_URL"
+    "url": "BACKEND_API_URL"
   },
   "connections": {
     "aggregateDispatch": {
@@ -36,6 +36,11 @@
     },
     "mysql": {
       "legacy": {
+        "options": {
+          "pool": {
+            "max": 1
+          }
+        },
         "url": "LEGACY_MYSQL_URL"
       }
     }
