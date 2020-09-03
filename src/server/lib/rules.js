@@ -38,14 +38,15 @@ const publicRules = ({ can, cannot }) => {
   // Places
   can('read', 'places')
 
-  // Schemes
-  can('read', 'schemes')
-
   // Companies
   can('read', 'companies')
 
   // Thing Types
   can('read', 'thing-types')
+  can('access', 'thing-types', {})
+
+  // Schemes
+  can('read', 'schemes')
 
   // Vocabularies
   can('read', 'vocabularies')
@@ -94,6 +95,14 @@ const membershipRulesByRole = {
     can(['create', 'read'], 'uploads', {
       organization_id: membership.organization_id
     })
+
+    // Companies
+    can(['create', 'patch'], 'companies')
+    can('assign', 'companies')
+
+    // Thing Types
+    can(['create', 'patch'], 'thing-types')
+    can('assign', 'thing-types')
   },
 
   [MembershipRole.CURATOR]: ({ can, cannot }, { membership }) => {
