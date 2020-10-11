@@ -4,10 +4,9 @@ The public facing REST API for Dendra. Built using [Feathers](https://feathersjs
 
 [API Documentation](https://dendrascience.github.io/dendra-json-schema/)
 
-
 ## Instructions
 
-1. Be sure you have Node version 8.11.3. If you’re using nvm, you may need to `nvm use 8.11.3`.
+1. Be sure you have Node version 10.15.1. If you’re using nvm, you may need to `nvm use 10.15.1`.
 
 2. Clone this repo.
 
@@ -16,7 +15,6 @@ The public facing REST API for Dendra. Built using [Feathers](https://feathersjs
 4. Install modules via `npm install`.
 
 5. If all goes well, you should be able to run the predefined package scripts.
-
 
 ## To build and publish the Docker image
 

@@ -1,0 +1,109 @@
+{
+  "access_levels": {
+    "explicit": [
+      {
+        "level": 2,
+        "organization_id": "592f155746a1b867a114e030"
+      },
+      {
+        "level": 2,
+        "person_id": "592f155746a1b867a114e040"
+      },
+      {
+        "level": 2,
+        "team_id": "592f155746a1b867a114e0c0"
+      }
+    ],
+    "member_level": 1,
+    "public_level": 1
+  },
+  "attributes": {
+    "height": {
+      "unit_tag": "dt_Unit_Meter",
+      "value": 10
+    }
+  },
+  "datapoints_config": [
+    {
+      "begins_at": "2017-05-28T09:50:23.106Z",
+      "connection": "legacy",
+      "ends_before": "2017-05-28T09:50:23.106Z",
+      "params": {
+        "query": {
+          "datastream_id": 3090,
+          "time_adjust": -28800
+        }
+      },
+      "path": "/datavalues-ucnrs"
+    }
+  ],
+  "derivation_description": "Calculated server-side based on the Celsius datastream.",
+  "derived_from_datastream_ids": [
+    "592f155746a1b867a114e021"
+  ],
+  "description": "Demo Datastream Description",
+  "external_refs": [
+    {
+      "identifier": "3090",
+      "type": "odm.datastreams.datastreamid"
+    },
+    {
+      "identifier": "334",
+      "type": "odm.stations.stationid",
+      "url": "http://sensor.berkeley.edu/index_ucnrs.html"
+    }
+  ],
+  "geo": {
+    "coordinates": [
+      -121.73638,
+      37.381666,
+      574.548
+    ],
+    "type": "Point"
+  },
+  "involved_parties": [
+    {
+      "organization_id": "592f155746a1b867a114e030",
+      "roles": [
+        "contact"
+      ]
+    },
+    {
+      "person_id": "592f155746a1b867a114e040",
+      "roles": [
+        "admin",
+        "contact"
+      ]
+    },
+    {
+      "roles": [
+        "contact"
+      ],
+      "team_id": "592f155746a1b867a114e0c0"
+    }
+  ],
+  "is_enabled": true,
+  "is_geo_protected": false,
+  "is_hidden": false,
+  "name": "Demo Datastream",
+  "organization_id": "592f155746a1b867a114e030",
+  "preferred_uom_ids": [
+    "degree-fahrenheit"
+  ],
+  "source": "edu.berkeley.sensor.ucnrs.legacy.odm",
+  "source_type": "sensor",
+  "state": "ready",
+  "station_id": "592f155746a1b867a114e060",
+  "terms": {
+    "ds": {
+      "Aggregate": "Average",
+      "Medium": "Air",
+      "Variable": "Temperature"
+    },
+    "dt": {
+      "Unit": "DegreeFahrenheit"
+    }
+  },
+  "thing_id": "592f155746a1b867a114e070",
+  "thing_type_id": "592f155746a1b867a114e0d0"
+}

@@ -1,0 +1,8 @@
+{
+  "description": "The Eel River CZO is largely based in the Eel River watershed in Northern California and is composed of nested components, increasing in scale from an intensively instrumented hillslope to a region encompassing the Eel watershed.",
+  "email": "erczo_org@test.dendra.science",
+  "is_enabled": true,
+  "name": "Eel River Critical Zone Observatory",
+  "slug": "erczo",
+  "url": "http://criticalzone.org/eel"
+}

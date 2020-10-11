@@ -1,72 +1,115 @@
-'use strict';
+"use strict";
 
-const apiHooks = require('@dendra-science/api-hooks-common');
-const auth = require('feathers-authentication');
-const authHooks = require('feathers-authentication-hooks');
-const commonHooks = require('feathers-hooks-common');
 const globalHooks = require('../../../hooks');
 
-const SCHEMA_NAME = 'annotation.json';
+const {
+  iff
+} = require('feathers-hooks-common');
 
-exports.before = {
-  // all: [],
+const {
+  idRandom,
+  Visibility
+} = require('../../../lib/utils');
 
-  find: [apiHooks.coerceQuery()],
+const _ = require('lodash');
 
-  // get: [],
+const processAnnotationKeys = ['actions', 'datastream_ids', 'intervals', 'is_enabled', 'state', 'station_ids'];
 
-  create: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  }), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce()],
+const defaultsMigrations = rec => {
+  _.defaults(rec, {
+    is_enabled: rec.enabled
+  }, {
+    is_enabled: true,
+    state: 'pending'
+  });
 
-  update: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  }), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), hook => {
-    // TODO: Optimize with find/$select to return fewer fields?
-    return hook.app.service('/annotations').get(hook.id).then(doc => {
-      hook.beforeDoc = doc;
-      hook.data.created_at = doc.created_at;
-      return hook;
-    });
-  }],
-
-  patch: [commonHooks.disallow('external')],
-
-  remove: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  })]
+  delete rec.access_levels_resolved;
+  delete rec.affected_station_ids;
+  delete rec.enabled;
 };
 
-function createAnnotationBuild() {
-  return hook => {
+const dispatchAnnotationBuild = method => {
+  return async context => {
+    context.app.logger.debug('dispatchAnnotationBuild');
+    const connection = context.app.get('connections').annotationDispatch;
+    if (!(connection && method)) return context;
     const now = new Date();
-    const method = 'processAnnotation';
-
-    return hook.app.get('connections').annotationBuild.app.service('/builds').create({
-      _id: `${method}-${hook.result._id}-${now.getTime()}-${Math.floor(Math.random() * 10000)}`,
+    const before = context.params.before || {};
+    const annotation = context.result;
+    const {
+      _id: id
+    } = annotation;
+    await connection.app.service('annotation-builds').create({
+      _id: `${method}-${id}-${now.getTime()}-${idRandom()}`,
       method,
-      build_at: now,
-      expires_at: new Date(now.getTime() + 86400000), // 24 hours from now
+      dispatch_at: now,
+      dispatch_key: id,
+      expires_at: new Date(now.getTime() + 86400000),
+      // 24 hours from now
       spec: {
-        annotation: hook.result,
-        annotation_before: hook.beforeDoc || {}
+        annotation,
+        annotation_before: before
       }
-    }).then(() => {
-      return hook;
     });
+    return context;
   };
-}
+};
 
+const stages = [{
+  $lookup: {
+    from: 'organizations',
+    localField: 'organization_id',
+    foreignField: '_id',
+    as: 'organization'
+  }
+}, {
+  $unwind: {
+    path: '$organization',
+    preserveNullAndEmptyArrays: true
+  }
+}, {
+  $addFields: {
+    access_levels_resolved: {
+      $mergeObjects: [{
+        member_level: Visibility.DOWNLOAD,
+        public_level: Visibility.DOWNLOAD
+      }, '$organization.access_levels']
+    }
+  }
+}, {
+  $project: {
+    organization: false
+  }
+}];
+exports.before = {
+  // all: [],
+  find: [globalHooks.beforeFind(), globalHooks.accessFind(stages)],
+  get: [globalHooks.beforeGet(), globalHooks.accessGet(stages)],
+  create: globalHooks.beforeCreate({
+    alterItems: defaultsMigrations,
+    schemaName: 'annotation.create.json',
+    versionStamp: true
+  }),
+  update: globalHooks.beforeUpdate({
+    alterItems: defaultsMigrations,
+    schemaName: 'annotation.update.json',
+    versionStamp: true
+  }),
+  patch: globalHooks.beforePatch({
+    schemaName: 'annotation.patch.json',
+    versionStamp: true
+  }),
+  remove: globalHooks.beforeRemove()
+};
 exports.after = {
   // all: [],
   // find: [],
   // get: [],
-
-  create: [createAnnotationBuild()],
-
-  update: [createAnnotationBuild()],
-
-  // patch: [],
-
-  remove: [createAnnotationBuild()]
+  create: [dispatchAnnotationBuild('processAnnotation'), globalHooks.signalBackend()],
+  update: [dispatchAnnotationBuild('processAnnotation'), globalHooks.signalBackend()],
+  patch: [iff(({
+    data,
+    params
+  }) => params.dispatchAnnotationBuild !== false && (params.dispatchAnnotationBuild === true || data.$set && _.intersection(processAnnotationKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(processAnnotationKeys, Object.keys(data.$unset)).length), dispatchAnnotationBuild('processAnnotation')), globalHooks.signalBackend()],
+  remove: [dispatchAnnotationBuild('processAnnotation'), globalHooks.signalBackend()]
 };

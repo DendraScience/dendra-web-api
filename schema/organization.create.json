@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "organization.create.json",
+  "$patch": {
+    "source": {"$ref": "organization.json#"},
+    "with": [
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "_id": {"$ref": "#/definitions/_id"},
+          "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
+          "description": {"$ref": "#/definitions/description"},
+          "email": {"$ref": "#/definitions/email"},
+          "full_name": {"$ref": "#/definitions/full_name"},
+          "general_config": {"$ref": "types.json#/definitions/generalConfig"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "name": {"$ref": "#/definitions/name"},
+          "slug": {"$ref": "#/definitions/slug"},
+          "sort_value": {"$ref": "types.json#/definitions/sortValue"},
+          "url": {"$ref": "#/definitions/url"}
+        }
+      }
+    ]
+  }
+}

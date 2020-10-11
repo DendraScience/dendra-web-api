@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "upload.update.json",
+  "$patch": {
+    "source": {"$ref": "upload.json#"},
+    "with": [
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "_id": {"$ref": "#/definitions/_id"},
+          "organization_id": {"$ref": "#/definitions/organization_id"},
+          "result": {"$ref": "types.json#/definitions/result"},
+          "spec": {"$ref": "types.json#/definitions/loadSpec"},
+          "spec_type": {"$ref": "#/definitions/spec_type"},
+          "station_id": {"$ref": "#/definitions/station_id"},
+          "storage": {"$ref": "types.json#/definitions/storageSpec"}
+        }
+      }
+    ]
+  }
+}

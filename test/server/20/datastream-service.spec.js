@@ -2,219 +2,231 @@
  * Tests for datastream service
  */
 
-describe('Service /datastreams', function () {
-  const databases = main.app.get('databases')
+const dataFile = 'demo.datastream'
+const servicePath = 'datastreams'
 
-  const unitTerm = {
-    abbreviation: 'm',
-    label: 'Meter',
-    scheme_id: 'ts2003',
-    scheme_priority: 1,
-    vocabulary_id: 'ts2003-unit',
-    vocabulary_label: 'Unit',
-    vocabulary_type: 'unit'
-  }
-  const unitTermUpdated = {
-    abbreviation: 'mm',
-    label: 'Millimeter',
-    scheme_id: 'ts2003',
-    scheme_priority: 1,
-    vocabulary_id: 'ts2003-unit',
-    vocabulary_label: 'Unit',
-    vocabulary_type: 'unit'
-  }
-  const tagsInfo = {
-    resolved_terms: [{
-      label: 'TermA',
-      scheme_id: 'ts2003',
-      scheme_priority: 1,
-      vocabulary_id: 'ts2003-class',
-      vocabulary_label: 'Class',
-      vocabulary_type: 'class'
-    }, unitTerm],
-    unit_tag: 'ts2003_Unit_Meter',
-    unit_term: unitTerm,
-    scheme_refs: [{
-      _id: 'ts2003',
-      tag_count: 2
-    }],
-    vocabulary_refs: [{
-      _id: 'ts2003-class'
-    }, {
-      _id: 'ts2003-unit'
-    }]
-  }
-  const tagsInfoUpdated = {
-    resolved_terms: [{
-      label: 'TermB',
-      scheme_id: 'ts2003',
-      scheme_priority: 1,
-      vocabulary_id: 'ts2003-class',
-      vocabulary_label: 'Class',
-      vocabulary_type: 'class'
-    }, unitTermUpdated],
-    unit_tag: 'ts2003_Unit_Millimeter',
-    unit_term: unitTermUpdated,
-    scheme_refs: [{
-      _id: 'ts2003',
-      tag_count: 2
-    }],
-    vocabulary_refs: [{
-      _id: 'ts2003-class'
-    }, {
-      _id: 'ts2003-unit'
-    }]
+describe(`Service ${servicePath}`, function () {
+  const id = {}
+
+  const cleanup = async () => {
+    await coll.datastreams.remove()
+    await coll.vocabularies.remove()
   }
 
-  before(function () {
-    if (databases.mongodb && databases.mongodb.metadata) {
-      return Promise.resolve(databases.mongodb.metadata.db).then(db => {
-        return Promise.all([
-          db.collection('datastreams').remove({source: 'science.dendra.test.ts2003'}),
-          db.collection('uoms').remove({_id: 'imp2003-a'}),
-          db.collection('vocabularies').remove({scheme_id: 'ts2003'}),
-          db.collection('schemes').remove({_id: 'ts2003'})
-        ])
-      }).then(() => {
-        return helper.loadJSON(path.join(__dirname, 'data/scheme_ts2003.json'))
-      }).then(doc => {
-        return sysAdmin.service('/schemes').create(doc)
-      }).then(() => {
-        return helper.loadJSON(path.join(__dirname, 'data/vocabulary_ts2003-class.json'))
-      }).then(doc => {
-        return sysAdmin.service('/vocabularies').create(doc)
-      }).then(() => {
-        return helper.loadJSON(path.join(__dirname, 'data/vocabulary_ts2003-unit.json'))
-      }).then(doc => {
-        return sysAdmin.service('/vocabularies').create(doc)
-      }).then(() => {
-        return helper.loadJSON(path.join(__dirname, 'data/uom_imp2003-a.json'))
-      }).then(doc => {
-        return sysAdmin.service('/uoms').create(doc)
-      })
-    }
+  before(async function () {
+    await cleanup()
+
+    const client = clients.sysAdmin
+    const service = client.service('vocabularies')
+    await service.create(await helper.getData('ds-aggregate.vocabulary'))
+    await service.create(await helper.getData('ds-medium.vocabulary'))
+    await service.create(await helper.getData('ds-variable.vocabulary'))
+    await service.create(await helper.getData('dt-unit.vocabulary'))
   })
 
-  after(function () {
-    if (databases.mongodb && databases.mongodb.metadata) {
-      return Promise.resolve(databases.mongodb.metadata.db).then(db => {
-        return Promise.all([
-          db.collection('datastreams').remove({source: 'science.dendra.test.ts2003'}),
-          db.collection('uoms').remove({_id: 'imp2003-a'}),
-          db.collection('vocabularies').remove({scheme_id: 'ts2003'}),
-          db.collection('schemes').remove({_id: 'ts2003'})
-        ])
-      })
-    }
+  after(async function () {
+    return cleanup()
   })
-
-  let _id
 
   describe('#create()', function () {
-    it('should create without error', function () {
-      return helper.loadJSON(path.join(__dirname, 'data/datastream_ts2003.json')).then(doc => {
-        return sysAdmin.service('/datastreams').create(doc)
-      }).then(doc => {
-        expect(doc).to.have.property('_id')
-        expect(doc).to.have.property('uom')
-        expect(doc).to.have.property('preferred_uoms').lengthOf(1)
-        expect(doc).to.have.property('version_id').and.match(/^[a-fA-F0-9]{24}$/)
+    it('guest should create with error', function () {
+      return helper.shouldCreateWithError(
+        clients.guest,
+        servicePath,
+        dataFile,
+        'NotAuthenticated'
+      )
+    })
 
-        /*
-          Validate computed fields
-         */
+    it('user should create with error', function () {
+      return helper.shouldCreateWithError(
+        clients.user,
+        servicePath,
+        dataFile,
+        'Forbidden'
+      )
+    })
 
-        assert.deepEqual(doc.attributes_info, {
-          sort: {
-            value1: 10,
-            value2: 0
-          },
-          text: '10 m',
-          unit_term: unitTerm
+    it('sys admin should create multiple with error', function () {
+      return helper.shouldCreateWithError(
+        clients.sysAdmin,
+        servicePath,
+        [dataFile, dataFile],
+        'MethodNotAllowed'
+      )
+    })
+
+    it('sys admin should create without error', function () {
+      return helper
+        .shouldCreateWithoutError(clients.sysAdmin, servicePath, dataFile)
+        .then(({ retDoc }) => {
+          id.doc = retDoc._id
         })
-
-        assert.deepEqual(doc.tags_info, tagsInfo)
-
-        assert.deepEqual(doc.hashes, [
-          {key: 'src', str: '41b35abaa0eaec10bc60a38f8e4966ba589732fa'},
-          {key: 'att', str: '6c0c2db35668f13b2ad8df4c79defdfe40a71a0b'},
-          {key: 'geo', str: '50d69564798973c593fdf1c54fc338b32da2ebbe'},
-          {key: 'tag', str: '9aa6a847b0f1fe1a2f32060e75aa46049d74257c', scheme_id: 'ts2003'},
-          {key: 'ent', str: 'a1d1d0fbd27a2b7db9be0f30cb5006b0562c86e8', scheme_id: 'ts2003'}
-        ])
-
-        _id = doc._id
-      })
     })
   })
 
   describe('#get()', function () {
-    it('should get without error', function () {
-      return guest.service('/datastreams').get(_id).then(doc => {
-        expect(doc).to.have.property('_id')
-      })
+    it('guest should get without error', function () {
+      return helper.shouldGetWithoutError(clients.guest, servicePath, id.doc)
+    })
+
+    it('user should get without error', function () {
+      return helper.shouldGetWithoutError(clients.user, servicePath, id.doc)
+    })
+
+    it('sys admin should get without error', function () {
+      return helper.shouldGetWithoutError(clients.sysAdmin, servicePath, id.doc)
     })
   })
 
   describe('#find()', function () {
-    it('should find without error', function () {
-      return guest.service('/datastreams').find({query: {source: 'science.dendra.test.ts2003'}}).then(res => {
-        expect(res).to.have.property('data').lengthOf(1)
-      })
+    it('guest should find without error', function () {
+      return helper.shouldFindWithoutError(clients.guest, servicePath)
+    })
+
+    it('user should find without error', function () {
+      return helper.shouldFindWithoutError(clients.user, servicePath)
+    })
+
+    it('sys admin should find without error', function () {
+      return helper.shouldFindWithoutError(clients.sysAdmin, servicePath)
     })
   })
 
   describe('#patch()', function () {
-    it('should patch without error', function () {
-      return sysAdmin.service('/datastreams').patch(_id, {datapoints_config_built: [{a: 1}]}).then(doc => {
-        expect(doc).to.have.nested.property('datapoints_config_built.0.a', 1)
-        expect(doc).to.have.nested.property('version_id').and.match(/^[a-fA-F0-9]{24}$/)
-      })
+    it('guest should patch with error', function () {
+      return helper.shouldPatchWithError(
+        clients.guest,
+        servicePath,
+        id.doc,
+        `${dataFile}.patch`,
+        'NotAuthenticated'
+      )
+    })
+
+    it('user should patch with error', function () {
+      return helper.shouldPatchWithError(
+        clients.user,
+        servicePath,
+        id.doc,
+        `${dataFile}.patch`,
+        'Forbidden'
+      )
+    })
+
+    it('sys admin should patch multiple with error', function () {
+      return helper.shouldPatchMultipleWithError(
+        clients.sysAdmin,
+        servicePath,
+        { _id: id.doc },
+        `${dataFile}.patch`,
+        'Forbidden'
+      )
+    })
+
+    it('sys admin should patch bad data with error', function () {
+      return helper.shouldPatchWithError(
+        clients.sysAdmin,
+        servicePath,
+        id.doc,
+        'bad.patch',
+        'BadRequest'
+      )
+    })
+
+    it('sys admin should patch without error', function () {
+      return helper
+        .shouldPatchWithoutError(
+          clients.sysAdmin,
+          servicePath,
+          id.doc,
+          `${dataFile}.patch`
+        )
+        .then(({ retDoc }) => {
+          expect(retDoc).to.have.property('name', 'Demo Datastream - Patched')
+        })
     })
   })
 
   describe('#update()', function () {
-    it('should update without error', function () {
-      return helper.loadJSON(path.join(__dirname, 'data/datastream_ts2003.update.json')).then(doc => {
-        return sysAdmin.service('/datastreams').update(_id, doc)
-      }).then(doc => {
-        expect(doc).to.have.property('name', 'TS2003 Datastream - Updated')
-        expect(doc).to.have.property('tags').lengthOf(2)
-        expect(doc).to.have.property('uom')
-        expect(doc).to.have.property('preferred_uoms').lengthOf(1)
-        expect(doc).to.have.property('version_id').and.match(/^[a-fA-F0-9]{24}$/)
+    it('guest should update with error', function () {
+      return helper.shouldUpdateWithError(
+        clients.guest,
+        servicePath,
+        id.doc,
+        `${dataFile}.update`,
+        'NotAuthenticated'
+      )
+    })
 
-        /*
-          Validate computed fields
-         */
+    it('user should update with error', function () {
+      return helper.shouldUpdateWithError(
+        clients.user,
+        servicePath,
+        id.doc,
+        `${dataFile}.update`,
+        'Forbidden'
+      )
+    })
 
-        assert.deepEqual(doc.attributes_info, {
-          sort: {
-            value1: 10000,
-            value2: 0
-          },
-          text: '10000 mm',
-          unit_term: unitTermUpdated
+    it('sys admin should update multiple with error', function () {
+      return helper.shouldUpdateMultipleWithError(
+        clients.sysAdmin,
+        servicePath,
+        { _id: id.doc },
+        `${dataFile}.update`,
+        'BadRequest'
+      )
+    })
+
+    it('sys admin should update without error', function () {
+      return helper
+        .shouldUpdateWithoutError(
+          clients.sysAdmin,
+          servicePath,
+          id.doc,
+          `${dataFile}.update`
+        )
+        .then(({ retDoc }) => {
+          expect(retDoc).to.have.property('name', 'Demo Datastream - Updated')
         })
-
-        assert.deepEqual(doc.tags_info, tagsInfoUpdated)
-
-        assert.deepEqual(doc.hashes, [
-          {key: 'src', str: '41b35abaa0eaec10bc60a38f8e4966ba589732fa'},
-          {key: 'att', str: 'd69d3a0f7808278d8ce26bd6721ce5def5510a3b'},
-          {key: 'geo', str: '50d69564798973c593fdf1c54fc338b32da2ebbe'},
-          {key: 'tag', str: 'ce3c904803be5a6e2a8308ea79c2f89969df2403', scheme_id: 'ts2003'},
-          {key: 'ent', str: '8f76edb9f335f11d7f4ec016186319f28b91d276', scheme_id: 'ts2003'}
-        ])
-      })
     })
   })
 
   describe('#remove()', function () {
-    it('should remove without error', function () {
-      return sysAdmin.service('/datastreams').remove(_id).then(doc => {
-        expect(doc).to.have.property('_id')
-      })
+    it('guest should remove with error', function () {
+      return helper.shouldRemoveWithError(
+        clients.guest,
+        servicePath,
+        id.doc,
+        'NotAuthenticated'
+      )
+    })
+
+    it('user should remove with error', function () {
+      return helper.shouldRemoveWithError(
+        clients.user,
+        servicePath,
+        id.doc,
+        'Forbidden'
+      )
+    })
+
+    it('sys admin should remove multiple with error', function () {
+      return helper.shouldRemoveMultipleWithError(
+        clients.sysAdmin,
+        servicePath,
+        { _id: id.doc },
+        'MethodNotAllowed'
+      )
+    })
+
+    it('sys admin should remove without error', function () {
+      return helper.shouldRemoveWithoutError(
+        clients.sysAdmin,
+        servicePath,
+        id.doc
+      )
     })
   })
 })

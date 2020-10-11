@@ -1,0 +1,28 @@
+{
+  "created_at": "2017-07-21T03:16:36.664Z",
+  "created_by": "592f155746a1b867a114e010",
+  "description": "Demo Thing Type Description",
+  "external_links": [
+    {
+      "title": "Manufacturer",
+      "url": "http://www.youngusa.com/products/7/5.html"
+    },
+    {
+      "title": "Manual",
+      "url": "https://s.campbellsci.com/documents/us/manuals/05103.pdf"
+    }
+  ],
+  "external_refs": [
+    {
+      "identifier": "2952",
+      "type": "odm.methods.MethodID"
+    }
+  ],
+  "is_enabled": true,
+  "model": "05103",
+  "name": "Demo Thing Type - Updated",
+  "oem_company_id": "592f155746a1b867a114e100",
+  "reseller_company_id": "592f155746a1b867a114e100",
+  "updated_at": "2017-07-21T03:16:36.664Z",
+  "updated_by": "592f155746a1b867a114e010"
+}

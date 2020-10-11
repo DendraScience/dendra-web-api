@@ -1,0 +1,18 @@
+{
+  "_id": "meter",
+  "convertible_to_uom_ids": [
+    "foot",
+    "centimeter",
+    "inch"
+  ],
+  "library_config": {
+    "mathjs": {
+      "round_n": 1,
+      "unit_name": "m"
+    }
+  },
+  "som_id": "met",
+  "unit_tags": [
+    "dt_Unit_Meter"
+  ]
+}

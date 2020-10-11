@@ -1,22 +1,21 @@
-'use strict';
+"use strict";
 
-const commonHooks = require('feathers-hooks-common');
+const apiHooks = require('@dendra-science/api-hooks-common');
+
+const {
+  disallow
+} = require('feathers-hooks-common');
 
 exports.before = {
   // all: [],
-
-  find: commonHooks.disallow(),
-
-  // get: [],
-
-  create: commonHooks.disallow(),
-  update: commonHooks.disallow(),
-  patch: commonHooks.disallow(),
-  remove: commonHooks.disallow()
+  find: disallow(),
+  get: apiHooks.coerceQuery(),
+  create: disallow(),
+  update: disallow(),
+  patch: disallow(),
+  remove: disallow()
 };
-
-exports.after = {
-  // all: [],
+exports.after = {// all: [],
   // find: [],
   // get: [],
   // create: [],

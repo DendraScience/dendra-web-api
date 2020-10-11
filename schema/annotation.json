@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "annotation.json",
   "title": "Annotation",
   "description": "A note with optional actions to apply against a range of datapoints.",
@@ -7,61 +7,6 @@
   "definitions": {
     "_id": {
       "$ref": "types.json#/definitions/annotationId"
-    },
-    "actions": {
-      "type": "array",
-      "description": "Specific actions to apply against the identified datapoints",
-      "minItems": 1,
-      "items": {
-        "oneOf": [
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "evaluate": {
-                "type": "string",
-                "example": "v = (v / 0.254) * 0.1"
-              }
-            },
-            "required": [
-              "evaluate"
-            ]
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "exclude": {
-                "type": "boolean",
-                "example": true,
-                "const": true
-              }
-            },
-            "required": [
-              "exclude"
-            ]
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "flag": {
-                "type": "array",
-                "minItems": 1,
-                "example": [
-                  "X"
-                ],
-                "items": {
-                  "type": "string"
-                }
-              }
-            },
-            "required": [
-              "flag"
-            ]
-          }
-        ]
-      }
     },
     "datastream_ids": {
       "type": "array",
@@ -74,11 +19,6 @@
     "description": {
       "$ref": "types.json#/definitions/description",
       "example": "Loaded new program to logger, it rearranges the TenMin table slightly."
-    },
-    "enabled": {
-      "type": "boolean",
-      "description": "Whether this datastream is enabled (shown) in any user interface",
-      "example": true
     },
     "external_refs": {
       "$ref": "types.json#/definitions/externalRefs",
@@ -95,53 +35,8 @@
       ]
     },
     "intervals": {
-      "type": "array",
-      "description": "One or more intervals to which this annotation applies",
-      "minItems": 1,
-      "items": {
-        "oneOf": [
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "begins_at": {
-                "$ref": "types.json#/definitions/isoDate"
-              },
-              "ends_before": {
-                "$ref": "types.json#/definitions/isoDate"
-              }
-            },
-            "required": [
-              "begins_at",
-              "ends_before"
-            ]
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "begins_at": {
-                "$ref": "types.json#/definitions/isoDate"
-              }
-            },
-            "required": [
-              "begins_at"
-            ]
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "ends_before": {
-                "$ref": "types.json#/definitions/isoDate"
-              }
-            },
-            "required": [
-              "ends_before"
-            ]
-          }
-        ]
-      }
+      "$ref": "types.json#/definitions/intervals",
+      "description": "One or more intervals to which this annotation applies"
     },
     "organization_id": {
       "$ref": "types.json#/definitions/organizationId",
@@ -169,22 +64,28 @@
   "additionalProperties": false,
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
+    "actions": {"$ref": "types.json#/definitions/annotationActions"},
+    "affected_station_ids": {"$ref": "#/definitions/station_ids"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
-    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
-    "actions": {"$ref": "#/definitions/actions"},
+    "created_by": {"$ref": "types.json#/definitions/createdBy"},
     "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
     "description": {"$ref": "#/definitions/description"},
-    "enabled": {"$ref": "#/definitions/enabled"},
     "external_refs": {"$ref": "#/definitions/external_refs"},
     "intervals": {"$ref": "#/definitions/intervals"},
+    "involved_parties": {"$ref": "types.json#/definitions/involvedParties"},
+    "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
     "organization_id": {"$ref": "#/definitions/organization_id"},
     "state": {"$ref": "#/definitions/state"},
     "station_ids": {"$ref": "#/definitions/station_ids"},
-    "title": {"$ref": "#/definitions/title"}
+    "title": {"$ref": "#/definitions/title"},
+    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"}
   },
   "required": [
-    "enabled",
+    "is_enabled",
     "organization_id",
+    "state",
     "title"
   ],
   "links": [
@@ -197,22 +98,48 @@
       "schema": {
         "type": "object",
         "properties": {
-          "actions": {"$ref": "#/definitions/actions"},
+          "actions": {"$ref": "types.json#/definitions/annotationActions"},
           "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
           "description": {"$ref": "#/definitions/description"},
-          "enabled": {"$ref": "#/definitions/enabled"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
           "intervals": {"$ref": "#/definitions/intervals"},
+          "involved_parties": {"$ref": "types.json#/definitions/involvedParties"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
           "state": {"$ref": "#/definitions/state"},
           "station_ids": {"$ref": "#/definitions/station_ids"},
           "title": {"$ref": "#/definitions/title"}
         },
         "required": [
-          "enabled",
+          "is_enabled",
           "organization_id",
+          "state",
           "title"
         ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Patch annotation",
+      "description": "Patch an existing annotation.",
+      "rel": "self",
+      "href": "annotations/{#/definitions/_id}",
+      "method": "PATCH",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "actions": {"$ref": "types.json#/definitions/annotationActions"},
+          "affected_station_ids": {"$ref": "#/definitions/station_ids"},
+          "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
+          "description": {"$ref": "#/definitions/description"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "intervals": {"$ref": "#/definitions/intervals"},
+          "involved_parties": {"$ref": "types.json#/definitions/involvedParties"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "state": {"$ref": "#/definitions/state"},
+          "station_ids": {"$ref": "#/definitions/station_ids"},
+          "title": {"$ref": "#/definitions/title"}
+        }
       },
       "targetSchema": {"rel": "self"}
     },
@@ -225,20 +152,23 @@
       "schema": {
         "type": "object",
         "properties": {
-          "actions": {"$ref": "#/definitions/actions"},
+          "_id": {"$ref": "#/definitions/_id"},
+          "actions": {"$ref": "types.json#/definitions/annotationActions"},
           "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
           "description": {"$ref": "#/definitions/description"},
-          "enabled": {"$ref": "#/definitions/enabled"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
           "intervals": {"$ref": "#/definitions/intervals"},
+          "involved_parties": {"$ref": "types.json#/definitions/involvedParties"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
           "state": {"$ref": "#/definitions/state"},
           "station_ids": {"$ref": "#/definitions/station_ids"},
           "title": {"$ref": "#/definitions/title"}
         },
         "required": [
-          "enabled",
+          "is_enabled",
           "organization_id",
+          "state",
           "title"
         ]
       },

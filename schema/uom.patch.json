@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "uom.patch.json",
+  "$patch": {
+    "source": {"$ref": "uom.json#"},
+    "with": [
+      {
+        "op": "remove",
+        "path": "/required"
+      },
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "$set": {
+            "additionalProperties": false,
+            "properties": {
+              "convertible_to_uom_ids": {"$ref": "#/definitions/convertible_to_uom_ids"},
+              "library_config": {"$ref": "#/definitions/library_config"},
+              "unit_tags": {"$ref": "#/definitions/unit_tags"}
+            },
+            "type": "object"
+          },
+          "$unset": {
+            "additionalProperties": false,
+            "properties": {
+              "convertible_to_uom_ids": {"$ref": "types.json#/definitions/unset"},
+              "library_config": {"$ref": "types.json#/definitions/unset"},
+              "unit_tags": {"$ref": "types.json#/definitions/unset"}
+            },
+            "type": "object"
+          }
+        }
+      }
+    ]
+  }
+}

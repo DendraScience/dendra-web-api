@@ -1,91 +1,103 @@
 const apiHooks = require('@dendra-science/api-hooks-common')
-const commonHooks = require('feathers-hooks-common')
-const math = require('../../../lib/math')
-const {treeMap} = require('@dendra-science/utils')
+const { disallow, iff } = require('feathers-hooks-common')
+const { annotHelpers, isProd, timeHelpers } = require('../../../lib/utils')
+const { treeMap } = require('@dendra-science/utils')
+const _ = require('lodash')
+
+/**
+ * Timeseries services must:
+ *   Support the 'compact' query parameter
+ *   Support the 'time[]' query parameter with operators $gt, $gte, $lt and $lte
+ *   Support the 'time[]' query parameter in simplified extended ISO format (ISO 8601)
+ *   Support the '$sort[time]' query parameter
+ *   Support the 't_int' and 't_local' query parameters
+ */
 
 exports.before = {
   // all: [],
 
   find: [
+    iff(() => isProd, disallow('external')),
+
     apiHooks.coerceQuery(),
 
-    (hook) => {
-      /*
-        Timeseries services must:
-        * Support a 'compact' query field
-        * Support a 'time[]' query field with operators $gt, $gte, $lt and $lte
-        * Support a '$sort[time]' query field
-        * Accept and return time values in simplified extended ISO format (ISO 8601)
-       */
+    ({ params }) => {
+      const { query } = params
 
-      const query = hook.params.query
-      hook.params.compact = query.compact
+      params.savedQuery = _.pick(query, ['compact', 't_int', 't_local'])
+
+      const newQuery = _.pick(query, ['datastream_id', '$limit'])
 
       // Eval 'time' query field
       if (typeof query.time === 'object') {
-        query.local_date_time = treeMap(query.time, (obj) => {
+        newQuery.local_date_time = treeMap(query.time, obj => {
           // Only map values that were coerced, i.e. in the correct format
-          if (obj instanceof Date) return new Date(obj.getTime() + (query.time_adjust | 0) * 1000)
+          if (obj instanceof Date)
+            return new Date(obj.getTime() + (query.time_adjust | 0) * 1000)
           return null
         })
       }
 
       // Eval $sort query field
-      if ((typeof query.$sort === 'object') && (typeof query.$sort.time !== 'undefined')) {
-        query.$sort = {local_date_time: query.$sort.time}
+      if (query.$sort && query.$sort.time !== undefined) {
+        newQuery.$sort = {
+          local_date_time: query.$sort.time
+        }
       }
-    },
 
-    commonHooks.removeQuery('compact', 'time', 'time_adjust')
+      params.query = newQuery
+    }
   ],
 
-  get: commonHooks.disallow(),
-  create: commonHooks.disallow(),
-  update: commonHooks.disallow(),
-  patch: commonHooks.disallow(),
-  remove: commonHooks.disallow()
+  get: disallow(),
+  create: disallow(),
+  update: disallow(),
+  patch: disallow(),
+  remove: disallow()
 }
 
 exports.after = {
   // all: []
 
-  find (hook) {
-    if (!hook.params.compact) return
+  find: async ({ params, result }) => {
+    const { savedQuery } = params
 
-    // Reformat results asynchronously; 20 items at a time (hardcoded)
-    // TODO: Move hardcoded 'count' to config
-    // TODO: Move this into a global hook?
-    const count = 20
-    const data = hook.result.data
-    const code = hook.params.evaluate ? math.compile(hook.params.evaluate) : null
-    const mapTask = function (start) {
-      return new Promise(resolve => {
-        setImmediate(() => {
-          const len = Math.min(start + count, data.length)
-          for (let i = start; i < len; i++) {
-            const item = data[i]
-            const newItem = {t: item.utc_date_time, o: item.utc_offset_secs, v: item.value}
+    if (!savedQuery.compact) return
 
-            if (code) {
-              try {
-                code.evaluate(newItem)
-              } catch (_) {
-              }
-            }
+    savedQuery.local = true
+    const { t_local: tLocal } = savedQuery
+    const { lt, t } = timeHelpers(params)
+    const { code, q } = annotHelpers(params)
 
-            data[i] = newItem
+    // Reformat results asynchronously; 24 items at a time (hardcoded)
+    for (let i = 0; i < result.length; i++) {
+      let item = result[i]
+      const ldt = item.local_date_time
+      const ms = item.utc_offset * 3600000
+
+      item = tLocal
+        ? {
+            lt: lt(ldt, ms),
+            o: item.utc_offset * 3600,
+            v: item.value
           }
-          resolve()
-        })
-      })
+        : {
+            lt: lt(ldt, ms),
+            t: t(ldt, ms),
+            v: item.value
+          }
+
+      if (code) {
+        try {
+          code.evaluate(item)
+        } catch (_) {}
+      }
+      if (q) item.q = q
+
+      result[i] = item
+
+      if (!(i % 24)) await new Promise(resolve => setImmediate(resolve))
     }
-    const tasks = []
-    for (let i = 0; i < data.length; i += count) {
-      tasks.push(mapTask(i))
-    }
-    return Promise.all(tasks).then(() => {
-      return hook
-    })
   }
 
   // get: [],

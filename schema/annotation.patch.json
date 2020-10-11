@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "annotation.patch.json",
+  "$patch": {
+    "source": {"$ref": "annotation.json#"},
+    "with": [
+      {
+        "op": "remove",
+        "path": "/required"
+      },
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "$set": {
+            "additionalProperties": false,
+            "properties": {
+              "actions": {"$ref": "types.json#/definitions/annotationActions"},
+              "affected_station_ids": {"$ref": "#/definitions/station_ids"},
+              "datastream_ids": {"$ref": "#/definitions/datastream_ids"},
+              "description": {"$ref": "#/definitions/description"},
+              "external_refs": {"$ref": "#/definitions/external_refs"},
+              "intervals": {"$ref": "#/definitions/intervals"},
+              "involved_parties": {"$ref": "types.json#/definitions/involvedParties"},
+              "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+              "state": {"$ref": "#/definitions/state"},
+              "station_ids": {"$ref": "#/definitions/station_ids"},
+              "title": {"$ref": "#/definitions/title"}
+            },
+            "type": "object"
+          },
+          "$unset": {
+            "additionalProperties": false,
+            "properties": {
+              "actions": {"$ref": "types.json#/definitions/unset"},
+              "affected_station_ids": {"$ref": "types.json#/definitions/unset"},
+              "datastream_ids": {"$ref": "types.json#/definitions/unset"},
+              "description": {"$ref": "types.json#/definitions/unset"},
+              "external_refs": {"$ref": "types.json#/definitions/unset"},
+              "intervals": {"$ref": "types.json#/definitions/unset"},
+              "involved_parties": {"$ref": "types.json#/definitions/unset"},
+              "station_ids": {"$ref": "types.json#/definitions/unset"}
+            },
+            "type": "object"
+          }
+        }
+      }
+    ]
+  }
+}

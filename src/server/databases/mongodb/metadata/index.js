@@ -1,23 +1,25 @@
 const MongoClient = require('mongodb').MongoClient
 
-module.exports = (function () {
-  return function () {
-    const app = this
-    const metadata = app.get('databases').mongodb.metadata
+module.exports = async app => {
+  const { metadata } = app.get('databases').mongodb
 
-    // Configure a new instance
-    metadata.db = new Promise((resolve, reject) => {
-      const tryConnect = function () {
-        MongoClient.connect(metadata.url, metadata.options).then(db => {
-          resolve(db)
-        }).catch(() => {
-          // If database service is unavailable, then retry
-          // TODO: Don't hardcode retry interval
-          // TODO: Add max retries?
-          setTimeout(tryConnect, 5000)
-        })
-      }
-      tryConnect()
-    })
+  // Configure a new instance
+  let retries = 100
+  while (true) {
+    try {
+      metadata.client = await MongoClient.connect(
+        metadata.url,
+        metadata.options
+      )
+      metadata.db = metadata.client.db(metadata.dbName)
+      break
+    } catch (err) {
+      app.logger.error(err)
+    }
+
+    if (retries-- === 0)
+      throw new Error('MongoDB connection retry attempts exceeded')
+
+    await new Promise(resolve => setTimeout(resolve, 5000))
   }
-})()
+}

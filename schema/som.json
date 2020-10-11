@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "som.json",
   "title": "System of Measurement",
   "description": "A collection of units of measurement.",
@@ -7,17 +7,6 @@
   "definitions": {
     "_id": {
       "$ref": "types.json#/definitions/somId"
-    },
-    "fallback_som_ids": {
-      "type": "array",
-      "description": "The order of precedence for selecting another system when this SOM is unavailable",
-      "example": [
-        "met"
-      ],
-      "minItems": 1,
-      "items": {
-        "$ref": "types.json#/definitions/somId"
-      }
     },
     "name": {
       "type": "string",
@@ -28,9 +17,11 @@
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
+    "created_by": {"$ref": "types.json#/definitions/createdBy"},
+    "name": {"$ref": "#/definitions/name"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
-    "fallback_som_ids": {"$ref": "#/definitions/fallback_som_ids"},
-    "name": {"$ref": "#/definitions/name"}
+    "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"}
   },
   "required": [
     "_id",
@@ -43,15 +34,28 @@
       "rel": "self",
       "href": "soms",
       "method": "POST",
-      "required": [
-        "_id",
-        "name"
-      ],
       "schema": {
         "type": "object",
         "properties": {
           "_id": {"$ref": "#/definitions/_id"},
-          "fallback_som_ids": {"$ref": "#/definitions/fallback_som_ids"},
+          "name": {"$ref": "#/definitions/name"}
+        },
+        "required": [
+          "_id",
+          "name"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Patch SOM",
+      "description": "Patch an existing system of measurement.",
+      "rel": "self",
+      "href": "soms/{#/definitions/_id}",
+      "method": "PATCH",
+      "schema": {
+        "type": "object",
+        "properties": {
           "name": {"$ref": "#/definitions/name"}
         }
       },
@@ -63,15 +67,16 @@
       "rel": "self",
       "href": "soms/{#/definitions/_id}",
       "method": "PUT",
-      "required": [
-        "name"
-      ],
       "schema": {
         "type": "object",
         "properties": {
-          "name": {"$ref": "#/definitions/name"},
-          "fallback_som_ids": {"$ref": "#/definitions/fallback_som_ids"}
-        }
+          "_id": {"$ref": "#/definitions/_id"},
+          "name": {"$ref": "#/definitions/name"}
+        },
+        "required": [
+          "_id",
+          "name"
+        ]
       },
       "targetSchema": {"rel": "self"}
     },

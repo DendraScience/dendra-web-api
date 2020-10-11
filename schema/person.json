@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "person.json",
   "title": "Person",
   "description": "A data consumer, responsible party, or user of the system.",
@@ -25,12 +25,17 @@
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
-    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "created_by": {"$ref": "types.json#/definitions/createdBy"},
     "email": {"$ref": "#/definitions/email"},
     "full_name": {"$ref": "#/definitions/full_name"},
-    "name": {"$ref": "#/definitions/name"}
+    "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+    "name": {"$ref": "#/definitions/name"},
+    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"}
   },
   "required": [
+    "is_enabled",
     "name"
   ],
   "links": [
@@ -40,14 +45,33 @@
       "rel": "self",
       "href": "persons",
       "method": "POST",
-      "required": [
-        "name"
-      ],
       "schema": {
         "type": "object",
         "properties": {
           "email": {"$ref": "#/definitions/email"},
           "full_name": {"$ref": "#/definitions/full_name"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "name": {"$ref": "#/definitions/name"}
+        },
+        "required": [
+          "is_enabled",
+          "name"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Patch person",
+      "description": "Patch an existing person.",
+      "rel": "self",
+      "href": "persons/{#/definitions/_id}",
+      "method": "PATCH",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "email": {"$ref": "#/definitions/email"},
+          "full_name": {"$ref": "#/definitions/full_name"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "name": {"$ref": "#/definitions/name"}
         }
       },
@@ -59,16 +83,19 @@
       "rel": "self",
       "href": "persons/{#/definitions/_id}",
       "method": "PUT",
-      "required": [
-        "name"
-      ],
       "schema": {
         "type": "object",
         "properties": {
+          "_id": {"$ref": "#/definitions/_id"},
           "email": {"$ref": "#/definitions/email"},
           "full_name": {"$ref": "#/definitions/full_name"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "name": {"$ref": "#/definitions/name"}
-        }
+        },
+        "required": [
+          "is_enabled",
+          "name"
+        ]
       },
       "targetSchema": {"rel": "self"}
     },

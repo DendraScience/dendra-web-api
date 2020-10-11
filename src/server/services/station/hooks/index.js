@@ -1,58 +1,98 @@
-const apiHooks = require('@dendra-science/api-hooks-common')
-const auth = require('feathers-authentication')
-const authHooks = require('feathers-authentication-hooks')
-const commonHooks = require('feathers-hooks-common')
 const globalHooks = require('../../../hooks')
+const { Visibility } = require('../../../lib/utils')
+const _ = require('lodash')
 
-const SCHEMA_NAME = 'station.json'
+const defaultsMigrations = rec => {
+  _.defaults(
+    rec,
+    {
+      is_enabled: rec.enabled
+    },
+    {
+      is_active: true,
+      is_enabled: true,
+      is_geo_protected: false,
+      is_hidden: false,
+      is_stationary: true,
+      state: 'ready',
+      station_type: 'weather'
+    }
+  )
+
+  delete rec.access_levels_resolved
+  delete rec.activated_at
+  delete rec.deactivated_at
+  delete rec.enabled
+  delete rec.general_config_resolved
+  delete rec.members
+  delete rec.organization_lookup
+}
+
+const stages = [
+  {
+    $lookup: {
+      from: 'organizations',
+      localField: 'organization_id',
+      foreignField: '_id',
+      as: 'organization'
+    }
+  },
+  {
+    $unwind: { path: '$organization', preserveNullAndEmptyArrays: true }
+  },
+  {
+    $addFields: {
+      access_levels_resolved: {
+        $mergeObjects: [
+          {
+            member_level: Visibility.DOWNLOAD,
+            public_level: Visibility.DOWNLOAD
+          },
+          '$organization.access_levels',
+          '$access_levels'
+        ]
+      },
+      general_config_resolved: {
+        $mergeObjects: [{}, '$organization.general_config', '$general_config']
+      },
+      organization_lookup: {
+        name: '$organization.name',
+        slug: '$organization.slug'
+      }
+    }
+  },
+  {
+    $project: {
+      organization: false
+    }
+  }
+]
 
 exports.before = {
   // all: [],
 
-  find: [
-    apiHooks.coerceQuery()
-  ],
+  find: [globalHooks.beforeFind(), globalHooks.accessFind(stages)],
 
-  // get: [],
+  get: [globalHooks.beforeGet(), globalHooks.accessGet(stages)],
 
-  create: [
-    auth.hooks.authenticate('jwt'),
-    authHooks.restrictToRoles({
-      roles: ['sys-admin']
-    }),
-    globalHooks.validate(SCHEMA_NAME),
-    apiHooks.timestamp(),
-    apiHooks.coerce()
-  ],
+  create: globalHooks.beforeCreate({
+    alterItems: defaultsMigrations,
+    schemaName: 'station.create.json',
+    versionStamp: true
+  }),
 
-  update: [
-    auth.hooks.authenticate('jwt'),
-    authHooks.restrictToRoles({
-      roles: ['sys-admin']
-    }),
-    globalHooks.validate(SCHEMA_NAME),
-    apiHooks.timestamp(),
-    apiHooks.coerce(),
+  update: globalHooks.beforeUpdate({
+    alterItems: defaultsMigrations,
+    schemaName: 'station.update.json',
+    versionStamp: true
+  }),
 
-    (hook) => {
-      // TODO: Optimize with find/$select to return fewer fields?
-      return hook.app.service('/stations').get(hook.id).then(doc => {
-        hook.data.created_at = doc.created_at
-        return hook
-      })
-    }
-  ],
+  patch: globalHooks.beforePatch({
+    schemaName: 'station.patch.json',
+    versionStamp: true
+  }),
 
-  patch: [
-    commonHooks.disallow('external')
-  ],
-
-  remove: [
-    auth.hooks.authenticate('jwt'),
-    authHooks.restrictToRoles({
-      roles: ['sys-admin']
-    })
-  ]
+  remove: globalHooks.beforeRemove()
 }
 
 exports.after = {

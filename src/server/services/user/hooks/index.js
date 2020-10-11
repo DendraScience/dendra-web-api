@@ -1,79 +1,83 @@
-const apiHooks = require('@dendra-science/api-hooks-common')
-const auth = require('feathers-authentication')
-const authHooks = require('feathers-authentication-hooks')
-const commonHooks = require('feathers-hooks-common')
+const bcrypt = require('bcryptjs')
+const errors = require('@feathersjs/errors')
 const globalHooks = require('../../../hooks')
-const local = require('feathers-authentication-local')
+const local = require('@feathersjs/authentication-local')
+const _ = require('lodash')
 
-const SCHEMA_NAME = 'user.json'
+const PATCH_CURRENT_PASSWORD = '$set.current_password'
+const PATCH_PASSWORD = '$set.password'
+
+const defaultsMigrations = rec => {
+  _.defaults(
+    rec,
+    {
+      is_enabled: rec.enabled
+    },
+    {
+      is_enabled: true
+    }
+  )
+
+  delete rec.enabled
+}
 
 exports.before = {
   // all: [],
 
-  find: [
-    auth.hooks.authenticate('jwt'),
-    authHooks.restrictToRoles({
-      roles: ['sys-admin']
-    }),
-    apiHooks.coerceQuery()
-  ],
+  find: globalHooks.beforeFind(),
 
-  get: [
-    auth.hooks.authenticate('jwt'),
-    authHooks.restrictToRoles({
-      roles: ['sys-admin'],
-      ownerField: '_id',
-      owner: true
-    })
-  ],
+  get: globalHooks.beforeGet(),
 
   create: [
-    globalHooks.validate(SCHEMA_NAME),
     local.hooks.hashPassword(),
-    apiHooks.timestamp(),
-    apiHooks.coerce()
+
+    globalHooks.beforeCreate({
+      alterItems: defaultsMigrations,
+      schemaName: 'user.create.json',
+      versionStamp: true
+    })
   ],
 
   update: [
-    auth.hooks.authenticate('jwt'),
-    authHooks.restrictToRoles({
-      roles: ['sys-admin'],
-      ownerField: '_id',
-      owner: true
-    }),
-    globalHooks.validate(SCHEMA_NAME),
     local.hooks.hashPassword(),
-    apiHooks.timestamp(),
-    apiHooks.coerce(),
 
-    (hook) => {
-      // TODO: Optimize with find/$select to return fewer fields?
-      return hook.app.service('/users').get(hook.id).then(doc => {
-        if (!hook.data.password) hook.data.password = doc.password
-        hook.data.created_at = doc.created_at
-        return hook
-      })
-    }
+    globalHooks.beforeUpdate({
+      alterItems: defaultsMigrations,
+      schemaName: 'user.update.json',
+      versionStamp: true
+    })
   ],
 
   patch: [
-    commonHooks.disallow('external')
+    local.hooks.hashPassword({ passwordField: PATCH_PASSWORD }),
+
+    ({ data, params }) => {
+      params.currentPassword = _.get(data, PATCH_CURRENT_PASSWORD)
+    },
+
+    globalHooks.beforePatch({
+      alterItems: rec => _.unset(rec, PATCH_CURRENT_PASSWORD),
+      schemaName: 'user.patch.json',
+      versionStamp: true
+    }),
+
+    async ({ data, params }) => {
+      const newPassword = _.get(data, PATCH_PASSWORD)
+
+      if (
+        newPassword &&
+        !(await bcrypt.compare(params.currentPassword, params.before.password))
+      ) {
+        throw new errors.Forbidden('The current password is not valid.')
+      }
+    }
   ],
 
-  remove: [
-    auth.hooks.authenticate('jwt'),
-    authHooks.restrictToRoles({
-      roles: ['sys-admin'],
-      ownerField: '_id',
-      owner: true
-    })
-  ]
+  remove: globalHooks.beforeRemove()
 }
 
 exports.after = {
-  all: [
-    commonHooks.when(hook => hook.params.provider, commonHooks.discard('password'))
-  ]
+  all: local.hooks.protect('password')
 
   // find: [],
   // get: [],

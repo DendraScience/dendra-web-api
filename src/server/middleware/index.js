@@ -1,19 +1,12 @@
-const handler = require('feathers-errors/handler')
-const notFound = require('./not-found-handler')
-const logger = require('./logger')
+// const handler = require('@feathersjs/errors/handler')
+// const notFound = require('./not-found-handler')
+// const logger = require('./logger')
 
-module.exports = (function () {
-  return function () {
-    // Add your custom middleware here. Remember, that
-    // just like Express the order matters, so error
-    // handling middleware should go last.
-    const app = this
-
-    app.set('middlewareReady',
-      Promise.resolve(app.get('servicesReady')).then(() => {
-        app.use(notFound())
-        app.use(logger(app))
-        app.use(handler())
-      }))
-  }
-})()
+module.exports = function (app) {
+  // // Add your custom middleware here. Remember, that
+  // // just like Express the order matters, so error
+  // // handling middleware should go last.
+  // app.use(notFound())
+  // app.use(logger(app))
+  // app.use(handler())
+}

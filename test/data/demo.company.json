@@ -1,0 +1,13 @@
+{
+  "company_type": "Demo Company Description",
+  "description": "Campbell Scientific is a worldwide provider of rugged, reliable dataloggers and data acquisition systems for long-term, unattended monitoring.",
+  "external_refs": [
+    {
+      "identifier": "100",
+      "type": "odm.methods.MethodID"
+    }
+  ],
+  "full_name": "Demo Company",
+  "name": "Demo Company",
+  "url": "https://test.dendra.science/"
+}

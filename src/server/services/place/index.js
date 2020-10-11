@@ -1,25 +1,22 @@
 const service = require('feathers-mongodb')
 const hooks = require('./hooks')
 
-module.exports = (function () {
-  return function () {
-    const app = this
-    const databases = app.get('databases')
+module.exports = function (app) {
+  const databases = app.get('databases')
 
-    if (databases.mongodb && databases.mongodb.metadata) {
-      app.set('serviceReady',
-        Promise.resolve(databases.mongodb.metadata.db).then(db => {
-          app.use('/places', service({
-            Model: db.collection('places'),
-            paginate: databases.mongodb.metadata.paginate
-          }))
+  if (!(databases.mongodb && databases.mongodb.metadata)) return
 
-          // Get the wrapped service object, bind hooks
-          const placeService = app.service('/places')
+  const { metadata } = databases.mongodb
+  const { db } = metadata
 
-          placeService.before(hooks.before)
-          placeService.after(hooks.after)
-        }))
-    }
-  }
-})()
+  const mongoService = service({
+    Model: db.collection('places'),
+    paginate: metadata.paginate,
+    whitelist: metadata.whitelist
+  })
+
+  app.use('/places', mongoService)
+
+  // Get the wrapped service object, bind hooks
+  app.service('places').hooks(hooks)
+}

@@ -1,122 +1,89 @@
-'use strict';
+"use strict";
 
-var _feathersQueryFilters = require('feathers-query-filters');
+const errors = require('@feathersjs/errors');
 
-var _feathersQueryFilters2 = _interopRequireDefault(_feathersQueryFilters);
+const axios = require('axios');
 
-var _feathersErrors = require('feathers-errors');
-
-var _hooks = require('./hooks');
-
-var _hooks2 = _interopRequireDefault(_hooks);
-
-var _request = require('request');
-
-var _request2 = _interopRequireDefault(_request);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+const hooks = require('./hooks');
 /**
- * Low-level service to retrieve Influx points.
+ * Custom service that submits an InfluxDB SELECT using query parameters:
  *
- * Since this sits behind another service; we're less fussy about santizing parameters.
+ *   SELECT <sc> FROM <fc> WHERE <wc> GROUP BY <gbc> [ORDER BY time DESC] [LIMIT $limit]
+ *
+ *   sc - select clause (defaults to '*')
+ *   fc - from clause (defaults to 'logger_data')
+ *   wc - where clause (optional)
+ *   gbc - group by clause (optional)
+ *   $sort[time] - pass (-1) to return the most recent timestamps first
+ *   $limit - return the first N points
+ *   api - config key pointing to an InfluxDB HTTP API (defaults to 'default')
+ *   db - database name (required)
  */
+
+
 class Service {
   constructor(options) {
-    this.apis = options.apis;
-    this.paginate = options.paginate || {};
+    this.apis = options.apis || {};
   }
 
-  _find(params, getFilter = _feathersQueryFilters2.default) {
-    const { query, filters } = getFilter(params.query || {});
-    const api = this.apis[query.api] || this.apis.default;
-    const influxUrl = api && api.url;
-    const parts = [`SELECT ${typeof query.sc === 'string' ? query.sc : '*'}`, `FROM ${typeof query.fc === 'string' ? query.fc : 'logger_data'}`];
+  setup(app) {
+    this.app = app;
+    this.logger = app.logger;
+  }
 
-    if (typeof query.wc === 'string') parts.push(`WHERE ${query.wc}`);
-    if (typeof query.gbc === 'string') parts.push(`GROUP BY ${query.gbc}`);
-    if (filters.$sort && filters.$sort.time && filters.$sort.time === -1) parts.push('ORDER BY time DESC');
-    if (typeof filters.$limit !== 'undefined') parts.push(`LIMIT ${filters.$limit}`);
+  async find(params) {
+    const query = params.query || {};
+    const {
+      api,
+      db,
+      sc,
+      fc,
+      wc,
+      gbc,
+      $sort: sort,
+      $limit: limit
+    } = query;
+    const apiConfig = this.apis[api] || this.apis.default;
+    const influxUrl = apiConfig && apiConfig.url;
+    if (!influxUrl) throw new errors.GeneralError('Influx select URL undefined.');
+    if (!db) throw new errors.GeneralError('Influx select requries query.db.');
+    const parts = [`SELECT ${typeof sc === 'string' ? sc : '*'}`, `FROM ${typeof fc === 'string' ? fc : 'logger_data'}`];
+    if (typeof wc === 'string') parts.push(`WHERE ${wc}`);
+    if (typeof gbc === 'string') parts.push(`GROUP BY ${gbc}`);
+    if (sort && sort.time === -1) parts.push('ORDER BY time DESC');
+    if (limit !== undefined) parts.push(`LIMIT ${limit | 0}`); // Limited to only one series for now
 
-    // Limited to only one series for now
     parts.push('SLIMIT 1');
-
-    const requestOpts = {
-      method: 'GET',
-      qs: {
-        db: query.db,
-        q: parts.join(' ')
-      },
-      url: `${influxUrl}/query`
-    };
-
-    return new Promise((resolve, reject) => {
-      (0, _request2.default)(requestOpts, (err, response) => err ? reject(err) : resolve(response));
-    }).then(response => {
-      if (response.statusCode !== 200) throw new _feathersErrors.errors.BadRequest(`Non-success status code ${response.statusCode}`);
-
-      return JSON.parse(response.body);
-    }).then(body => {
-      // Stay async-friendly
-      return new Promise((resolve, reject) => {
-        setImmediate(() => {
-          if (!body) {
-            return reject(new _feathersErrors.errors.BadRequest('No body returned'));
-          }
-          if (body.error) {
-            return reject(new _feathersErrors.errors.BadRequest('Error returned', {
-              error: body.error
-            }));
-          }
-
-          const firstResult = body.results && body.results[0];
-
-          if (!firstResult) {
-            return reject(new _feathersErrors.errors.BadRequest('No result returned'));
-          }
-          if (firstResult.error) {
-            return reject(new _feathersErrors.errors.BadRequest('Error result returned', {
-              error: firstResult.error
-            }));
-          }
-
-          resolve({
-            limit: filters.$limit,
-            data: firstResult
-          });
-        });
-      });
+    const q = parts.join(' ');
+    this.logger.debug(`GET ${influxUrl}/query?db=${db}&q=${q}`);
+    const response = await axios.get(`${influxUrl}/query`, {
+      params: {
+        db,
+        q
+      }
     });
+    if (response.status !== 200) throw new errors.BadRequest(`Non-success status code ${response.status}`);
+    const body = response.data;
+    if (!body) throw new errors.BadRequest('No body returned');
+    if (body.error) throw new errors.BadRequest('Error returned', {
+      error: body.error
+    });
+    const firstResult = body.results && body.results[0];
+    if (!firstResult) throw new errors.BadRequest('No result returned');
+    if (firstResult.error) throw new errors.BadRequest('Error result returned', {
+      error: firstResult.error
+    });
+    return firstResult;
   }
 
-  find(params) {
-    const paginate = typeof params.paginate !== 'undefined' ? params.paginate : this.paginate;
-    const result = this._find(params, query => (0, _feathersQueryFilters2.default)(query, paginate));
-
-    if (!(paginate && paginate.default)) {
-      return result.then(page => page.data);
-    }
-
-    return result;
-  }
 }
 
-module.exports = function () {
-  return function () {
-    const app = this;
-    const services = app.get('services');
+module.exports = function (app) {
+  const services = app.get('services');
+  if (!services.influx_select) return;
+  app.use('/influx/select', new Service({
+    apis: services.influx_select.apis
+  })); // Get the wrapped service object, bind hooks
 
-    if (services.influx_select) {
-      app.use('/influx/select', new Service({
-        apis: services.influx_select.apis,
-        paginate: services.influx_select.paginate
-      }));
-
-      // Get the wrapped service object, bind hooks
-      const selectService = app.service('/influx/select');
-
-      selectService.before(_hooks2.default.before);
-      selectService.after(_hooks2.default.after);
-    }
-  };
-}();
+  app.service('influx/select').hooks(hooks);
+};

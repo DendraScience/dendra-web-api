@@ -2,278 +2,331 @@
  * Tests for user service
  */
 
-const feathers = require('feathers')
-const restClient = require('feathers-rest/client')
-const request = require('request')
+const dataFile = 'demo-user.user'
+const servicePath = 'users'
 
-describe('Service /users', function () {
-  const databases = main.app.get('databases')
+describe(`Service ${servicePath}`, function () {
+  this.timeout(10000)
 
-  let owner
+  const id = {}
 
-  before(function () {
-    if (databases.mongodb && databases.mongodb.metadata) {
-      return Promise.resolve(databases.mongodb.metadata.db).then(db => {
-        return db.collection('users').remove({email: 'user_test_one@test.dendra.science'})
-      })
-    }
+  let demoClient
+  let demoUser
+
+  const cleanup = async () => {
+    await coll.users.remove({ email: demoUser.email })
+  }
+
+  before(async function () {
+    demoUser = await helper.loadData(dataFile)
+
+    await cleanup()
   })
 
-  after(function () {
-    if (databases.mongodb && databases.mongodb.metadata) {
-      return Promise.resolve(databases.mongodb.metadata.db).then(db => {
-        return db.collection('users').remove({email: 'user_test_one@test.dendra.science'})
-      })
-    }
+  after(async function () {
+    return cleanup()
   })
-
-  let _id = '59e15f6a60e2ff2238a6fd09'
 
   describe('#create()', function () {
-    it('guest should create without error', function () {
-      return helper.loadJSON(path.join(__dirname, 'data/user_test_one.json')).then(doc => {
-        return guest.service('/users').create(doc)
-      }).then(doc => {
-        expect(doc).to.have.property('_id')
-        expect(doc).to.not.have.property('password')
-
-        _id = doc._id
-      })
+    it('guest should create with error', function () {
+      return helper.shouldCreateWithError(
+        clients.guest,
+        servicePath,
+        dataFile,
+        'NotAuthenticated'
+      )
     })
 
-    it('guest should authenticate without error', function () {
-      return guest.service('/authentication').create({
-        email: 'user_test_one@test.dendra.science',
-        password: 'abc123',
-        strategy: 'local'
-      }).then(doc => {
-        expect(doc).to.have.property('accessToken')
+    it('user should create with error', function () {
+      return helper.shouldCreateWithError(
+        clients.user,
+        servicePath,
+        dataFile,
+        'Forbidden'
+      )
+    })
 
-        owner = feathers()
-          .configure(restClient('http://localhost:3030').request(request.defaults({
-            headers: {
-              'Authorization': doc.accessToken
-            }
-          })))
-      })
+    it('sys admin should create multiple with error', function () {
+      return helper.shouldCreateWithError(
+        clients.sysAdmin,
+        servicePath,
+        [dataFile, dataFile],
+        'MethodNotAllowed'
+      )
+    })
+
+    it('sys admin should create without error', function () {
+      return helper
+        .shouldCreateWithoutError(clients.sysAdmin, servicePath, dataFile)
+        .then(({ retDoc }) => {
+          id.doc = retDoc._id
+        })
+    })
+  })
+
+  describe('auth', function () {
+    it('demo user (disabled) should authenticate with error', async function () {
+      let retApp
+      let retErr
+
+      await coll.users.updateOne(
+        { email: demoUser.email },
+        { $set: { is_enabled: false } }
+      )
+
+      try {
+        retApp = await helper.authenticate({
+          email: demoUser.email,
+          password: demoUser.password
+        })
+      } catch (err) {
+        retErr = err
+      }
+
+      /* eslint-disable-next-line no-unused-expressions */
+      expect(retApp).to.be.undefined
+      expect(retErr).to.have.property(
+        'code',
+        helper.getCode('MethodNotAllowed')
+      )
+    })
+
+    it('demo user (enabled) should authenticate without error', async function () {
+      let retApp
+      let retErr
+
+      await coll.users.updateOne(
+        { email: demoUser.email },
+        { $set: { is_enabled: true } }
+      )
+
+      try {
+        retApp = await helper.authenticate({
+          email: demoUser.email,
+          password: demoUser.password
+        })
+      } catch (err) {
+        retErr = err
+      }
+
+      /* eslint-disable-next-line no-unused-expressions */
+      expect(retErr).to.be.undefined
+      expect(retApp).to.have.property('service')
+
+      demoClient = retApp
     })
   })
 
   describe('#get()', function () {
     it('guest should get with error', function () {
-      let retDoc
-      let retErr
-
-      return guest.service('/users').get(_id).then(doc => {
-        retDoc = doc
-      }).catch(err => {
-        retErr = err
-      }).then(() => {
-        expect(retDoc).to.be.undefined
-        expect(retErr).to.have.property('code', 401) // Not authenticated
-      })
+      return helper.shouldGetWithError(
+        clients.guest,
+        servicePath,
+        id.doc,
+        'NotFound'
+      )
     })
 
-    it('non admin should get with error', function () {
-      let retDoc
-      let retErr
-
-      return nonAdmin.service('/users').get(_id).then(doc => {
-        retDoc = doc
-      }).catch(err => {
-        retErr = err
-      }).then(() => {
-        expect(retDoc).to.be.undefined
-        expect(retErr).to.have.property('code', 403) // Forbidden
-      })
+    it('user should get with error', function () {
+      return helper.shouldGetWithoutError(clients.user, servicePath, id.doc)
     })
 
-    it('owner should get without error', function () {
-      return owner.service('/users').get(_id).then(doc => {
-        expect(doc).to.have.property('_id')
-        expect(doc).to.not.have.property('password')
-      })
+    it('demo user should get without error', function () {
+      return helper.shouldGetWithoutError(demoClient, servicePath, id.doc)
     })
 
     it('sys admin should get without error', function () {
-      return sysAdmin.service('/users').get(_id).then(doc => {
-        expect(doc).to.have.property('_id')
-        expect(doc).to.not.have.property('password')
-      })
+      return helper.shouldGetWithoutError(clients.sysAdmin, servicePath, id.doc)
     })
   })
 
   describe('#find()', function () {
-    it('guest should find with error', function () {
-      let retRes
-      let retErr
-
-      return guest.service('/users').find({query: {email: 'user_test_one@test.dendra.science'}}).then(res => {
-        retRes = res
-      }).catch(err => {
-        retErr = err
-      }).then(() => {
-        expect(retRes).to.be.undefined
-        expect(retErr).to.have.property('code', 401) // Not authenticated
-      })
+    it('guest should find without error', function () {
+      return helper.shouldFindWithoutError(clients.guest, servicePath, {}, 0)
     })
 
-    it('non admin should find with error', function () {
-      let retRes
-      let retErr
-
-      return nonAdmin.service('/users').find({query: {email: 'user_test_one@test.dendra.science'}}).then(res => {
-        retRes = res
-      }).catch(err => {
-        retErr = err
-      }).then(() => {
-        expect(retRes).to.be.undefined
-        expect(retErr).to.have.property('code', 403) // Forbidden
-      })
+    it('user should find without error', function () {
+      return helper.shouldFindWithoutError(clients.user, servicePath, {}, 3)
     })
 
-    it('owner should find with error', function () {
-      let retRes
-      let retErr
-
-      return owner.service('/users').find({query: {email: 'user_test_one@test.dendra.science'}}).then(res => {
-        retRes = res
-      }).catch(err => {
-        retErr = err
-      }).then(() => {
-        expect(retRes).to.be.undefined
-        expect(retErr).to.have.property('code', 403) // Forbidden
-      })
+    it('demo user should find without error', function () {
+      return helper.shouldFindWithoutError(demoClient, servicePath, {}, 3)
     })
 
     it('sys admin should find without error', function () {
-      return sysAdmin.service('/users').find({query: {email: 'user_test_one@test.dendra.science'}}).then(res => {
-        expect(res).to.have.property('data').lengthOf(1)
-        expect(res).to.have.nested.property('data.0.name')
-        expect(res).to.not.have.nested.property('data.0.password')
-      })
+      return helper.shouldFindWithoutError(clients.sysAdmin, servicePath, {}, 3)
+    })
+  })
+
+  describe('#patch()', function () {
+    it('guest should patch with error', function () {
+      return helper.shouldPatchWithError(
+        clients.guest,
+        servicePath,
+        id.doc,
+        `${dataFile}.patch`,
+        'NotAuthenticated'
+      )
+    })
+
+    it('user should patch with error', function () {
+      return helper.shouldPatchWithError(
+        clients.user,
+        servicePath,
+        id.doc,
+        `${dataFile}.patch`,
+        'Forbidden'
+      )
+    })
+
+    it('demo user should patch without error', function () {
+      return helper
+        .shouldPatchWithoutError(
+          demoClient,
+          servicePath,
+          id.doc,
+          `${dataFile}.patch.demo-user`
+        )
+        .then(({ retDoc }) => {
+          expect(retDoc).to.have.property(
+            'full_name',
+            'Demo User - Patched - Demo User'
+          )
+        })
+    })
+
+    it('sys admin should patch multiple with error', function () {
+      return helper.shouldPatchMultipleWithError(
+        clients.sysAdmin,
+        servicePath,
+        { _id: id.doc },
+        `${dataFile}.patch`,
+        'Forbidden'
+      )
+    })
+
+    it('sys admin should patch bad data with error', function () {
+      return helper.shouldPatchWithError(
+        clients.sysAdmin,
+        servicePath,
+        id.doc,
+        'bad.patch',
+        'BadRequest'
+      )
+    })
+
+    it('sys admin should patch without error', function () {
+      return helper
+        .shouldPatchWithoutError(
+          clients.sysAdmin,
+          servicePath,
+          id.doc,
+          `${dataFile}.patch`
+        )
+        .then(({ retDoc }) => {
+          expect(retDoc).to.have.property('full_name', 'Demo User - Patched')
+        })
     })
   })
 
   describe('#update()', function () {
     it('guest should update with error', function () {
-      let retDoc
-      let retErr
-
-      return helper.loadJSON(path.join(__dirname, 'data/user_test_one.update.json')).then(doc => {
-        return guest.service('/users').update(_id, doc)
-      }).then(doc => {
-        retDoc = doc
-      }).catch(err => {
-        retErr = err
-      }).then(() => {
-        expect(retDoc).to.be.undefined
-        expect(retErr).to.have.property('code', 401) // Not authenticated
-      })
+      return helper.shouldUpdateWithError(
+        clients.guest,
+        servicePath,
+        id.doc,
+        `${dataFile}.update`,
+        'NotAuthenticated'
+      )
     })
 
-    it('non admin should update with error', function () {
-      let retDoc
-      let retErr
-
-      return helper.loadJSON(path.join(__dirname, 'data/user_test_one.update.json')).then(doc => {
-        return nonAdmin.service('/users').update(_id, doc)
-      }).then(doc => {
-        retDoc = doc
-      }).catch(err => {
-        retErr = err
-      }).then(() => {
-        expect(retDoc).to.be.undefined
-        expect(retErr).to.have.property('code', 403) // Forbidden
-      })
+    it('user should update with error', function () {
+      return helper.shouldUpdateWithError(
+        clients.user,
+        servicePath,
+        id.doc,
+        `${dataFile}.update`,
+        'Forbidden'
+      )
     })
 
-    it('owner should update without error', function () {
-      return helper.loadJSON(path.join(__dirname, 'data/user_test_one.update1.json')).then(doc => {
-        return sysAdmin.service('/users').update(_id, doc)
-      }).then(doc => {
-        expect(doc).to.have.property('name', 'Test One - Updated 1')
-        expect(doc).to.not.have.property('password')
-      })
+    it('demo user should update with error', function () {
+      return helper.shouldUpdateWithError(
+        demoClient,
+        servicePath,
+        id.doc,
+        `${dataFile}.update`,
+        'Forbidden'
+      )
     })
 
-    it('guest should authenticate with new password', function () {
-      return guest.service('/authentication').create({
-        email: 'user_test_one@test.dendra.science',
-        password: 'def456',
-        strategy: 'local'
-      }).then(doc => {
-        expect(doc).to.have.property('accessToken')
-      })
+    it('sys admin should update multiple with error', function () {
+      return helper.shouldUpdateMultipleWithError(
+        clients.sysAdmin,
+        servicePath,
+        { _id: id.doc },
+        `${dataFile}.update`,
+        'BadRequest'
+      )
     })
 
     it('sys admin should update without error', function () {
-      return helper.loadJSON(path.join(__dirname, 'data/user_test_one.update2.json')).then(doc => {
-        return sysAdmin.service('/users').update(_id, doc)
-      }).then(doc => {
-        expect(doc).to.have.property('name', 'Test One - Updated 2')
-        expect(doc).to.not.have.property('password')
-      })
-    })
-
-    it('guest should authenticate with same password', function () {
-      return guest.service('/authentication').create({
-        email: 'user_test_one@test.dendra.science',
-        password: 'def456',
-        strategy: 'local'
-      }).then(doc => {
-        expect(doc).to.have.property('accessToken')
-      })
+      return helper
+        .shouldUpdateWithoutError(
+          clients.sysAdmin,
+          servicePath,
+          id.doc,
+          `${dataFile}.update`
+        )
+        .then(({ retDoc }) => {
+          expect(retDoc).to.have.property('full_name', 'Demo User - Updated')
+        })
     })
   })
 
   describe('#remove()', function () {
     it('guest should remove with error', function () {
-      let retDoc
-      let retErr
-
-      return guest.service('/users').remove(_id).then(doc => {
-        retDoc = doc
-      }).catch(err => {
-        retErr = err
-      }).then(() => {
-        expect(retDoc).to.be.undefined
-        expect(retErr).to.have.property('code', 401) // Not authenticated
-      })
+      return helper.shouldRemoveWithError(
+        clients.guest,
+        servicePath,
+        id.doc,
+        'NotAuthenticated'
+      )
     })
 
-    it('non admin should remove with error', function () {
-      let retDoc
-      let retErr
-
-      return nonAdmin.service('/users').remove(_id).then(doc => {
-        retDoc = doc
-      }).catch(err => {
-        retErr = err
-      }).then(() => {
-        expect(retDoc).to.be.undefined
-        expect(retErr).to.have.property('code', 403) // Forbidden
-      })
+    it('user should remove with error', function () {
+      return helper.shouldRemoveWithError(
+        clients.user,
+        servicePath,
+        id.doc,
+        'Forbidden'
+      )
     })
 
-    it('owner should remove without error', function () {
-      return owner.service('/users').remove(_id).then(doc => {
-        expect(doc).to.have.property('_id')
-      })
+    it('demo user should remove with error', function () {
+      return helper.shouldRemoveWithError(
+        demoClient,
+        servicePath,
+        id.doc,
+        'Forbidden'
+      )
     })
 
-    it('sys admin should remove with error', function () {
-      let retDoc
-      let retErr
+    it('sys admin should remove multiple with error', function () {
+      return helper.shouldRemoveMultipleWithError(
+        clients.sysAdmin,
+        servicePath,
+        { _id: id.doc },
+        'MethodNotAllowed'
+      )
+    })
 
-      return sysAdmin.service('/users').remove(_id).then(doc => {
-        retDoc = doc
-      }).catch(err => {
-        retErr = err
-      }).then(() => {
-        expect(retDoc).to.be.undefined
-        expect(retErr).to.have.property('code', 404) // Not found
-      })
+    it('sys admin should remove without error', function () {
+      return helper.shouldRemoveWithoutError(
+        clients.sysAdmin,
+        servicePath,
+        id.doc
+      )
     })
   })
 })

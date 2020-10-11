@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "datastream.create.json",
+  "$patch": {
+    "source": {"$ref": "datastream.json#"},
+    "with": [
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "_id": {"$ref": "#/definitions/_id"},
+          "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
+          "attributes": {"$ref": "types.json#/definitions/datastreamAttributes"},
+          "datapoints_config": {"$ref": "types.json#/definitions/datapointsConfig"},
+          "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"},
+          "derivation_description": {"$ref": "#/definitions/derivation_description"},
+          "derivation_method": {"$ref": "#/definitions/derivation_method"},
+          "derived_from_datastream_ids": {"$ref": "#/definitions/derived_from_datastream_ids"},
+          "description": {"$ref": "#/definitions/description"},
+          "extent": {"$ref": "types.json#/definitions/interval"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "general_config": {"$ref": "types.json#/definitions/generalConfig"},
+          "geo": {"$ref": "types.json#/definitions/geoPoint"},
+          "involved_parties": {"$ref": "types.json#/definitions/involvedParties"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "is_geo_protected": {"$ref": "types.json#/definitions/isGeoProtected"},
+          "is_hidden": {"$ref": "types.json#/definitions/isHidden"},
+          "name": {"$ref": "#/definitions/name"},
+          "organization_id": {"$ref": "#/definitions/organization_id"},
+          "preferred_uom_ids": {"$ref": "#/definitions/preferred_uom_ids"},
+          "source": {"$ref": "types.json#/definitions/datastreamSource"},
+          "source_type": {"$ref": "types.json#/definitions/datastreamSourceType"},
+          "state": {"$ref": "#/definitions/state"},
+          "station_id": {"$ref": "#/definitions/station_id"},
+          "terms": {"$ref": "types.json#/definitions/terms"},
+          "thing_id": {"$ref": "#/definitions/thing_id"},
+          "thing_type_id": {"$ref": "#/definitions/thing_type_id"}
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "company.json",
+  "title": "Company",
+  "description": "An equipment manufacturer, reseller, or other assemblage of individuals.",
+  "type": "object",
+  "definitions": {
+    "_id": {
+      "$ref": "types.json#/definitions/companyId"
+    },
+    "company_type": {
+      "type": "string",
+      "description": "The specific type of company (e.g. 'coporation', 'group')",
+      "example": "corporation"
+    },
+    "description": {
+      "$ref": "types.json#/definitions/description",
+      "example": "Campbell Scientific is a worldwide provider of rugged, reliable dataloggers and data acquisition systems for long-term, unattended monitoring."
+    },
+    "external_refs": {
+      "$ref": "types.json#/definitions/externalRefs",
+      "example": [
+        {
+          "identifier": "100",
+          "type": "odm.methods.MethodID"
+        }
+      ]
+    },
+    "full_name": {
+      "type": "string",
+      "example": "Campbell Scientific, Inc."
+    },
+    "name": {
+      "type": "string",
+      "example": "Campbell Scientific"
+    },
+    "url": {
+      "$ref": "types.json#/definitions/url",
+      "example": "https://www.campbellsci.com/"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "_id": {"$ref": "#/definitions/_id"},
+    "company_type": {"$ref": "#/definitions/company_type"},
+    "created_at": {"$ref": "types.json#/definitions/createdAt"},
+    "created_by": {"$ref": "types.json#/definitions/createdBy"},
+    "description": {"$ref": "#/definitions/description"},
+    "external_refs": {"$ref": "#/definitions/external_refs"},
+    "full_name": {"$ref": "#/definitions/full_name"},
+    "name": {"$ref": "#/definitions/name"},
+    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
+    "url": {"$ref": "#/definitions/url"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"}
+  },
+  "required": [
+    "company_type",
+    "name"
+  ],
+  "links": [
+    {
+      "title": "Create company",
+      "description": "Create a new company.",
+      "rel": "self",
+      "href": "companies",
+      "method": "POST",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "company_type": {"$ref": "#/definitions/company_type"},
+          "description": {"$ref": "#/definitions/description"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "full_name": {"$ref": "#/definitions/full_name"},
+          "name": {"$ref": "#/definitions/name"},
+          "url": {"$ref": "#/definitions/url"}
+        },
+        "required": [
+          "company_type",
+          "name"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Patch company",
+      "description": "Patch an existing company.",
+      "rel": "self",
+      "href": "companies/{#/definitions/_id}",
+      "method": "PATCH",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "company_type": {"$ref": "#/definitions/company_type"},
+          "description": {"$ref": "#/definitions/description"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "full_name": {"$ref": "#/definitions/full_name"},
+          "name": {"$ref": "#/definitions/name"},
+          "url": {"$ref": "#/definitions/url"}
+        }
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Update company",
+      "description": "Update an existing company.",
+      "rel": "self",
+      "href": "companies/{#/definitions/_id}",
+      "method": "PUT",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "_id": {"$ref": "#/definitions/_id"},
+          "company_type": {"$ref": "#/definitions/company_type"},
+          "description": {"$ref": "#/definitions/description"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "full_name": {"$ref": "#/definitions/full_name"},
+          "name": {"$ref": "#/definitions/name"},
+          "url": {"$ref": "#/definitions/url"}
+        },
+        "required": [
+          "company_type",
+          "name"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Remove company",
+      "description": "Remove an existing company.",
+      "rel": "self",
+      "href": "companies/{#/definitions/_id}",
+      "method": "DELETE",
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Company info",
+      "description": "Return a specific company.",
+      "rel": "self",
+      "href": "companies/{#/definitions/_id}",
+      "method": "GET",
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "List companies",
+      "description": "Find one or more companies based on the query parameters.",
+      "rel": "instances",
+      "href": "companies",
+      "method": "GET",
+      "schema": {
+        "$ref": "types.json#/definitions/queryParameters"
+      },
+      "targetSchema": {
+        "allOf": [
+          {"$ref": "types.json#/definitions/paginationMeta"},
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {"rel": "self"}
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

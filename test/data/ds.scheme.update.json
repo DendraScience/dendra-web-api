@@ -1,0 +1,10 @@
+{
+  "_id": "ds",
+  "created_at": "2017-05-28T09:50:23.106Z",
+  "created_by": "592f155746a1b867a114e010",
+  "description": "A collection of controlled vocabularies for internal use in the Dendra system.",
+  "is_enabled": true,
+  "name": "Dendra System Controlled Vocabularies - Updated",
+  "updated_at": "2017-05-28T09:50:23.106Z",
+  "updated_by": "592f155746a1b867a114e010"
+}

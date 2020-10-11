@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "company.patch.json",
+  "$patch": {
+    "source": {"$ref": "company.json#"},
+    "with": [
+      {
+        "op": "remove",
+        "path": "/required"
+      },
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "$set": {
+            "additionalProperties": false,
+            "properties": {
+              "company_type": {"$ref": "#/definitions/company_type"},
+              "description": {"$ref": "#/definitions/description"},
+              "external_refs": {"$ref": "#/definitions/external_refs"},
+              "full_name": {"$ref": "#/definitions/full_name"},
+              "name": {"$ref": "#/definitions/name"},
+              "url": {"$ref": "#/definitions/url"}
+            },
+            "type": "object"
+          },
+          "$unset": {
+            "additionalProperties": false,
+            "properties": {
+              "description": {"$ref": "types.json#/definitions/unset"},
+              "external_refs": {"$ref": "types.json#/definitions/unset"},
+              "full_name": {"$ref": "types.json#/definitions/unset"},
+              "url": {"$ref": "types.json#/definitions/unset"}
+            },
+            "type": "object"
+          }
+        }
+      }
+    ]
+  }
+}

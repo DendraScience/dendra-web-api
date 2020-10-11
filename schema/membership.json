@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "membership.json",
   "title": "Membership",
   "description": "An affiliation between a person and an organization.",
@@ -18,11 +18,12 @@
     },
     "roles": {
       "type": "array",
-      "description": "The person's roles within this organization (e.g. 'admin', 'contact', 'curator', 'manager')",
+      "description": "The person's roles within this organization (e.g. 'admin', 'curator', 'member')",
+      "maxItems": 1,
       "minItems": 1,
       "items": {
         "type": "string",
-        "example": "contact"
+        "example": "member"
       }
     }
   },
@@ -30,10 +31,13 @@
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
-    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "created_by": {"$ref": "types.json#/definitions/createdBy"},
     "organization_id": {"$ref": "#/definitions/organization_id"},
     "person_id": {"$ref": "#/definitions/person_id"},
-    "roles": {"$ref": "#/definitions/roles"}
+    "roles": {"$ref": "#/definitions/roles"},
+    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"}
   },
   "required": [
     "organization_id",
@@ -47,16 +51,30 @@
       "rel": "self",
       "href": "memberships",
       "method": "POST",
-      "required": [
-        "organization_id",
-        "person_id",
-        "roles"
-      ],
       "schema": {
         "type": "object",
         "properties": {
           "organization_id": {"$ref": "#/definitions/organization_id"},
           "person_id": {"$ref": "#/definitions/person_id"},
+          "roles": {"$ref": "#/definitions/roles"}
+        },
+        "required": [
+          "organization_id",
+          "person_id",
+          "roles"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Patch membership",
+      "description": "Patch an existing membership.",
+      "rel": "self",
+      "href": "memberships/{#/definitions/_id}",
+      "method": "PATCH",
+      "schema": {
+        "type": "object",
+        "properties": {
           "roles": {"$ref": "#/definitions/roles"}
         }
       },
@@ -68,14 +86,19 @@
       "rel": "self",
       "href": "memberships/{#/definitions/_id}",
       "method": "PUT",
-      "required": [
-        "roles"
-      ],
       "schema": {
         "type": "object",
         "properties": {
+          "_id": {"$ref": "#/definitions/_id"},
+          "organization_id": {"$ref": "#/definitions/organization_id"},
+          "person_id": {"$ref": "#/definitions/person_id"},
           "roles": {"$ref": "#/definitions/roles"}
-        }
+        },
+        "required": [
+          "organization_id",
+          "person_id",
+          "roles"
+        ]
       },
       "targetSchema": {"rel": "self"}
     },

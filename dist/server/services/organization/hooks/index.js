@@ -1,43 +1,60 @@
-'use strict';
+"use strict";
 
-const apiHooks = require('@dendra-science/api-hooks-common');
-const auth = require('feathers-authentication');
-const authHooks = require('feathers-authentication-hooks');
-const commonHooks = require('feathers-hooks-common');
 const globalHooks = require('../../../hooks');
 
-const SCHEMA_NAME = 'organization.json';
+const {
+  Visibility
+} = require('../../../lib/utils');
 
-exports.before = {
-  // all: [],
+const _ = require('lodash');
 
-  find: [apiHooks.coerceQuery()],
+const defaultsMigrations = rec => {
+  _.defaults(rec, {
+    is_enabled: rec.enabled
+  }, {
+    is_enabled: true,
+    sort_value: 0
+  });
 
-  // get: [],
-
-  create: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  }), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce()],
-
-  update: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  }), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), hook => {
-    // TODO: Optimize with find/$select to return fewer fields?
-    return hook.app.service('/organizations').get(hook.id).then(doc => {
-      hook.data.created_at = doc.created_at;
-      return hook;
-    });
-  }],
-
-  patch: [commonHooks.disallow('external')],
-
-  remove: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  })]
+  delete rec.access_levels_resolved;
+  delete rec.enabled;
+  delete rec.general_config_resolved;
 };
 
-exports.after = {
+const stages = [{
+  $addFields: {
+    access_levels_resolved: {
+      $mergeObjects: [{
+        member_level: Visibility.DOWNLOAD,
+        public_level: Visibility.DOWNLOAD
+      }, '$access_levels']
+    },
+    general_config_resolved: {
+      $mergeObjects: [{}, '$general_config']
+    }
+  }
+}];
+exports.before = {
   // all: [],
+  find: [globalHooks.beforeFind(), globalHooks.accessFind(stages)],
+  get: [globalHooks.beforeGet(), globalHooks.accessGet(stages)],
+  create: globalHooks.beforeCreate({
+    alterItems: defaultsMigrations,
+    schemaName: 'organization.create.json',
+    versionStamp: true
+  }),
+  update: globalHooks.beforeUpdate({
+    alterItems: defaultsMigrations,
+    schemaName: 'organization.update.json',
+    versionStamp: true
+  }),
+  patch: globalHooks.beforePatch({
+    schemaName: 'organization.patch.json',
+    versionStamp: true
+  }),
+  remove: globalHooks.beforeRemove()
+};
+exports.after = {// all: [],
   // find: [],
   // get: [],
   // create: [],

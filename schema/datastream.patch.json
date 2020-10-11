@@ -1,21 +1,78 @@
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "datastream.patch.json",
-  "type": "object",
-  "definitions": {
-    "_id": {
-      "$ref": "types.json#/definitions/datastreamId"
-    },
-    "datapoints_config_built": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "object"
+  "$patch": {
+    "source": {"$ref": "datastream.json#"},
+    "with": [
+      {
+        "op": "remove",
+        "path": "/required"
+      },
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "$set": {
+            "additionalProperties": false,
+            "properties": {
+              "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
+              "attributes": {"$ref": "types.json#/definitions/datastreamAttributes"},
+              "datapoints_config": {"$ref": "types.json#/definitions/datapointsConfig"},
+              "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"},
+              "derivation_description": {"$ref": "#/definitions/derivation_description"},
+              "derivation_method": {"$ref": "#/definitions/derivation_method"},
+              "derived_from_datastream_ids": {"$ref": "#/definitions/derived_from_datastream_ids"},
+              "description": {"$ref": "#/definitions/description"},
+              "extent": {"$ref": "types.json#/definitions/interval"},
+              "external_refs": {"$ref": "#/definitions/external_refs"},
+              "general_config": {"$ref": "types.json#/definitions/generalConfig"},
+              "geo": {"$ref": "types.json#/definitions/geoPoint"},
+              "involved_parties": {"$ref": "types.json#/definitions/involvedParties"},
+              "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+              "is_geo_protected": {"$ref": "types.json#/definitions/isGeoProtected"},
+              "is_hidden": {"$ref": "types.json#/definitions/isHidden"},
+              "name": {"$ref": "#/definitions/name"},
+              "organization_id": {"$ref": "#/definitions/organization_id"},
+              "preferred_uom_ids": {"$ref": "#/definitions/preferred_uom_ids"},
+              "source": {"$ref": "types.json#/definitions/datastreamSource"},
+              "source_type": {"$ref": "types.json#/definitions/datastreamSourceType"},
+              "state": {"$ref": "#/definitions/state"},
+              "station_id": {"$ref": "#/definitions/station_id"},
+              "terms": {"$ref": "types.json#/definitions/terms"},
+              "thing_id": {"$ref": "#/definitions/thing_id"},
+              "thing_type_id": {"$ref": "#/definitions/thing_type_id"}
+            },
+            "type": "object"
+          },
+          "$unset": {
+            "additionalProperties": false,
+            "properties": {
+              "access_levels": {"$ref": "types.json#/definitions/unset"},
+              "attributes": {"$ref": "types.json#/definitions/unset"},
+              "datapoints_config": {"$ref": "types.json#/definitions/unset"},
+              "datapoints_config_built": {"$ref": "types.json#/definitions/unset"},
+              "derivation_description": {"$ref": "types.json#/definitions/unset"},
+              "derivation_method": {"$ref": "types.json#/definitions/unset"},
+              "derived_from_datastream_ids": {"$ref": "types.json#/definitions/unset"},
+              "description": {"$ref": "types.json#/definitions/unset"},
+              "extent": {"$ref": "types.json#/definitions/unset"},
+              "external_refs": {"$ref": "types.json#/definitions/unset"},
+              "general_config": {"$ref": "types.json#/definitions/unset"},
+              "geo": {"$ref": "types.json#/definitions/unset"},
+              "involved_parties": {"$ref": "types.json#/definitions/unset"},
+              "organization_id": {"$ref": "types.json#/definitions/unset"},
+              "preferred_uom_ids": {"$ref": "types.json#/definitions/unset"},
+              "source": {"$ref": "types.json#/definitions/unset"},
+              "source_type": {"$ref": "types.json#/definitions/unset"},
+              "station_id": {"$ref": "types.json#/definitions/unset"},
+              "terms": {"$ref": "types.json#/definitions/unset"},
+              "thing_id": {"$ref": "types.json#/definitions/unset"},
+              "thing_type_id": {"$ref": "types.json#/definitions/unset"}
+            },
+            "type": "object"
+          }
+        }
       }
-    }
-  },
-  "additionalProperties": false,
-  "properties": {
-    "datapoints_config_built": {"$ref": "#/definitions/datapoints_config_built"}
+    ]
   }
 }

@@ -1,16 +1,17 @@
-const commonHooks = require('feathers-hooks-common')
+const apiHooks = require('@dendra-science/api-hooks-common')
+const { disallow } = require('feathers-hooks-common')
 
 exports.before = {
   // all: [],
 
-  find: commonHooks.disallow(),
+  find: disallow(),
 
-  // get: [],
+  get: apiHooks.coerceQuery(),
 
-  create: commonHooks.disallow(),
-  update: commonHooks.disallow(),
-  patch: commonHooks.disallow(),
-  remove: commonHooks.disallow()
+  create: disallow(),
+  update: disallow(),
+  patch: disallow(),
+  remove: disallow()
 }
 
 exports.after = {

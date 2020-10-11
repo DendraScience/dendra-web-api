@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "vocabulary.patch.json",
+  "$patch": {
+    "source": {"$ref": "vocabulary.json#"},
+    "with": [
+      {
+        "op": "remove",
+        "path": "/required"
+      },
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "$set": {
+            "additionalProperties": false,
+            "properties": {
+              "description": {"$ref": "#/definitions/description"},
+              "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+              "is_hidden": {"$ref": "types.json#/definitions/isHidden"},
+              "label": {"$ref": "#/definitions/label"},
+              "terms": {"$ref": "#/definitions/terms"},
+              "vocabulary_type": {"$ref": "#/definitions/vocabulary_type"}
+            },
+            "type": "object"
+          },
+          "$unset": {
+            "additionalProperties": false,
+            "properties": {
+              "description": {"$ref": "types.json#/definitions/unset"},
+              "terms": {"$ref": "types.json#/definitions/unset"}
+            },
+            "type": "object"
+          }
+        }
+      }
+    ]
+  }
+}

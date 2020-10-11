@@ -1,0 +1,70 @@
+{
+  "_id": "ds-medium",
+  "is_enabled": true,
+  "is_hidden": false,
+  "label": "Medium",
+  "scheme_id": "ds",
+  "terms": [
+    {
+      "label": "Air"
+    },
+    {
+      "label": "Battery"
+    },
+    {
+      "label": "GroundWater",
+      "name": "Ground Water"
+    },
+    {
+      "label": "Instrument"
+    },
+    {
+      "label": "Leaf"
+    },
+    {
+      "label": "Not Applicable",
+      "name": "NotApplicable"
+    },
+    {
+      "label": "Precipitation"
+    },
+    {
+      "label": "Rock"
+    },
+    {
+      "label": "Sap"
+    },
+    {
+      "label": "Saprolite"
+    },
+    {
+      "label": "Sediment"
+    },
+    {
+      "label": "Sky"
+    },
+    {
+      "label": "Snow"
+    },
+    {
+      "label": "Soil"
+    },
+    {
+      "label": "Solar"
+    },
+    {
+      "label": "SurfaceWater",
+      "name": "Surface Water"
+    },
+    {
+      "label": "Tissue"
+    },
+    {
+      "label": "Unknown"
+    },
+    {
+      "label": "Water"
+    }
+  ],
+  "vocabulary_type": "class"
+}

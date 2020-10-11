@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "place.json",
   "title": "Place",
   "description": "A specific, named location with corresponding geo coordinates.",
@@ -21,9 +21,6 @@
         "state_abbreviation": "CA"
       }
     },
-    "country_code": {
-      "$ref": "types.json#/definitions/countryCode3"
-    },
     "external_refs": {
       "$ref": "types.json#/definitions/externalRefs",
       "example": [
@@ -37,9 +34,6 @@
     "full_name": {
       "type": "string",
       "example": "San Jose, California, USA"
-    },
-    "geo": {
-      "$ref": "types.json#/definitions/geoObject"
     },
     "name": {
       "type": "string",
@@ -58,21 +52,27 @@
   "additionalProperties": false,
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
-    "created_at": {"$ref": "types.json#/definitions/createdAt"},
-    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
     "abbreviation": {"$ref": "#/definitions/abbreviation"},
     "attributes": {"$ref": "#/definitions/attributes"},
-    "country_code": {"$ref": "#/definitions/country_code"},
+    "country_code": {"$ref": "types.json#/definitions/isoCountryCode3"},
+    "created_at": {"$ref": "types.json#/definitions/createdAt"},
+    "created_by": {"$ref": "types.json#/definitions/createdBy"},
     "external_refs": {"$ref": "#/definitions/external_refs"},
     "full_name": {"$ref": "#/definitions/full_name"},
-    "geo": {"$ref": "#/definitions/geo"},
+    "geo": {"$ref": "types.json#/definitions/geoObject"},
+    "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
     "name": {"$ref": "#/definitions/name"},
     "place_type": {"$ref": "#/definitions/place_type"},
-    "url": {"$ref": "#/definitions/url"}
+    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
+    "url": {"$ref": "#/definitions/url"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"}
   },
   "required": [
     "geo",
-    "name"
+    "is_enabled",
+    "name",
+    "place_type"
   ],
   "links": [
     {
@@ -81,19 +81,45 @@
       "rel": "self",
       "href": "places",
       "method": "POST",
-      "required": [
-        "geo",
-        "name"
-      ],
       "schema": {
         "type": "object",
         "properties": {
           "abbreviation": {"$ref": "#/definitions/abbreviation"},
           "attributes": {"$ref": "#/definitions/attributes"},
-          "country_code": {"$ref": "#/definitions/country_code"},
+          "country_code": {"$ref": "types.json#/definitions/isoCountryCode3"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
           "full_name": {"$ref": "#/definitions/full_name"},
-          "geo": {"$ref": "#/definitions/geo"},
+          "geo": {"$ref": "types.json#/definitions/geoObject"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "name": {"$ref": "#/definitions/name"},
+          "place_type": {"$ref": "#/definitions/place_type"},
+          "url": {"$ref": "#/definitions/url"}
+        },
+        "required": [
+          "geo",
+          "is_enabled",
+          "name",
+          "place_type"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Patch place",
+      "description": "Patch an existing place.",
+      "rel": "self",
+      "href": "places/{#/definitions/_id}",
+      "method": "PATCH",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "abbreviation": {"$ref": "#/definitions/abbreviation"},
+          "attributes": {"$ref": "#/definitions/attributes"},
+          "country_code": {"$ref": "types.json#/definitions/isoCountryCode3"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "full_name": {"$ref": "#/definitions/full_name"},
+          "geo": {"$ref": "types.json#/definitions/geoObject"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "name": {"$ref": "#/definitions/name"},
           "place_type": {"$ref": "#/definitions/place_type"},
           "url": {"$ref": "#/definitions/url"}
@@ -107,23 +133,27 @@
       "rel": "self",
       "href": "places/{#/definitions/_id}",
       "method": "PUT",
-      "required": [
-        "geo",
-        "name"
-      ],
       "schema": {
         "type": "object",
         "properties": {
+          "_id": {"$ref": "#/definitions/_id"},
           "abbreviation": {"$ref": "#/definitions/abbreviation"},
           "attributes": {"$ref": "#/definitions/attributes"},
-          "country_code": {"$ref": "#/definitions/country_code"},
+          "country_code": {"$ref": "types.json#/definitions/isoCountryCode3"},
           "external_refs": {"$ref": "#/definitions/external_refs"},
           "full_name": {"$ref": "#/definitions/full_name"},
-          "geo": {"$ref": "#/definitions/geo"},
+          "geo": {"$ref": "types.json#/definitions/geoObject"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "name": {"$ref": "#/definitions/name"},
           "place_type": {"$ref": "#/definitions/place_type"},
           "url": {"$ref": "#/definitions/url"}
-        }
+        },
+        "required": [
+          "geo",
+          "is_enabled",
+          "name",
+          "place_type"
+        ]
       },
       "targetSchema": {"rel": "self"}
     },

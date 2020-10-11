@@ -1,0 +1,107 @@
+{
+  "description": "Demo Station Description",
+  "external_links": [
+    {
+      "title": "Sensor database",
+      "url": "http://sensor.berkeley.edu/index_ucnrs.html"
+    }
+  ],
+  "external_refs": [
+    {
+      "identifier": "334",
+      "type": "odm.stations.stationid",
+      "url": "http://sensor.berkeley.edu/index_ucnrs.html"
+    }
+  ],
+  "full_name": "Demo Station",
+  "geo": {
+    "coordinates": [
+      -121.73638,
+      37.381666,
+      574.548
+    ],
+    "type": "Point"
+  },
+  "involved_parties": [
+    {
+      "organization_id": "592f155746a1b867a114e030",
+      "roles": [
+        "contact"
+      ]
+    },
+    {
+      "person_id": "592f155746a1b867a114e040",
+      "roles": [
+        "admin",
+        "contact"
+      ]
+    },
+    {
+      "roles": [
+        "contact"
+      ],
+      "team_id": "592f155746a1b867a114e0c0"
+    }
+  ],
+  "is_active": true,
+  "is_enabled": true,
+  "is_geo_protected": false,
+  "is_hidden": false,
+  "is_stationary": true,
+  "media": [
+    {
+      "sizes": {
+        "large": {
+          "h": 1080,
+          "url": "http://res.cloudinary.com/dendro/image/upload/c_fill,g_center,h_1080,w_1080/photo.jpg",
+          "w": 1080
+        },
+        "medium": {
+          "h": 480,
+          "url": "http://res.cloudinary.com/dendro/image/upload/c_fill,g_center,h_480,w_480/photo.jpg",
+          "w": 480
+        },
+        "medium_2x": {
+          "h": 960,
+          "url": "http://res.cloudinary.com/dendro/image/upload/c_fill,g_center,h_960,w_960/photo.jpg",
+          "w": 960
+        },
+        "small": {
+          "h": 240,
+          "url": "http://res.cloudinary.com/dendro/image/upload/c_fill,g_center,h_240,w_240/photo.jpg",
+          "w": 240
+        },
+        "small_2x": {
+          "h": 480,
+          "url": "http://res.cloudinary.com/dendro/image/upload/c_fill,g_center,h_480,w_480/photo.jpg",
+          "w": 480
+        },
+        "thumb": {
+          "h": 60,
+          "url": "http://res.cloudinary.com/dendro/image/upload/c_fill,g_center,h_60,w_60/photo.jpg",
+          "w": 60
+        },
+        "thumb_2x": {
+          "h": 120,
+          "url": "http://res.cloudinary.com/dendro/image/upload/c_fill,g_center,h_120,w_120/photo.jpg",
+          "w": 120
+        }
+      },
+      "type": "photo"
+    }
+  ],
+  "name": "Demo Station",
+  "organization_id": "592f155746a1b867a114e030",
+  "place_id": "592f155746a1b867a114e050",
+  "slug": "demo-station",
+  "state": "ready",
+  "station_type": "weather",
+  "thing_ids": [
+    "592f155746a1b867a114e070"
+  ],
+  "thing_type_ids": [
+    "592f155746a1b867a114e0d0"
+  ],
+  "time_zone": "PST",
+  "utc_offset": -28800
+}

@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "datapoint.json",
   "title": "Datapoint",
   "description": "An individual time series observation in a datastream.",
@@ -46,7 +46,7 @@
       "$ref": "types.json#/definitions/geoPosition"
     },
     "lt": {
-      "$ref": "types.json#/definitions/isoDate",
+      "$ref": "types.json#/definitions/isoDatetimeUTC",
       "description": "The datapoint's timestamp in local time"
     },
     "o": {
@@ -61,7 +61,7 @@
       }
     },
     "t": {
-      "$ref": "types.json#/definitions/isoDate",
+      "$ref": "types.json#/definitions/isoDatetimeUTC",
       "description": "The datapoint's timestamp in UTC"
     },
     "ti": {
@@ -130,21 +130,13 @@
               "datastream_id": {
                 "$ref": "types.json#/definitions/datastreamId",
                 "description": "A datastream identifier"
-              },
-              "som_id": {
-                "$ref": "types.json#/definitions/somId",
-                "description": "Attempt to convert the datapoint values to this system of measurement"
-              },
-              "uom_id": {
-                "$ref": "types.json#/definitions/uomId",
-                "description": "Attempt to convert the datapoint values to this unit of measurement"
               }
-            }
+            },
+            "required": [
+              "datastream_id"
+            ]
           },
           {"$ref": "types.json#/definitions/datapointQueryParameters"}
-        ],
-        "required": [
-          "datastream_id"
         ]
       },
       "targetSchema": {
@@ -160,49 +152,6 @@
             }
           }
         ]
-      }
-    },
-    {
-      "title": "Lookup datapoints",
-      "description": "Find datapoints for up to 100 datastreams based on the query parameters. This endpoint is analogous to datastreams/lookups with the added ability to return datapoints.",
-      "rel": "instances",
-      "href": "datapoints/lookup",
-      "method": "GET",
-      "schema": {
-        "allOf": [
-          {
-            "type": "object",
-            "properties": {
-              "som_id": {
-                "$ref": "types.json#/definitions/somId",
-                "description": "Do a fuzzy match on datastreams, then attempt to convert the datapoint values to this system of measurement"
-              },
-              "uom_id": {
-                "$ref": "types.json#/definitions/uomId",
-                "description": "Attempt to convert the datapoint values to this unit of measurement"
-              }
-            }
-          },
-          {"$ref": "types.json#/definitions/datastreamLookupParameters"},
-          {"$ref": "types.json#/definitions/datapointQueryParameters"}
-        ]
-      },
-      "targetSchema": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "_id": {"$ref": "types.json#/definitions/datastreamId"},
-            "attributes": {"$ref": "types.json#/definitions/datastreamAttributes"},
-            "source": {"$ref": "types.json#/definitions/datastreamSource"},
-            "station_id": {"$ref": "types.json#/definitions/stationId"},
-            "tags": {"$ref": "types.json#/definitions/datastreamTags"},
-            "datapoints": {
-              "type": "array",
-              "items": {"rel": "self"}
-            }
-          }
-        }
       }
     }
   ]

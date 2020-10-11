@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "upload.json",
+  "title": "Upload",
+  "description": "A specification for one or more resources to be uploaded into the system.",
+  "type": "object",
+  "definitions": {
+    "_id": {
+      "$ref": "types.json#/definitions/uploadId"
+    },
+    "organization_id": {
+      "$ref": "types.json#/definitions/organizationId",
+      "description": "The organization to which this upload belongs"
+    },
+    "spec_type": {
+      "const": "file/import",
+      "description": "The specification type for uploading",
+      "example": "file/import",
+      "type": "string"
+    },
+    "station_id": {
+      "$ref": "types.json#/definitions/stationId",
+      "description": "The station to which this upload belongs"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "_id": {"$ref": "#/definitions/_id"},
+    "created_at": {"$ref": "types.json#/definitions/createdAt"},
+    "created_by": {"$ref": "types.json#/definitions/createdBy"},
+    "organization_id": {"$ref": "#/definitions/organization_id"},
+    "result": {"$ref": "types.json#/definitions/result"},
+    "spec": {"$ref": "types.json#/definitions/loadSpec"},
+    "spec_type": {"$ref": "#/definitions/spec_type"},
+    "station_id": {"$ref": "#/definitions/station_id"},
+    "storage": {"$ref": "types.json#/definitions/storageSpec"},
+    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"}
+  },
+  "required": [
+    "organization_id",
+    "spec_type",
+    "storage"
+  ],
+  "links": [
+    {
+      "title": "Create upload",
+      "description": "Create a new upload.",
+      "rel": "self",
+      "href": "uploads",
+      "method": "POST",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "organization_id": {"$ref": "#/definitions/organization_id"},
+          "result": {"$ref": "types.json#/definitions/result"},
+          "spec": {"$ref": "types.json#/definitions/loadSpec"},
+          "spec_type": {"$ref": "#/definitions/spec_type"},
+          "station_id": {"$ref": "#/definitions/station_id"},
+          "storage": {"$ref": "types.json#/definitions/storageSpec"}
+        },
+        "required": [
+          "organization_id",
+          "spec_type",
+          "storage"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Patch upload",
+      "description": "Patch an existing upload.",
+      "rel": "self",
+      "href": "uploads/{#/definitions/_id}",
+      "method": "PATCH",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "result": {"$ref": "types.json#/definitions/result"},
+          "spec": {"$ref": "types.json#/definitions/loadSpec"}
+        }
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Update upload",
+      "description": "Update an existing upload.",
+      "rel": "self",
+      "href": "uploads/{#/definitions/_id}",
+      "method": "PUT",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "_id": {"$ref": "#/definitions/_id"},
+          "organization_id": {"$ref": "#/definitions/organization_id"},
+          "result": {"$ref": "types.json#/definitions/result"},
+          "spec": {"$ref": "types.json#/definitions/loadSpec"},
+          "spec_type": {"$ref": "#/definitions/spec_type"},
+          "station_id": {"$ref": "#/definitions/station_id"},
+          "storage": {"$ref": "types.json#/definitions/storageSpec"}
+        },
+        "required": [
+          "organization_id",
+          "spec_type",
+          "storage"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Remove upload",
+      "description": "Remove an existing upload.",
+      "rel": "self",
+      "href": "uploads/{#/definitions/_id}",
+      "method": "DELETE",
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Upload info",
+      "description": "Return a specific upload.",
+      "rel": "self",
+      "href": "uploads/{#/definitions/_id}",
+      "method": "GET",
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "List uploads",
+      "description": "Find one or more uploads based on the query parameters.",
+      "rel": "instances",
+      "href": "uploads",
+      "method": "GET",
+      "schema": {
+        "$ref": "types.json#/definitions/queryParameters"
+      },
+      "targetSchema": {
+        "allOf": [
+          {"$ref": "types.json#/definitions/paginationMeta"},
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {"rel": "self"}
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

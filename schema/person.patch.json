@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "person.patch.json",
+  "$patch": {
+    "source": {"$ref": "person.json#"},
+    "with": [
+      {
+        "op": "remove",
+        "path": "/required"
+      },
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "$set": {
+            "additionalProperties": false,
+            "properties": {
+              "email": {"$ref": "#/definitions/email"},
+              "full_name": {"$ref": "#/definitions/full_name"},
+              "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+              "name": {"$ref": "#/definitions/name"}
+            },
+            "type": "object"
+          },
+          "$unset": {
+            "additionalProperties": false,
+            "properties": {
+              "email": {"$ref": "types.json#/definitions/unset"},
+              "full_name": {"$ref": "types.json#/definitions/unset"}
+            },
+            "type": "object"
+          }
+        }
+      }
+    ]
+  }
+}

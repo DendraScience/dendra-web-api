@@ -1,20 +1,30 @@
-'use strict';
+"use strict";
 
-const auth = require('feathers-authentication');
-const jwt = require('feathers-authentication-jwt');
-const local = require('feathers-authentication-local');
+const auth = require('@feathersjs/authentication');
 
-module.exports = function () {
-  return function () {
-    const app = this;
+const {
+  disallow,
+  iff
+} = require('feathers-hooks-common');
 
-    app.configure(auth(app.get('authentication'))).configure(jwt()).configure(local());
-
-    app.service('/authentication').hooks({
-      before: {
-        create: [auth.hooks.authenticate(['jwt', 'local'])],
-        remove: [auth.hooks.authenticate('jwt')]
-      }
-    });
-  };
-}();
+module.exports = function (app) {
+  app.service('authentication').hooks({
+    before: {
+      create: auth.hooks.authenticate(['jwt', 'local']),
+      remove: auth.hooks.authenticate('jwt')
+    },
+    after: {
+      // TODO: Move to an ability?
+      create: iff(context => !context.params.user.is_enabled, disallow())
+    },
+    error: {
+      remove: [({
+        app,
+        error,
+        params
+      }) => {
+        if (params.authenticated && error.name === 'TokenExpiredError') app.service('users').emit('token-expired');
+      }]
+    }
+  });
+};

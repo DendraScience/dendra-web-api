@@ -1,447 +1,280 @@
-'use strict';
+"use strict";
 
-const apiHooks = require('@dendra-science/api-hooks-common');
-const auth = require('feathers-authentication');
-const authHooks = require('feathers-authentication-hooks');
-const commonHooks = require('feathers-hooks-common');
+const errors = require('@feathersjs/errors');
+
 const globalHooks = require('../../../hooks');
-const { asyncHashDigest } = require('../../../lib/utils');
-const { errors } = require('feathers-errors');
-const { ObjectID } = require('mongodb');
 
-const SCHEMA_NAME = 'datastream.json';
+const {
+  iff
+} = require('feathers-hooks-common');
 
-function getTagsInfo(tags, app) {
-  const schemeService = app.service('/schemes');
-  const vocabularyService = app.service('/vocabularies');
+const {
+  mergeConfig
+} = require('../../../lib/datapoints');
 
-  const info = {
-    resolved_terms: [],
-    scheme_refs: [],
-    vocabulary_refs: []
+const {
+  idRandom,
+  Visibility
+} = require('../../../lib/utils');
 
-    /*
-      Iterate over tags; set up a promise chain to parse and resolve each tag.
-     */
-  };let step = Promise.resolve();
-  tags.forEach(tag => {
-    const parts = tag.split('_');
+const _ = require('lodash');
 
-    // We only support tags in the format <schemeId>_<vocabularyLabel>_<termLabel>
-    if (parts.length !== 3) return;
+const assembleDatapointsConfigKeys = ['attributes', 'datapoints_config', 'is_enabled', 'source_type', 'station_ids'];
+const initDerivedDatastreamKeys = ['derivation_method', 'derived_from_datastream_ids', 'is_enabled', 'source_type'];
+const processDatastreamKeys = ['datapoints_config_built'];
 
-    const [schemeId, vLabel, tLabel] = parts;
-    let scheme;
+const defaultsMigrations = rec => {
+  let terms = {}; // Convert 1.x tags array to 2.x terms object
 
-    step = step.then(() => {
-      return schemeService.get(schemeId);
-    }).then(doc => {
-      scheme = doc;
-    }).then(() => {
-      return vocabularyService.find({
-        query: {
-          scheme_id: schemeId,
-          label: vLabel,
-          'terms.label': tLabel
-        },
-        $limit: 1,
-        $sort: { _id: 1 }
-      });
-    }).then(res => {
-      if (!res || !res.data || res.data.length < 1) throw new errors.BadRequest(`No vocabulary or term found for tag '${tag}'`);
+  if (Array.isArray(rec.tags)) {
+    terms = rec.tags.reduce((obj, tag) => {
+      const parts = tag.split('_');
+      const value = parts.pop();
 
-      const vocab = res.data[0];
-      const term = vocab.terms.find(t => t.label === tLabel); // Should exist since data was found
-
-      if (!term) throw new errors.BadRequest(`No term found for tag '${tag}'`);
-
-      const resolved = {};
-
-      if (term.abbreviation) resolved.abbreviation = term.abbreviation;
-      resolved.label = term.label;
-      resolved.scheme_id = scheme._id;
-      resolved.scheme_priority = typeof scheme.priority === 'number' ? scheme.priority : 10;
-      resolved.vocabulary_id = vocab._id;
-      resolved.vocabulary_label = vocab.label;
-      if (vocab.vocabulary_type) resolved.vocabulary_type = vocab.vocabulary_type;
-
-      info.resolved_terms.push(resolved);
-
-      // The predominant unit designation; based on the scheme with the highest priority
-      if (vocab.vocabulary_type === 'unit' && (!info.unit_term || info.unit_term.scheme_priority > resolved.scheme_priority)) {
-        info.unit_tag = tag;
-        info.unit_term = resolved;
-      }
-
-      const schemeRef = info.scheme_refs.find(ref => ref._id === vocab.scheme_id);
-      if (schemeRef) {
-        schemeRef.tag_count++;
+      if (parts.length) {
+        _.set(obj, parts.join('.'), value);
       } else {
-        info.scheme_refs.push({
-          _id: vocab.scheme_id,
-          tag_count: 1
-        });
+        obj[value] = true;
       }
 
-      const vocabRef = info.vocabulary_refs.find(ref => ref._id === vocab._id);
-      if (!vocabRef) {
-        info.vocabulary_refs.push({
-          _id: vocab._id
-        });
-      }
-    });
+      return obj;
+    }, {});
+  }
+
+  _.defaults(rec, {
+    is_enabled: rec.enabled,
+    terms
+  }, {
+    is_enabled: true,
+    is_geo_protected: false,
+    is_hidden: false,
+    state: 'ready'
   });
 
-  return step.then(() => info);
-}
+  delete rec.access_levels_resolved;
+  delete rec.attributes_info;
+  delete rec.convertible_to_uoms;
+  delete rec.enabled;
+  delete rec.general_config_resolved;
+  delete rec.members;
+  delete rec.organization_lookup;
+  delete rec.preferred_uoms;
+  delete rec.station_lookup;
+  delete rec.tags;
+  delete rec.tags_info;
+  delete rec.terms_info;
+  delete rec.uom;
+  delete rec.urls;
+};
 
-exports.getTagsInfo = getTagsInfo; // For testing
-
-/**
- * Populate information about this datastream's attributes.
- */
-function computeAttributesInfo() {
-  return hook => {
-    delete hook.data.attributes_info;
-
-    const data = hook.data;
-    const attrs = data.attributes;
-    if (typeof attrs !== 'object') return;
-
-    const info = data.attributes_info = {
-      sort: {
-        value1: 0,
-        value2: 0
-      },
-      text: ''
-    };
-
-    const firstKey = Object.keys(attrs)[0];
-    if (!firstKey) return;
-
-    const obj = attrs[firstKey];
-    if (typeof obj !== 'object') return;
-
-    /*
-      Infer a sort values and text based on numeric attribute fields.
-       We only support certain attribute constructs, e.g. delta, range and value.
-     */
-    const parts = [];
-    if (Array.isArray(obj.delta) && obj.delta.length > 1 && typeof obj.delta[0] === 'number' && typeof obj.delta[1] === 'number') {
-      info.sort.value1 = obj.delta[0];
-      info.sort.value2 = obj.delta[1];
-      parts.push(`${obj.delta[0]}-${obj.delta[1]}`);
-    } else if (Array.isArray(obj.range) && obj.range.length > 1 && typeof obj.range[0] === 'number' && typeof obj.range[1] === 'number') {
-      info.sort.value1 = obj.range[0];
-      info.sort.value2 = obj.range[1] - obj.range[0];
-      parts.push(`${obj.range[0]}...${obj.range[1]}`);
-    } else if (typeof obj.value === 'number') {
-      info.sort.value1 = obj.value;
-      info.sort.value2 = 0;
-      parts.push(`${obj.value}`);
-    }
-
-    // Parse the unit tag, lookup an abbreviation
-    if (typeof obj.unit_tag === 'string') {
-      return getTagsInfo([obj.unit_tag], hook.app).then(tagsInfo => {
-        if (tagsInfo.unit_term) {
-          info.unit_term = tagsInfo.unit_term;
-
-          // Append the unit abbreviation if present
-          if (tagsInfo.unit_term.abbreviation) parts.push(tagsInfo.unit_term.abbreviation);
-        }
-
-        info.text = parts.join(' ');
-
-        return hook;
-      });
-    }
-
-    info.text = parts.join(' ');
-  };
-}
-
-exports.computeAttributesInfo = computeAttributesInfo; // For testing
-
-/**
- * Populate information about this datastream's tags.
- */
-function computeTagsInfo() {
-  return hook => {
-    delete hook.data.tags_info;
-
-    const data = hook.data;
-    const tags = data.tags;
-    if (!Array.isArray(tags)) return;
-
-    return getTagsInfo(tags, hook.app).then(tagsInfo => {
-      data.tags_info = tagsInfo;
-
-      return hook;
-    });
-  };
-}
-
-exports.computeTagsInfo = computeTagsInfo; // For testing
-
-/**
- * Populate hashes for uniquing and indexing this document.
- *
- * Requires a populated tags_info.
- */
-function computeHashes() {
-  return hook => {
-    delete hook.data.hashes;
-
-    const data = hook.data;
-    const hashes = data.hashes = [];
-
-    // Features and data used to generate hashes
-    const srcFeat = [data.source ? data.source : '', data.station_id ? data.station_id : ''];
-    const srcData = srcFeat.join('\r\n');
-    const attData = typeof data.attributes === 'object' ? JSON.stringify(data.attributes) : '';
-    const geoData = typeof data.geo === 'object' ? JSON.stringify(data.geo) : '';
-
-    let entScheme;
-    let entTagData;
-
-    /*
-      Compute a hash for the source, attributes and geo location.
-     */
-    let step = asyncHashDigest(srcData).then(str => {
-      hashes.push({
-        key: 'src',
-        str: str
-      });
-    }).then(() => {
-      return asyncHashDigest(attData);
-    }).then(str => {
-      hashes.push({
-        key: 'att',
-        str: str
-      });
-    }).then(() => {
-      return asyncHashDigest(geoData);
-    }).then(str => {
-      hashes.push({
-        key: 'geo',
-        str: str
-      });
-    });
-
-    const tagsInfo = data.tags_info;
-
-    if (typeof tagsInfo === 'object') {
-      const resolvedTerms = tagsInfo.resolved_terms;
-      const schemeRefs = tagsInfo.scheme_refs;
-
-      if (Array.isArray(resolvedTerms) && Array.isArray(schemeRefs)) {
-        /*
-          Determine the vocabulary scheme to use when computing the entitiy hash.
-           Do this by finding the highest priority scheme referenced in classifier tags (exluding unit tags).
-         */
-        entScheme = resolvedTerms.reduce((s, t) => {
-          if (t.vocabulary_type === 'class' && (!s._id || t.scheme_priority < s.priority)) {
-            s._id = t.scheme_id;
-            s.priority = t.scheme_priority;
-          }
-          return s;
-        }, {
-          priority: 999 // Reasonable upper limit
-        });
-
-        /*
-          Iterate over scheme_refs; set up a promise chain to compute a hash for each scheme's tags.
-         */
-        schemeRefs.forEach(ref => {
-          step = step.then(() => {
-            // While we're processing this scheme, see if we need to obtain tags for the entity hash
-            if (typeof entTagData !== 'string' && ref._id === entScheme._id) {
-              entTagData = resolvedTerms.filter(t => t.scheme_id === ref._id && t.vocabulary_type === 'class').map(t => `${t.scheme_id}_${t.vocabulary_label}_${t.label}`).sort().join('\r\n');
-            }
-
-            const tagData = resolvedTerms.filter(t => t.scheme_id === ref._id).map(t => `${t.scheme_id}_${t.vocabulary_label}_${t.label}`).sort().join('\r\n');
-
-            return asyncHashDigest(tagData);
-          }).then(str => {
-            hashes.push({
-              key: 'tag',
-              str: str,
-              scheme_id: ref._id
-            });
-          });
-        });
+const dispatchAnnotationBuild = method => {
+  return async context => {
+    context.app.logger.debug('dispatchAnnotationBuild');
+    const connection = context.app.get('connections').annotationDispatch;
+    if (!(connection && method)) return context;
+    const now = new Date();
+    const datastream = context.result;
+    const {
+      _id: id
+    } = datastream;
+    await connection.app.service('annotation-builds').create({
+      _id: `${method}-${id}-${now.getTime()}-${idRandom()}`,
+      method,
+      dispatch_at: now,
+      dispatch_key: id,
+      expires_at: new Date(now.getTime() + 86400000),
+      // 24 hours from now
+      spec: {
+        datastream
       }
-
-      /*
-        Compute a hash for the entity.
-         The entity hash is used to identify 'similar' datastreams that are expressed in different units.
-       */
-      step = step.then(() => {
-        if (typeof entTagData === 'string') {
-          const entFeat = [srcData, data.thing_id ? data.thing_id : '', attData, geoData, entTagData];
-          const entData = entFeat.join('\r\n');
-
-          return asyncHashDigest(entData);
-        }
-      }).then(str => {
-        if (str) {
-          hashes.push({
-            key: 'ent',
-            str: str,
-            scheme_id: entScheme._id
-          });
-        }
-      });
-    }
-
-    return step.then(() => hook);
-  };
-}
-
-exports.computeHashes = computeHashes; // For testing
-
-/**
- * Generate and assign a new version identifier.
- */
-function versionStamp() {
-  return hook => {
-    let items = commonHooks.getItems(hook);
-    if (!Array.isArray(items)) items = [items];
-
-    items.forEach(item => {
-      item.version_id = new ObjectID();
     });
-
-    return hook;
+    return context;
   };
-}
+};
 
-exports.versionStamp = versionStamp; // For testing
+const dispatchDerivedBuild = method => {
+  return async context => {
+    context.app.logger.debug('dispatchDerivedBuild');
+    const connection = context.app.get('connections').derivedDispatch;
+    if (!(connection && method)) return context;
+    const now = new Date();
+    const datastream = context.result;
+    const {
+      _id: id
+    } = datastream;
+    await connection.app.service('derived-builds').create({
+      _id: `${method}-${id}-${now.getTime()}-${idRandom()}`,
+      method,
+      dispatch_at: now,
+      dispatch_key: id,
+      expires_at: new Date(now.getTime() + 86400000),
+      // 24 hours from now
+      spec: {
+        datastream
+      }
+    });
+    return context;
+  };
+};
 
+const setExtent = async context => {
+  const data = context.method === 'patch' ? context.data.$set : context.data;
+  if (!(data && data.datapoints_config_built)) return context;
+  const config = mergeConfig(data.datapoints_config_built);
+  if (config.length) data.extent = {
+    begins_at: new Date(config[0].beginsAt),
+    ends_before: new Date(config[config.length - 1].endsBefore)
+  };
+  return context;
+};
+
+const setTermsInfo = async context => {
+  const data = context.method === 'patch' ? context.data.$set : context.data;
+  if (!(data && data.terms)) return context;
+  const {
+    terms
+  } = data;
+  const schemeIds = Object.keys(terms).sort();
+  const info = data.terms_info = {
+    class_keys: [],
+    class_tags: []
+  }; // TODO: Implement caching
+
+  const vocabularies = await context.app.service('vocabularies').find({
+    paginate: false,
+    provider: null,
+    query: {
+      is_enabled: true,
+      scheme_id: {
+        $in: schemeIds
+      }
+    }
+  });
+  schemeIds.forEach(schemeId => {
+    const keys = [schemeId];
+    const spec = terms[schemeId];
+    Object.keys(spec).sort().forEach(vLabel => {
+      const tLabel = spec[vLabel];
+      const vocabulary = vocabularies.find(v => v.scheme_id === schemeId && v.label === vLabel);
+      if (!vocabulary) throw new errors.BadRequest(`No vocabulary found for '${schemeId}.${vLabel}'.`);
+      const term = vocabulary.terms.find(t => t.label === tLabel);
+      if (!term) throw new errors.BadRequest(`No vocabulary term found for '${schemeId}.${vLabel}.${tLabel}'.`);
+      const key = `${vLabel}_${tLabel}`;
+      const tag = `${schemeId}_${key}`;
+
+      switch (vocabulary.vocabulary_type) {
+        case 'class':
+          info.class_tags.push(tag);
+          keys.push(key);
+          break;
+
+        case 'unit':
+          if (info.unit_tag) throw new errors.BadRequest(`You are not allowed to specify more than one unit term.`);
+          info.unit_tag = tag;
+          break;
+      }
+    });
+    if (keys.length > 1) info.class_keys.push(keys.join('__'));
+  });
+  return context;
+};
+
+const stages = [{
+  $lookup: {
+    from: 'organizations',
+    localField: 'organization_id',
+    foreignField: '_id',
+    as: 'organization'
+  }
+}, {
+  $unwind: {
+    path: '$organization',
+    preserveNullAndEmptyArrays: true
+  }
+}, {
+  $lookup: {
+    from: 'stations',
+    localField: 'station_id',
+    foreignField: '_id',
+    as: 'station'
+  }
+}, {
+  $unwind: {
+    path: '$station',
+    preserveNullAndEmptyArrays: true
+  }
+}, {
+  $addFields: {
+    access_levels_resolved: {
+      $mergeObjects: [{
+        member_level: Visibility.DOWNLOAD,
+        public_level: Visibility.DOWNLOAD
+      }, '$organization.access_levels', '$station.access_levels', '$access_levels']
+    },
+    general_config_resolved: {
+      $mergeObjects: [{}, '$organization.general_config', '$station.general_config', '$general_config']
+    },
+    organization_lookup: {
+      name: '$organization.name',
+      slug: '$organization.slug'
+    },
+    station_lookup: {
+      name: '$station.name',
+      slug: '$station.slug',
+      time_zone: '$station.time_zone',
+      utc_offset: '$station.utc_offset'
+    }
+  }
+}];
 exports.before = {
   // all: [],
-
-  find: [apiHooks.coerceQuery()],
-
-  // get: [],
-
-  create: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  }), commonHooks.discard('_computed', '_elapsed', '_include'), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), apiHooks.uniqueArray('data.tags'), computeAttributesInfo(), computeTagsInfo(), computeHashes(), versionStamp()],
-
-  update: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  }), commonHooks.discard('_computed', '_elapsed', '_include'), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), apiHooks.uniqueArray('data.tags'), computeAttributesInfo(), computeTagsInfo(), computeHashes(), versionStamp(), hook => {
-    // TODO: Optimize with find/$select to return fewer fields?
-    return hook.app.service('/datastreams').get(hook.id).then(doc => {
-      if (doc.datapoints_config_built) {
-        hook.data.datapoints_config_built = doc.datapoints_config_built;
-      } else {
-        delete hook.data.datapoints_config_built;
-      }
-      hook.data.created_at = doc.created_at;
-      return hook;
-    });
-  }],
-
-  patch: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  }), globalHooks.validate('datastream.patch.json'), apiHooks.timestamp(), apiHooks.coerceQuery(), apiHooks.coerce(), versionStamp()],
-
-  remove: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  })]
-
-  /**
-   * HACK: Ensure uom is not null since populate({schema: convertibleToUomsSchema}) blows chunks.
-   */
-};function discardIfFalse(field) {
-  return hook => {
-    const items = commonHooks.getItems(hook);
-
-    if (Array.isArray(items)) {
-      items.forEach(item => {
-        if (!item[field]) delete item[field];
-      });
-    } else if (typeof items === 'object') {
-      if (!items[field]) delete items[field];
+  find: [globalHooks.beforeFind(), globalHooks.accessFind(stages.concat({
+    $project: {
+      datapoints_config_built: false,
+      organization: false,
+      station: false
     }
-
-    return hook;
-  };
-}
-
-function createAnnotationBuild() {
-  return hook => {
-    const now = new Date();
-    const method = 'assembleDatapointsConfig';
-
-    let items = hook.result;
-    if (!Array.isArray(items)) items = [items];
-
-    let step = Promise.resolve();
-    items.forEach(item => {
-      // HACK: Don't trigger another build if we're patching the built config
-      if (hook.method === 'patch' && hook.data.datapoints_config_built) return;
-
-      step = step.then(() => {
-        return hook.app.get('connections').annotationBuild.app.service('/builds').create({
-          _id: `${method}-${item._id}-${now.getTime()}-${Math.floor(Math.random() * 10000)}`,
-          method,
-          build_at: now,
-          expires_at: new Date(now.getTime() + 86400000), // 24 hours from now
-          spec: {
-            datastream: item
-          }
-        });
-      });
-    });
-
-    return step.then(() => hook);
-  };
-}
-
-const uomSchema = {
-  include: {
-    service: 'uoms',
-    nameAs: 'uom',
-    parentField: 'tags_info.unit_tag',
-    childField: 'unit_tags'
-  }
+  }))],
+  get: [globalHooks.beforeGet(), globalHooks.accessGet(stages.concat({
+    $project: {
+      organization: false,
+      station: false
+    }
+  }))],
+  create: [globalHooks.beforeCreate({
+    alterItems: defaultsMigrations,
+    schemaName: 'datastream.create.json',
+    versionStamp: true
+  }), setExtent, setTermsInfo],
+  update: [globalHooks.beforeUpdate({
+    alterItems: defaultsMigrations,
+    schemaName: 'datastream.update.json',
+    versionStamp: true
+  }), setExtent, setTermsInfo],
+  patch: [globalHooks.beforePatch({
+    schemaName: 'datastream.patch.json',
+    versionStamp: true
+  }), setExtent, setTermsInfo],
+  remove: globalHooks.beforeRemove()
 };
-
-const convertibleToUomsSchema = {
-  include: {
-    service: 'uoms',
-    nameAs: 'convertible_to_uoms',
-    parentField: 'uom.convertible_to_uom_ids',
-    childField: '_id',
-    asArray: true
-  }
-};
-
-const preferredUomsSchema = {
-  include: {
-    service: 'uoms',
-    nameAs: 'preferred_uoms',
-    parentField: 'preferred_uom_ids',
-    childField: '_id',
-    asArray: true
-  }
-};
-
 exports.after = {
-  all: [commonHooks.populate({ schema: uomSchema }), discardIfFalse('uom'), commonHooks.populate({ schema: convertibleToUomsSchema }), commonHooks.populate({ schema: preferredUomsSchema })],
-
+  // all: [],
   // find: [],
   // get: [],
-
-  create: [createAnnotationBuild()],
-
-  update: [createAnnotationBuild()],
-
-  patch: [createAnnotationBuild()]
-
-  // remove: []
+  create: [iff(context => context.result.source_type === 'sensor', dispatchAnnotationBuild('assembleDatapointsConfig')), iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('initDerivedDatastream')), globalHooks.signalBackend()],
+  update: [iff(context => context.result.source_type === 'sensor', dispatchAnnotationBuild('assembleDatapointsConfig')), iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('initDerivedDatastream')), globalHooks.signalBackend()],
+  patch: [iff(({
+    data,
+    params,
+    result
+  }) => result.source_type === 'sensor' && params.dispatchAnnotationBuild !== false && (params.dispatchAnnotationBuild === true || data.$set && _.intersection(assembleDatapointsConfigKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(assembleDatapointsConfigKeys, Object.keys(data.$unset)).length), dispatchAnnotationBuild('assembleDatapointsConfig')), iff(({
+    data,
+    params,
+    result
+  }) => result.source_type === 'sensor' && params.dispatchDerivedBuild !== false && (params.dispatchDerivedBuild === true || data.$set && _.intersection(processDatastreamKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(processDatastreamKeys, Object.keys(data.$unset)).length), dispatchDerivedBuild('processDatastream')), iff(({
+    data,
+    params,
+    result
+  }) => result.source_type === 'deriver' && params.dispatchDerivedBuild !== false && (params.dispatchDerivedBuild === true || data.$set && _.intersection(initDerivedDatastreamKeys, Object.keys(data.$set)).length || data.$unset && _.intersection(initDerivedDatastreamKeys, Object.keys(data.$unset)).length), dispatchDerivedBuild('initDerivedDatastream')), globalHooks.signalBackend()],
+  remove: [iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('destroyDerivedDatastream')), globalHooks.signalBackend()]
 };

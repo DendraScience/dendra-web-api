@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "user.json",
   "title": "User",
   "description": "A user account with credentials for authentication.",
@@ -28,9 +28,20 @@
       "$ref": "types.json#/definitions/personId",
       "description": "The person affiliated with this user account"
     },
+    "preferences": {
+      "type": "object",
+      "description": "Saved preferences for this user account",
+      "example": {
+        "web_ui": {
+          "datastream_search_fields": ["organization", "station"]
+        }
+      }
+    },
     "roles": {
       "type": "array",
       "description": "The user's roles within the system (e.g. 'sys-admin')",
+      "maxItems": 1,
+      "minItems": 1,
       "items": {
         "type": "string",
         "example": "sys-admin"
@@ -41,16 +52,25 @@
   "properties": {
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
-    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "created_by": {"$ref": "types.json#/definitions/createdBy"},
     "email": {"$ref": "#/definitions/email"},
     "full_name": {"$ref": "#/definitions/full_name"},
+    "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
     "name": {"$ref": "#/definitions/name"},
     "password": {"$ref": "#/definitions/password"},
     "person_id": {"$ref": "#/definitions/person_id"},
-    "roles": {"$ref": "#/definitions/roles"}
+    "preferences": {"$ref": "#/definitions/preferences"},
+    "roles": {"$ref": "#/definitions/roles"},
+    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"}
   },
   "required": [
-    "name"
+    "email",
+    "is_enabled",
+    "name",
+    "password",
+    "roles"
   ],
   "links": [
     {
@@ -59,17 +79,45 @@
       "rel": "self",
       "href": "users",
       "method": "POST",
-      "required": [
-        "name",
-        "password"
-      ],
       "schema": {
         "type": "object",
         "properties": {
           "email": {"$ref": "#/definitions/email"},
           "full_name": {"$ref": "#/definitions/full_name"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "name": {"$ref": "#/definitions/name"},
           "password": {"$ref": "#/definitions/password"},
-          "name": {"$ref": "#/definitions/name"}
+          "person_id": {"$ref": "#/definitions/person_id"},
+          "preferences": {"$ref": "#/definitions/preferences"},
+          "roles": {"$ref": "#/definitions/roles"}
+        },
+        "required": [
+          "email",
+          "is_enabled",
+          "name",
+          "password",
+          "roles"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Patch user",
+      "description": "Patch an existing user.",
+      "rel": "self",
+      "href": "users/{#/definitions/_id}",
+      "method": "PATCH",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "email": {"$ref": "#/definitions/email"},
+          "full_name": {"$ref": "#/definitions/full_name"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "name": {"$ref": "#/definitions/name"},
+          "password": {"$ref": "#/definitions/password"},
+          "person_id": {"$ref": "#/definitions/person_id"},
+          "preferences": {"$ref": "#/definitions/preferences"},
+          "roles": {"$ref": "#/definitions/roles"}
         }
       },
       "targetSchema": {"rel": "self"}
@@ -80,18 +128,26 @@
       "rel": "self",
       "href": "users/{#/definitions/_id}",
       "method": "PUT",
-      "required": [
-        "name",
-        "password"
-      ],
       "schema": {
         "type": "object",
         "properties": {
+          "_id": {"$ref": "#/definitions/_id"},
           "email": {"$ref": "#/definitions/email"},
           "full_name": {"$ref": "#/definitions/full_name"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "name": {"$ref": "#/definitions/name"},
           "password": {"$ref": "#/definitions/password"},
-          "name": {"$ref": "#/definitions/name"}
-        }
+          "person_id": {"$ref": "#/definitions/person_id"},
+          "preferences": {"$ref": "#/definitions/preferences"},
+          "roles": {"$ref": "#/definitions/roles"}
+        },
+        "required": [
+          "email",
+          "is_enabled",
+          "name",
+          "password",
+          "roles"
+        ]
       },
       "targetSchema": {"rel": "self"}
     },

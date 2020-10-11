@@ -1,176 +1,186 @@
 const apiHooks = require('@dendra-science/api-hooks-common')
-const commonHooks = require('feathers-hooks-common')
+const auth = require('@feathersjs/authentication')
+const errors = require('@feathersjs/errors')
+const { disallow, iff, iffElse } = require('feathers-hooks-common')
+const { treeMap } = require('@dendra-science/utils')
+const _ = require('lodash')
+
+const setAbility = require('../../../hooks/setAbility')
+const { TYPE_KEY } = require('../../../lib/ability')
 const math = require('../../../lib/math')
-const {errors} = require('feathers-errors')
-const {treeMap} = require('@dendra-science/utils')
 
 exports.before = {
   // all: [],
 
   find: [
-    apiHooks.coerceQuery(),
+    iff(
+      context => context.params.headers && context.params.headers.authorization,
+      auth.hooks.authenticate('jwt')
+    ),
+    setAbility(),
+    apiHooks.coerceQuery({
+      bool: true,
+      id: true,
+      num: true
+    }),
+    iffElse(
+      context => context.params.query && context.params.query.time_local,
+      apiHooks.coerceQuery({ naive: true }),
+      apiHooks.coerceQuery({ utc: true })
+    ),
 
-    (hook) => {
-      if (typeof hook.params.query !== 'object') throw new errors.BadRequest('Expected query')
-    },
+    async ({ app, params }) => {
+      if (!params.query) throw new errors.BadRequest('Expected query.')
+      if (params.queryDepth > 3)
+        throw new errors.BadRequest('Query depth exceeded.')
 
-    (hook) => {
-      const query = hook.params.query
-      if (query.datastream_id) {
-        return hook.app.service('/datastreams').get(query.datastream_id).then(datastream => {
-          hook.params.datastream = datastream
-          return hook
+      const { ability, headers, provider, query } = params
+      let { datastream } = params
+
+      if (!datastream && query.datastream_id) {
+        datastream = await app.service('datastreams').get(query.datastream_id, {
+          ability,
+          provider
         })
       }
-    },
 
-    (hook) => {
-      const datastream = hook.params.datastream
-      if (typeof datastream !== 'object') throw new errors.BadRequest('Expected datastream')
-      if (!Array.isArray(datastream.datapoints_config)) throw new errors.GeneralError('Missing datapoints config')
-    },
+      if (!datastream)
+        throw new errors.BadRequest(
+          'Expected params.datastream or query.datastream_id.'
+        )
+      if (!Array.isArray(datastream.datapoints_config))
+        throw new errors.GeneralError('Missing datastream.datapoints_config.')
 
-    (hook) => {
-      /*
-        If a system of measurement is given, then resolve the SOM to a valid unit of measurement.
-       */
-      const datastream = hook.params.datastream
-      const query = hook.params.query
-
-      if ((typeof query.som_id === 'string') && (typeof datastream.uom === 'object') && Array.isArray(datastream.convertible_to_uoms)) {
-        const sourceUom = datastream.uom
-        const sourceSomId = sourceUom.som_id
-        const targetSomId = query.som_id
-
-        let foundUom
-
-        if (Array.isArray(datastream.preferred_uoms)) {
-          let defaultUom
-          // Seek out a preferred UOM for the given system of measurement
-          foundUom = datastream.preferred_uoms.find(uom => {
-            // The default is the first UOM that does not have a system
-            if (!defaultUom && !uom.som_id) defaultUom = uom._id
-            return uom.som_id === targetSomId
-          }) || defaultUom
-
-          if (foundUom) {
-            // Verify the chosen, preferred UOM against the convertibles
-            foundUom = datastream.convertible_to_uoms.find(uom => uom._id === foundUom._id)
-          }
-        }
-
-        if (foundUom) {
-          // We have a preference, this supersedes all
-          hook.params.sourceUom = sourceUom
-          hook.params.targetUom = foundUom
-        } else if (targetSomId === sourceSomId) {
-          // We are already in the given system of measurement
-          hook.params.sourceUom = hook.params.targetUom = sourceUom
-        } else {
-          // Seek out a convertible UOM for the given system of measurement
-          foundUom = datastream.convertible_to_uoms.find(uom => uom.som_id === targetSomId)
-
-          if (foundUom) {
-            hook.params.sourceUom = sourceUom
-            hook.params.targetUom = foundUom
-          }
+      if (provider) {
+        // HACK: Allow if header is specified
+        const action =
+          headers && headers['dendra-fetch-action'] === 'graph'
+            ? 'graph'
+            : 'download'
+        datastream[TYPE_KEY] = 'datastreams'
+        if (ability.cannot(action, datastream)) {
+          throw new errors.Forbidden(
+            `You are not allowed to ${action} datapoints for the datastream.`
+          )
         }
       }
-    },
 
-    (hook) => {
-      /*
-        If a unit of measurement is given, then verify the target UOM here. We convert values in the after hook.
-       */
-      const datastream = hook.params.datastream
-      const query = hook.params.query
+      // Eval 'time' query fields
+      if (query.time) {
+        if (typeof query.time !== 'object')
+          throw new errors.BadRequest('Invalid time parameter.')
 
-      if ((typeof query.uom_id === 'string') && (typeof datastream.uom === 'object') && Array.isArray(datastream.convertible_to_uoms)) {
-        const sourceUom = datastream.uom
-        const sourceUomId = sourceUom._id
-        const targetUomId = query.uom_id
+        if (query.time_local) {
+          let station = datastream.station_lookup
+          if (!station) {
+            if (!datastream.station_id)
+              throw new errors.BadRequest(
+                'No datastream.station_id defined to allow query.time_local.'
+              )
 
-        if (targetUomId === sourceUomId) {
-          // We are already in the given unit of measurement
-          hook.params.sourceUom = hook.params.targetUom = sourceUom
+            station = await app
+              .service('stations')
+              .get(datastream.station_id, { provider: null })
+          }
+
+          // Convert local time to UTC for downstream use
+          const ms = (station.utc_offset | 0) * 1000
+          query.time = treeMap(query.time, obj => {
+            // Only permit date strings that were coerced
+            if (typeof obj === 'string')
+              throw new errors.BadRequest('Invalid local time format.')
+            if (typeof obj === 'number') return new Date(obj - ms)
+            if (obj instanceof Date) return new Date(obj.getTime() - ms)
+            return obj
+          })
         } else {
-          // Verify the given UOM against the convertibles
-          const foundUom = datastream.convertible_to_uoms.find(uom => uom._id === targetUomId)
-          if (!foundUom) throw new errors.BadRequest(`Not convertible to '${targetUomId}'`)
-
-          hook.params.sourceUom = sourceUom
-          hook.params.targetUom = foundUom
+          query.time = treeMap(query.time, obj => {
+            // Only permit date strings that were coerced
+            if (typeof obj === 'string')
+              throw new errors.BadRequest('Invalid time format.')
+            if (typeof obj === 'number') return new Date(obj)
+            return obj
+          })
         }
       }
-    },
 
-    (hook) => {
-      /*
-        Treat the time[] query field as local station time if time_local is true.
-       */
-      const datastream = hook.params.datastream
-      const query = hook.params.query
+      // Eval 'uom_id' query field
+      if (query.uom_id) {
+        // Get target unit of measure
+        const targetUom = await app
+          .service('uoms')
+          .get(query.uom_id, { provider: null })
 
-      if ((typeof query.time === 'object') && (query.time_local === true) && datastream.station_id) {
-        return hook.app.service('/stations').get(datastream.station_id).then(station => {
-          const offset = station.utc_offset
-          if (typeof offset === 'number') {
-            // Convert station time to UTC for downstream use
-            query.time = treeMap(query.time, (obj) => {
-              // Only map values that were coerced, i.e. in the correct format
-              if (obj instanceof Date) return new Date(obj.getTime() - offset * 1000)
-              return obj
-            })
-          }
-          return hook
+        if (!(datastream.terms_info && datastream.terms_info.unit_tag))
+          throw new errors.BadRequest(
+            'No datastream.terms_info.unit_tag defined to allow unit conversion.'
+          )
+
+        // Find source unit of measure based on unit tag
+        const unitTag = datastream.terms_info.unit_tag
+        const uoms = await app.service('uoms').find({
+          paginate: false,
+          provider: null,
+          query: { unit_tags: unitTag, $limit: 1 }
         })
+
+        if (!uoms.length)
+          throw new errors.BadRequest(
+            `No unit of measure (uom) found for '${unitTag}'.`
+          )
+
+        // Ensure that we have Math.js library settings
+        const sourceUom = uoms[0]
+        const sourceUnitName = _.get(
+          sourceUom,
+          'library_config.mathjs.unit_name'
+        )
+        const targetUnitName = _.get(
+          targetUom,
+          'library_config.mathjs.unit_name'
+        )
+
+        if (!(sourceUnitName && targetUnitName))
+          throw new errors.BadRequest(
+            'No library_config.mathjs.unit_name defined to allow unit conversion.'
+          )
+
+        params.sourceUnitName = sourceUnitName
+        params.targetUnitName = targetUnitName
       }
+
+      params.datastream = datastream
     }
   ],
 
-  get: commonHooks.disallow(),
-  create: commonHooks.disallow(),
-  update: commonHooks.disallow(),
-  patch: commonHooks.disallow(),
-  remove: commonHooks.disallow()
+  get: disallow(),
+  create: disallow(),
+  update: disallow(),
+  patch: disallow(),
+  remove: disallow()
 }
 
 exports.after = {
   // all: [],
 
-  find (hook) {
-    const sourceUnitName = commonHooks.getByDot(hook, 'params.sourceUom.library_config.mathjs.unit_name')
-    const targetUnitName = commonHooks.getByDot(hook, 'params.targetUom.library_config.mathjs.unit_name')
+  find: async ({ params, result }) => {
+    const { sourceUnitName, targetUnitName } = params
+    const { data } = result
 
-    if (!sourceUnitName || !targetUnitName) return
+    if (!(data && sourceUnitName && targetUnitName)) return
 
-    // Convert results asynchronously; 20 items at a time (hardcoded)
-    // TODO: Move hardcoded 'count' to config
-    // TODO: Move this into a global hook?
-    const count = 20
-    const data = hook.result.data
-    const mapTask = function (start) {
-      return new Promise(resolve => {
-        setImmediate(() => {
-          const len = Math.min(start + count, data.length)
-          for (let i = start; i < len; i++) {
-            const item = data[i]
-            if (typeof item.v === 'number') {
-              // Be cautious, bypass conversion if the same unit name
-              item.uv = sourceUnitName === targetUnitName ? item.v : math.unit(item.v, sourceUnitName).toNumber(targetUnitName)
-            }
-          }
-          resolve()
-        })
-      })
+    // Convert results asynchronously; 24 items at a time (hardcoded)
+    for (let i = 0; i < data.length; i++) {
+      const item = data[i]
+
+      if (typeof item.v === 'number')
+        item.uv =
+          sourceUnitName === targetUnitName // Simulate conversion if the same unit name
+            ? item.v
+            : math.unit(item.v, sourceUnitName).toNumber(targetUnitName)
+
+      if (!(i % 24)) await new Promise(resolve => setImmediate(resolve))
     }
-    const tasks = []
-    for (let i = 0; i < data.length; i += count) {
-      tasks.push(mapTask(i))
-    }
-    return Promise.all(tasks).then(() => {
-      return hook
-    })
   }
 
   // get: [],

@@ -1,0 +1,181 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "thing-type.json",
+  "title": "Thing Type",
+  "description": "A type of instrument or other equipment.",
+  "type": "object",
+  "definitions": {
+    "_id": {
+      "$ref": "types.json#/definitions/thingTypeId"
+    },
+    "description": {
+      "$ref": "types.json#/definitions/description",
+      "example": "The 05103 Wind Monitor is a lightweight, sturdy instrument for measuring wind speed and direction in your harsh environments. Its simplicity and corrosion-resistant construction make it ideal for a wide range of wind measuring applications. Manufactured by R. M. Young, this wind monitor is cabled for use with your Campbell Scientific data logger."
+    },
+    "external_links": {
+      "$ref": "types.json#/definitions/externalLinks",
+      "example": [
+        {
+          "title": "Manufacturer",
+          "url": "http://www.youngusa.com/products/7/5.html"
+        }
+      ]
+    },
+    "external_refs": {
+      "$ref": "types.json#/definitions/externalRefs",
+      "example": [
+        {
+          "identifier": "2952",
+          "type": "odm.methods.MethodID"
+        }
+      ]
+    },
+    "model": {
+      "type": "string",
+      "description": "The manufacturer's model number",
+      "example": "05103"
+    },
+    "name": {
+      "type": "string",
+      "example": "Wind Monitor"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "_id": {"$ref": "#/definitions/_id"},
+    "created_at": {"$ref": "types.json#/definitions/createdAt"},
+    "created_by": {"$ref": "types.json#/definitions/createdBy"},
+    "description": {"$ref": "#/definitions/description"},
+    "external_links": {"$ref": "#/definitions/external_links"},
+    "external_refs": {"$ref": "#/definitions/external_refs"},
+    "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+    "model": {"$ref": "#/definitions/model"},
+    "name": {"$ref": "#/definitions/name"},
+    "oem_company_id": {"$ref": "types.json#/definitions/companyId"},
+    "reseller_company_id": {"$ref": "types.json#/definitions/companyId"},
+    "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
+    "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
+    "version_id": {"$ref": "types.json#/definitions/versionId"}
+  },
+  "required": [
+    "is_enabled",
+    "model",
+    "name"
+  ],
+  "links": [
+    {
+      "title": "Create thing type",
+      "description": "Create a new thing type.",
+      "rel": "self",
+      "href": "thing-types",
+      "method": "POST",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "description": {"$ref": "#/definitions/description"},
+          "external_links": {"$ref": "#/definitions/external_links"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "model": {"$ref": "#/definitions/model"},
+          "name": {"$ref": "#/definitions/name"},
+          "oem_company_id": {"$ref": "types.json#/definitions/companyId"},
+          "reseller_company_id": {"$ref": "types.json#/definitions/companyId"}
+        },
+        "required": [
+          "is_enabled",
+          "model",
+          "name"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Patch thing type",
+      "description": "Patch an existing thing type.",
+      "rel": "self",
+      "href": "thing-types/{#/definitions/_id}",
+      "method": "PATCH",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "description": {"$ref": "#/definitions/description"},
+          "external_links": {"$ref": "#/definitions/external_links"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "model": {"$ref": "#/definitions/model"},
+          "name": {"$ref": "#/definitions/name"},
+          "oem_company_id": {"$ref": "types.json#/definitions/companyId"},
+          "reseller_company_id": {"$ref": "types.json#/definitions/companyId"}
+        }
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Update thing type",
+      "description": "Update an existing thing type.",
+      "rel": "self",
+      "href": "thing-types/{#/definitions/_id}",
+      "method": "PUT",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "_id": {"$ref": "#/definitions/_id"},
+          "description": {"$ref": "#/definitions/description"},
+          "external_links": {"$ref": "#/definitions/external_links"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "model": {"$ref": "#/definitions/model"},
+          "name": {"$ref": "#/definitions/name"},
+          "oem_company_id": {"$ref": "types.json#/definitions/companyId"},
+          "reseller_company_id": {"$ref": "types.json#/definitions/companyId"}
+        },
+        "required": [
+          "is_enabled",
+          "model",
+          "name"
+        ]
+      },
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Remove thing type",
+      "description": "Remove an existing thing type.",
+      "rel": "self",
+      "href": "thing-types/{#/definitions/_id}",
+      "method": "DELETE",
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "Thing info",
+      "description": "Return a specific thing type.",
+      "rel": "self",
+      "href": "thing-types/{#/definitions/_id}",
+      "method": "GET",
+      "targetSchema": {"rel": "self"}
+    },
+    {
+      "title": "List thing types",
+      "description": "Find one or more thing types based on the query parameters.",
+      "rel": "instances",
+      "href": "thing-types",
+      "method": "GET",
+      "schema": {
+        "$ref": "types.json#/definitions/queryParameters"
+      },
+      "targetSchema": {
+        "allOf": [
+          {"$ref": "types.json#/definitions/paginationMeta"},
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {"rel": "self"}
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

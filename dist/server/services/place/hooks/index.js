@@ -1,43 +1,40 @@
-'use strict';
+"use strict";
 
-const apiHooks = require('@dendra-science/api-hooks-common');
-const auth = require('feathers-authentication');
-const authHooks = require('feathers-authentication-hooks');
-const commonHooks = require('feathers-hooks-common');
 const globalHooks = require('../../../hooks');
 
-const SCHEMA_NAME = 'place.json';
+const _ = require('lodash');
+
+const defaultsMigrations = rec => {
+  _.defaults(rec, {
+    is_enabled: rec.enabled
+  }, {
+    is_enabled: true
+  });
+
+  delete rec.enabled;
+};
 
 exports.before = {
   // all: [],
-
-  find: [apiHooks.coerceQuery()],
-
-  // get: [],
-
-  create: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  }), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce()],
-
-  update: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  }), globalHooks.validate(SCHEMA_NAME), apiHooks.timestamp(), apiHooks.coerce(), hook => {
-    // TODO: Optimize with find/$select to return fewer fields?
-    return hook.app.service('/places').get(hook.id).then(doc => {
-      hook.data.created_at = doc.created_at;
-      return hook;
-    });
-  }],
-
-  patch: [commonHooks.disallow('external')],
-
-  remove: [auth.hooks.authenticate('jwt'), authHooks.restrictToRoles({
-    roles: ['sys-admin']
-  })]
+  find: globalHooks.beforeFind(),
+  get: globalHooks.beforeGet(),
+  create: globalHooks.beforeCreate({
+    alterItems: defaultsMigrations,
+    schemaName: 'place.create.json',
+    versionStamp: true
+  }),
+  update: globalHooks.beforeUpdate({
+    alterItems: defaultsMigrations,
+    schemaName: 'place.update.json',
+    versionStamp: true
+  }),
+  patch: globalHooks.beforePatch({
+    schemaName: 'place.patch.json',
+    versionStamp: true
+  }),
+  remove: globalHooks.beforeRemove()
 };
-
-exports.after = {
-  // all: [],
+exports.after = {// all: [],
   // find: [],
   // get: [],
   // create: [],

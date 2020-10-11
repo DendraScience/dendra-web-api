@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "company.create.json",
+  "$patch": {
+    "source": {"$ref": "company.json#"},
+    "with": [
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "_id": {"$ref": "#/definitions/_id"},
+          "company_type": {"$ref": "#/definitions/company_type"},
+          "description": {"$ref": "#/definitions/description"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
+          "full_name": {"$ref": "#/definitions/full_name"},
+          "name": {"$ref": "#/definitions/name"},
+          "url": {"$ref": "#/definitions/url"}
+        }
+      }
+    ]
+  }
+}

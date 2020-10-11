@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "user.patch.json",
+  "$patch": {
+    "source": {"$ref": "user.json#"},
+    "with": [
+      {
+        "op": "remove",
+        "path": "/required"
+      },
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "$set": {
+            "additionalProperties": false,
+            "properties": {
+              "email": {"$ref": "#/definitions/email"},
+              "full_name": {"$ref": "#/definitions/full_name"},
+              "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+              "name": {"$ref": "#/definitions/name"},
+              "password": {"$ref": "#/definitions/password"},
+              "person_id": {"$ref": "#/definitions/person_id"},
+              "preferences": {"$ref": "#/definitions/preferences"},
+              "roles": {"$ref": "#/definitions/roles"}
+            },
+            "type": "object"
+          },
+          "$unset": {
+            "additionalProperties": false,
+            "properties": {
+              "full_name": {"$ref": "types.json#/definitions/unset"},
+              "person_id": {"$ref": "types.json#/definitions/unset"},
+              "preferences": {"$ref": "types.json#/definitions/unset"}
+            },
+            "type": "object"
+          }
+        }
+      }
+    ]
+  }
+}

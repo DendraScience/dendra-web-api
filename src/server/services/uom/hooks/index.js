@@ -1,60 +1,28 @@
-const apiHooks = require('@dendra-science/api-hooks-common')
-const auth = require('feathers-authentication')
-const authHooks = require('feathers-authentication-hooks')
-const commonHooks = require('feathers-hooks-common')
 const globalHooks = require('../../../hooks')
-
-const SCHEMA_NAME = 'uom.json'
 
 exports.before = {
   // all: [],
 
-  find: [
-    apiHooks.coerceQuery()
-  ],
+  find: globalHooks.beforeFind(),
 
-  // get: [],
+  get: globalHooks.beforeGet(),
 
-  create: [
-    auth.hooks.authenticate('jwt'),
-    authHooks.restrictToRoles({
-      roles: ['sys-admin']
-    }),
-    globalHooks.validate(SCHEMA_NAME),
-    apiHooks.timestamp(),
-    apiHooks.coerce(),
-    apiHooks.uniqueArray('data.unit_tags')
-  ],
+  create: globalHooks.beforeCreate({
+    schemaName: 'uom.create.json',
+    versionStamp: true
+  }),
 
-  update: [
-    auth.hooks.authenticate('jwt'),
-    authHooks.restrictToRoles({
-      roles: ['sys-admin']
-    }),
-    globalHooks.validate(SCHEMA_NAME),
-    apiHooks.timestamp(),
-    apiHooks.coerce(),
-    apiHooks.uniqueArray('data.unit_tags'),
+  update: globalHooks.beforeUpdate({
+    schemaName: 'uom.update.json',
+    versionStamp: true
+  }),
 
-    (hook) => {
-      // TODO: Optimize with find/$select to return fewer fields?
-      return hook.app.service('/uoms').get(hook.id).then(doc => {
-        hook.data.created_at = doc.created_at
-        return hook
-      })
-    }
-  ],
+  patch: globalHooks.beforePatch({
+    schemaName: 'uom.patch.json',
+    versionStamp: true
+  }),
 
-  patch: [
-    commonHooks.disallow('external')
-  ],
-
-  remove: [
-    auth.hooks.authenticate('jwt'),
-    authHooks.restrictToRoles({
-      roles: ['sys-admin']
-    })
-  ]
+  remove: globalHooks.beforeRemove()
 }
 
 exports.after = {
