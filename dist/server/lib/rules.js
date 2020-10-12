@@ -94,10 +94,9 @@ const membershipRulesByRole = {
     });
     can('assign', 'datastreams'); // Uploads
 
-    can(['create', 'patch', 'read'], 'uploads', {
+    can('read', 'uploads', {
       organization_id: membership.organization_id
-    });
-    can('assign', 'uploads'); // Companies
+    }); // Companies
 
     can(['create', 'patch'], 'companies');
     can('assign', 'companies'); // Thing Types
