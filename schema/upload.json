@@ -77,8 +77,7 @@
       "schema": {
         "type": "object",
         "properties": {
-          "result": {"$ref": "types.json#/definitions/result"},
-          "spec": {"$ref": "types.json#/definitions/loadSpec"}
+          "result": {"$ref": "types.json#/definitions/result"}
         }
       },
       "targetSchema": {"rel": "self"}

@@ -1,7 +1,7 @@
 {
   "$set": {
     "result": {
-      "patched": "Patched"
+      "patched": "User Patched"
     }
   }
 }

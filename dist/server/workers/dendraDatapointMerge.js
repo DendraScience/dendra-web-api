@@ -51,7 +51,6 @@ function dendraDatapointMerge({
     }
   }
 
-  const keys = [...map.keys()].sort();
   const query = params.query || {};
   const {
     $sort: sort
@@ -60,6 +59,11 @@ function dendraDatapointMerge({
     code,
     q
   } = annotHelpers(params);
+
+  const compareNumbers = (a, b) => a - b;
+
+  let keys = [...map.keys()];
+  keys = typeof keys[0] === 'number' ? keys.sort(compareNumbers) : keys.sort();
 
   if (sort && sort.time === -1) {
     // DESC

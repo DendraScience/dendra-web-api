@@ -1,8 +1,7 @@
 {
   "$set": {
-    "spec": {
-      "comment": "Demo Upload - Patched",
-      "method": "csvStream"
+    "result": {
+      "patched": "Patched"
     }
   }
 }

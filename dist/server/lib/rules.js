@@ -94,9 +94,10 @@ const membershipRulesByRole = {
     });
     can('assign', 'datastreams'); // Uploads
 
-    can(['create', 'read'], 'uploads', {
+    can(['create', 'patch', 'read'], 'uploads', {
       organization_id: membership.organization_id
-    }); // Companies
+    });
+    can('assign', 'uploads'); // Companies
 
     can(['create', 'patch'], 'companies');
     can('assign', 'companies'); // Thing Types
@@ -130,7 +131,7 @@ const membershipRulesByRole = {
     });
     can('assign', 'datastreams'); // Uploads
 
-    can(['create', 'read'], 'uploads', {
+    can('read', 'uploads', {
       organization_id: membership.organization_id
     });
   },
@@ -253,7 +254,11 @@ const userRulesByRole = {
     can('create', 'downloads');
     can('read', 'downloads', {
       created_by: user._id
-    }); // Users
+    });
+    can('patch', 'downloads', {
+      created_by: user._id
+    });
+    can('assign', 'downloads'); // Users
 
     can('read', 'users');
     can('patch', 'users', {

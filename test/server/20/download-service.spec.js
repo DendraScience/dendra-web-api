@@ -149,14 +149,20 @@ describe(`Service ${servicePath}`, function () {
       )
     })
 
-    it('user should patch with error (user)', function () {
-      return helper.shouldPatchWithError(
-        clients.user,
-        servicePath,
-        id.userDoc,
-        `${dataFile}.patch`,
-        'Forbidden'
-      )
+    it('user should patch without error (user)', function () {
+      return helper
+        .shouldPatchWithoutError(
+          clients.user,
+          servicePath,
+          id.userDoc,
+          `${dataFile}.patch.user`
+        )
+        .then(({ retDoc }) => {
+          expect(retDoc).to.have.nested.property(
+            'result.patched',
+            'User Patched'
+          )
+        })
     })
 
     it('user should patch with error (sys admin)', function () {
@@ -218,10 +224,7 @@ describe(`Service ${servicePath}`, function () {
           `${dataFile}.patch`
         )
         .then(({ retDoc }) => {
-          expect(retDoc).to.have.nested.property(
-            'result.comment',
-            'Demo Download - Patched'
-          )
+          expect(retDoc).to.have.nested.property('result.patched', 'Patched')
         })
     })
 
@@ -234,10 +237,7 @@ describe(`Service ${servicePath}`, function () {
           `${dataFile}.patch`
         )
         .then(({ retDoc }) => {
-          expect(retDoc).to.have.nested.property(
-            'result.comment',
-            'Demo Download - Patched'
-          )
+          expect(retDoc).to.have.nested.property('result.patched', 'Patched')
         })
     })
   })

@@ -92,7 +92,7 @@ const membershipRulesByRole = {
     can('assign', 'datastreams')
 
     // Uploads
-    can(['create', 'read'], 'uploads', {
+    can('read', 'uploads', {
       organization_id: membership.organization_id
     })
 
@@ -130,7 +130,7 @@ const membershipRulesByRole = {
     can('assign', 'datastreams')
 
     // Uploads
-    can(['create', 'read'], 'uploads', {
+    can('read', 'uploads', {
       organization_id: membership.organization_id
     })
   },
@@ -226,6 +226,8 @@ const userRulesByRole = {
     // Downloads
     can('create', 'downloads')
     can('read', 'downloads', { created_by: user._id })
+    can('patch', 'downloads', { created_by: user._id })
+    can('assign', 'downloads')
 
     // Users
     can('read', 'users')

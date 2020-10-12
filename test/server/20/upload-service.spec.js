@@ -145,10 +145,7 @@ describe(`Service ${servicePath}`, function () {
           `${dataFile}.patch`
         )
         .then(({ retDoc }) => {
-          expect(retDoc).to.have.nested.property(
-            'spec.comment',
-            'Demo Upload - Patched'
-          )
+          expect(retDoc).to.have.nested.property('result.patched', 'Patched')
         })
     })
   })
