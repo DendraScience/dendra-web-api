@@ -1,6 +1,6 @@
 {
   "name": "dendra-web-api",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "Dendra public facing REST API.",
   "license": "BSD-2-Clause-FreeBSD",
   "author": "J. Scott Smith <scott@newleafsolutionsinc.com>",
@@ -46,6 +46,7 @@
     "@feathersjs/feathers": "^3.3.1",
     "@feathersjs/rest-client": "^1.4.7",
     "@feathersjs/socketio": "^3.2.9",
+    "agentkeepalive": "^4.1.3",
     "ajv": "^6.12.4",
     "ajv-merge-patch": "^4.1.0",
     "axios": "^0.19.2",

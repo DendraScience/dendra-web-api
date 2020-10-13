@@ -2,7 +2,26 @@
 
 const errors = require('@feathersjs/errors');
 
+const Agent = require('agentkeepalive');
+
+const {
+  HttpsAgent
+} = require('agentkeepalive');
+
 const axios = require('axios');
+
+const instance = axios.create({
+  httpAgent: new Agent({
+    timeout: 60000,
+    freeSocketTimeout: 30000
+  }),
+  httpsAgent: new HttpsAgent({
+    timeout: 60000,
+    freeSocketTimeout: 30000
+  }),
+  maxRedirects: 0,
+  timeout: 180000
+});
 
 const hooks = require('./hooks');
 /**
@@ -56,7 +75,7 @@ class Service {
     parts.push('SLIMIT 1');
     const q = parts.join(' ');
     this.logger.debug(`GET ${influxUrl}/query?db=${db}&q=${q}`);
-    const response = await axios.get(`${influxUrl}/query`, {
+    const response = await instance.get(`${influxUrl}/query`, {
       params: {
         db,
         q
