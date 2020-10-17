@@ -15,14 +15,19 @@
           "$set": {
             "additionalProperties": false,
             "properties": {
-              "result": {"$ref": "types.json#/definitions/result"}
+              "result": {"$ref": "types.json#/definitions/result"},
+              "result_pre": {"$ref": "types.json#/definitions/result"},
+              "result_post": {"$ref": "types.json#/definitions/result"},
+              "state": {"$ref": "#/definitions/state"}
             },
             "type": "object"
           },
           "$unset": {
             "additionalProperties": false,
             "properties": {
-              "result": {"$ref": "types.json#/definitions/unset"}
+              "result": {"$ref": "types.json#/definitions/unset"},
+              "result_pre": {"$ref": "types.json#/definitions/unset"},
+              "result_post": {"$ref": "types.json#/definitions/unset"}
             },
             "type": "object"
           }

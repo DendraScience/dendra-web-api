@@ -10,6 +10,7 @@
     "method": "csvStream"
   },
   "spec_type": "file/export",
+  "state": "pending",
   "storage": {
     "method": "gdrive",
     "options": {

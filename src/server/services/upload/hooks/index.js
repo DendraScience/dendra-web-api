@@ -5,6 +5,16 @@ const _ = require('lodash')
 
 const processUploadKeys = ['spec']
 
+const defaultsMigrations = rec => {
+  _.defaults(rec, {
+    state: 'pending'
+  })
+
+  delete rec.result
+  delete rec.result_pre
+  delete rec.result_post
+}
+
 const dispatchFileImport = method => {
   return async context => {
     const connection = context.app.get('connections').fileDispatch
@@ -38,11 +48,13 @@ exports.before = {
   get: globalHooks.beforeGet(),
 
   create: globalHooks.beforeCreate({
+    alterItems: defaultsMigrations,
     schemaName: 'upload.create.json',
     versionStamp: true
   }),
 
   update: globalHooks.beforeUpdate({
+    alterItems: defaultsMigrations,
     schemaName: 'upload.update.json',
     versionStamp: true
   }),

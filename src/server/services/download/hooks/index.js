@@ -1,4 +1,15 @@
 const globalHooks = require('../../../hooks')
+const _ = require('lodash')
+
+const defaultsMigrations = rec => {
+  _.defaults(rec, {
+    state: 'pending'
+  })
+
+  delete rec.result
+  delete rec.result_pre
+  delete rec.result_post
+}
 
 exports.before = {
   // all: [],
@@ -8,11 +19,13 @@ exports.before = {
   get: globalHooks.beforeGet(),
 
   create: globalHooks.beforeCreate({
+    alterItems: defaultsMigrations,
     schemaName: 'download.create.json',
     versionStamp: true
   }),
 
   update: globalHooks.beforeUpdate({
+    alterItems: defaultsMigrations,
     schemaName: 'download.update.json',
     versionStamp: true
   }),

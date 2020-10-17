@@ -8,6 +8,10 @@
     "_id": {
       "$ref": "types.json#/definitions/downloadId"
     },
+    "organization_id": {
+      "$ref": "types.json#/definitions/organizationId",
+      "description": "The organization to which this download belongs"
+    },
     "requester_email": {
       "$ref": "types.json#/definitions/email",
       "example": "collin@berkeley.edu"
@@ -17,6 +21,11 @@
       "description": "The specification type for downloading",
       "example": "file/export",
       "type": "string"
+    },
+    "state": {
+      "type": "string",
+      "description": "The current state of this download",
+      "example": "finished"
     }
   },
   "additionalProperties": false,
@@ -24,10 +33,14 @@
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
     "created_by": {"$ref": "types.json#/definitions/createdBy"},
+    "organization_id": {"$ref": "#/definitions/organization_id"},
     "requester_email": {"$ref": "#/definitions/requester_email"},
     "result": {"$ref": "types.json#/definitions/result"},
+    "result_pre": {"$ref": "types.json#/definitions/result"},
+    "result_post": {"$ref": "types.json#/definitions/result"},
     "spec": {"$ref": "types.json#/definitions/loadSpec"},
     "spec_type": {"$ref": "#/definitions/spec_type"},
+    "state": {"$ref": "#/definitions/state"},
     "storage": {"$ref": "types.json#/definitions/storageSpec"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
     "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
@@ -36,6 +49,7 @@
   "required": [
     "spec",
     "spec_type",
+    "state",
     "storage"
   ],
   "links": [
@@ -48,15 +62,20 @@
       "schema": {
         "type": "object",
         "properties": {
+          "organization_id": {"$ref": "#/definitions/organization_id"},
           "requester_email": {"$ref": "#/definitions/requester_email"},
           "result": {"$ref": "types.json#/definitions/result"},
+          "result_pre": {"$ref": "types.json#/definitions/result"},
+          "result_post": {"$ref": "types.json#/definitions/result"},
           "spec": {"$ref": "types.json#/definitions/loadSpec"},
           "spec_type": {"$ref": "#/definitions/spec_type"},
+          "state": {"$ref": "#/definitions/state"},
           "storage": {"$ref": "types.json#/definitions/storageSpec"}
         },
         "required": [
           "spec",
           "spec_type",
+          "state",
           "storage"
         ]
       },
@@ -71,7 +90,10 @@
       "schema": {
         "type": "object",
         "properties": {
-          "result": {"$ref": "types.json#/definitions/result"}
+          "result": {"$ref": "types.json#/definitions/result"},
+          "result_pre": {"$ref": "types.json#/definitions/result"},
+          "result_post": {"$ref": "types.json#/definitions/result"},
+          "state": {"$ref": "#/definitions/state"}
         }
       },
       "targetSchema": {"rel": "self"}
@@ -86,15 +108,20 @@
         "type": "object",
         "properties": {
           "_id": {"$ref": "#/definitions/_id"},
+          "organization_id": {"$ref": "#/definitions/organization_id"},
           "requester_email": {"$ref": "#/definitions/requester_email"},
           "result": {"$ref": "types.json#/definitions/result"},
+          "result_pre": {"$ref": "types.json#/definitions/result"},
+          "result_post": {"$ref": "types.json#/definitions/result"},
           "spec": {"$ref": "types.json#/definitions/loadSpec"},
           "spec_type": {"$ref": "#/definitions/spec_type"},
+          "state": {"$ref": "#/definitions/state"},
           "storage": {"$ref": "types.json#/definitions/storageSpec"}
         },
         "required": [
           "spec",
           "spec_type",
+          "state",
           "storage"
         ]
       },

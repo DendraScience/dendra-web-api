@@ -8,6 +8,7 @@
     "method": "csvStream"
   },
   "spec_type": "file/import",
+  "state": "pending",
   "station_id": "58e68cacdf5ce600012602d7",
   "storage": {
     "method": "local",
