@@ -64,15 +64,33 @@ class Service {
     parts.push('SLIMIT 1')
 
     const q = parts.join(' ')
-
-    this.logger.debug(`GET ${influxUrl}/query?db=${db}&q=${q}`)
-
-    const response = await instance.get(`${influxUrl}/query`, {
+    const queryConfig = {
       params: {
         db,
         q
       }
-    })
+    }
+    const queryUrl = `${influxUrl}/query`
+
+    this.logger.debug(`GET ${influxUrl}/query?db=${db}&q=${q}`)
+
+    let response
+    try {
+      response = await instance.get(queryUrl, queryConfig)
+    } catch (err) {
+      // Retry in case of keep-alive race
+      // SEE: https://github.com/node-modules/agentkeepalive#support-reqreusedsocket
+      if (
+        err.request &&
+        err.request.reusedSocket &&
+        err.code === 'ECONNRESET'
+      ) {
+        this.logger.warn(
+          `ECONNRESET retrying GET ${influxUrl}/query?db=${db}&q=${q}`
+        )
+        response = await instance.get(queryUrl, queryConfig)
+      } else throw err
+    }
 
     if (response.status !== 200)
       throw new errors.BadRequest(`Non-success status code ${response.status}`)
