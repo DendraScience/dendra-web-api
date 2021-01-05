@@ -20,18 +20,18 @@ exports.before = {
 
   create: globalHooks.beforeCreate({
     alterItems: defaultsMigrations,
-    schemaName: 'upload.create.json',
+    schemaName: 'monitor.create.json',
     versionStamp: true
   }),
 
   update: globalHooks.beforeUpdate({
     alterItems: defaultsMigrations,
-    schemaName: 'upload.update.json',
+    schemaName: 'monitor.update.json',
     versionStamp: true
   }),
 
   patch: globalHooks.beforePatch({
-    schemaName: 'upload.patch.json',
+    schemaName: 'monitor.patch.json',
     versionStamp: true
   }),
 

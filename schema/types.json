@@ -753,32 +753,6 @@
       "maxLength": 50,
       "type": "string"
     },
-    "loadSpec": {
-      "additionalProperties": false,
-      "description": "Specifications for file loading",
-      "properties": {
-        "comment": {
-          "$ref": "#/definitions/description"
-        },
-        "method": {
-          "type": "string"
-        },
-        "notify": {
-          "items": {
-            "type": "string"
-          },
-          "minItems": 1,
-          "type": "array"
-        },
-        "options": {
-          "$ref": "#/definitions/options"
-        }
-      },
-      "required": [
-        "method"
-      ],
-      "type": "object"
-    },
     "media": {
       "description": "Image and video resources at specific sizes and pixel densities",
       "example": [
@@ -893,6 +867,10 @@
     "membershipId": {
       "$ref": "#/definitions/objectId",
       "example": "592f155746a1b867a114e080"
+    },
+    "monitorId": {
+      "$ref": "#/definitions/objectId",
+      "example": "592f155746a1b867a114e110"
     },
     "objectId": {
       "description": "The unique document identifier",
@@ -1016,9 +994,42 @@
       "minItems": 1,
       "type": "array"
     },
+    "schedule": {
+      "description": "Key/value pairs to further schedule this item",
+      "type": "object"
+    },
     "schemeId": {
       "$ref": "#/definitions/stringId",
       "example": "ds"
+    },
+    "serviceSpec": {
+      "additionalProperties": false,
+      "description": "Specifications for file loading",
+      "properties": {
+        "comment": {
+          "$ref": "#/definitions/description"
+        },
+        "method": {
+          "type": "string"
+        },
+        "notify": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "options": {
+          "$ref": "#/definitions/options"
+        },
+        "schedule": {
+          "$ref": "#/definitions/schedule"
+        }
+      },
+      "required": [
+        "method"
+      ],
+      "type": "object"
     },
     "slug": {
       "description": "A human-readable and URL-friendly name used to retrieve this document's page or resource",

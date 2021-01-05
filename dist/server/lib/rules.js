@@ -47,7 +47,9 @@ const publicRules = ({
     'access_levels_resolved.public_level': {
       $gte: Visibility.DOWNLOAD
     }
-  }); // Persons
+  }); // Monitors
+
+  can('read', 'monitors'); // Persons
 
   can('read', 'persons'); // Places
 

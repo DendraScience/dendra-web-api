@@ -32,6 +32,9 @@ const publicRules = ({ can, cannot }) => {
     'access_levels_resolved.public_level': { $gte: Visibility.DOWNLOAD }
   })
 
+  // Monitors
+  can('read', 'monitors')
+
   // Persons
   can('read', 'persons')
 

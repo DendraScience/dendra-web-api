@@ -1,29 +1,25 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "download.json",
-  "title": "Download",
-  "description": "A specification for one or more resources to be download from the system.",
+  "$id": "monitor.json",
+  "title": "Monitor",
+  "description": "A specification for automated monitoring of resources or system components.",
   "type": "object",
   "definitions": {
     "_id": {
-      "$ref": "types.json#/definitions/downloadId"
+      "$ref": "types.json#/definitions/monitorId"
     },
     "organization_id": {
       "$ref": "types.json#/definitions/organizationId",
-      "description": "The organization to which this download belongs"
-    },
-    "requester_email": {
-      "$ref": "types.json#/definitions/email",
-      "example": "collin@berkeley.edu"
+      "description": "The organization to which this monitor belongs"
     },
     "spec_type": {
-      "description": "The specification type for downloading",
-      "example": "file/export",
+      "description": "The specification type for monitoring",
+      "example": "station/status",
       "type": "string"
     },
     "state": {
       "type": "string",
-      "description": "The current state of this download",
+      "description": "The current state of this monitor",
       "example": "finished"
     }
   },
@@ -33,14 +29,12 @@
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
     "created_by": {"$ref": "types.json#/definitions/createdBy"},
     "organization_id": {"$ref": "#/definitions/organization_id"},
-    "requester_email": {"$ref": "#/definitions/requester_email"},
     "result": {"$ref": "types.json#/definitions/result"},
     "result_pre": {"$ref": "types.json#/definitions/result"},
     "result_post": {"$ref": "types.json#/definitions/result"},
     "spec": {"$ref": "types.json#/definitions/serviceSpec"},
     "spec_type": {"$ref": "#/definitions/spec_type"},
     "state": {"$ref": "#/definitions/state"},
-    "storage": {"$ref": "types.json#/definitions/storageSpec"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
     "updated_by": {"$ref": "types.json#/definitions/updatedBy"},
     "version_id": {"$ref": "types.json#/definitions/versionId"}
@@ -48,43 +42,39 @@
   "required": [
     "spec",
     "spec_type",
-    "state",
-    "storage"
+    "state"
   ],
   "links": [
     {
-      "title": "Create download",
-      "description": "Create a new download.",
+      "title": "Create monitor",
+      "description": "Create a new monitor.",
       "rel": "self",
-      "href": "downloads",
+      "href": "monitors",
       "method": "POST",
       "schema": {
         "type": "object",
         "properties": {
           "organization_id": {"$ref": "#/definitions/organization_id"},
-          "requester_email": {"$ref": "#/definitions/requester_email"},
           "result": {"$ref": "types.json#/definitions/result"},
           "result_pre": {"$ref": "types.json#/definitions/result"},
           "result_post": {"$ref": "types.json#/definitions/result"},
           "spec": {"$ref": "types.json#/definitions/serviceSpec"},
           "spec_type": {"$ref": "#/definitions/spec_type"},
-          "state": {"$ref": "#/definitions/state"},
-          "storage": {"$ref": "types.json#/definitions/storageSpec"}
+          "state": {"$ref": "#/definitions/state"}
         },
         "required": [
           "spec",
           "spec_type",
-          "state",
-          "storage"
+          "state"
         ]
       },
       "targetSchema": {"rel": "self"}
     },
     {
-      "title": "Patch download",
-      "description": "Patch an existing download.",
+      "title": "Patch monitor",
+      "description": "Patch an existing monitor.",
       "rel": "self",
-      "href": "downloads/{#/definitions/_id}",
+      "href": "monitors/{#/definitions/_id}",
       "method": "PATCH",
       "schema": {
         "type": "object",
@@ -98,55 +88,52 @@
       "targetSchema": {"rel": "self"}
     },
     {
-      "title": "Update download",
-      "description": "Update an existing download.",
+      "title": "Update monitor",
+      "description": "Update an existing monitor.",
       "rel": "self",
-      "href": "downloads/{#/definitions/_id}",
+      "href": "monitors/{#/definitions/_id}",
       "method": "PUT",
       "schema": {
         "type": "object",
         "properties": {
           "_id": {"$ref": "#/definitions/_id"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
-          "requester_email": {"$ref": "#/definitions/requester_email"},
           "result": {"$ref": "types.json#/definitions/result"},
           "result_pre": {"$ref": "types.json#/definitions/result"},
           "result_post": {"$ref": "types.json#/definitions/result"},
           "spec": {"$ref": "types.json#/definitions/serviceSpec"},
           "spec_type": {"$ref": "#/definitions/spec_type"},
-          "state": {"$ref": "#/definitions/state"},
-          "storage": {"$ref": "types.json#/definitions/storageSpec"}
+          "state": {"$ref": "#/definitions/state"}
         },
         "required": [
           "spec",
           "spec_type",
-          "state",
-          "storage"
+          "state"
         ]
       },
       "targetSchema": {"rel": "self"}
     },
     {
-      "title": "Remove download",
-      "description": "Remove an existing download.",
+      "title": "Remove monitor",
+      "description": "Remove an existing monitor.",
       "rel": "self",
-      "href": "downloads/{#/definitions/_id}",
+      "href": "monitors/{#/definitions/_id}",
       "method": "DELETE",
       "targetSchema": {"rel": "self"}
     },
     {
-      "title": "Download info",
-      "description": "Return a specific download.",
+      "title": "Monitor info",
+      "description": "Return a specific monitor.",
       "rel": "self",
-      "href": "downloads/{#/definitions/_id}",
+      "href": "monitors/{#/definitions/_id}",
       "method": "GET",
       "targetSchema": {"rel": "self"}
     },
     {
-      "title": "List downloads",
-      "description": "Find one or more downloads based on the query parameters.",
+      "title": "List monitors",
+      "description": "Find one or more monitors based on the query parameters.",
       "rel": "instances",
-      "href": "downloads",
+      "href": "monitors",
       "method": "GET",
       "schema": {
         "$ref": "types.json#/definitions/queryParameters"

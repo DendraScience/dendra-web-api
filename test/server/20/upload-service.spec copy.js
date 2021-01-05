@@ -1,22 +1,32 @@
 /**
- * Tests for system/schema service
+ * Tests for upload service
  */
 
-const findLength = 70
-const servicePath = 'system/schemas'
+const dataFile = 'demo.upload'
+const servicePath = 'uploads'
 
 describe(`Service ${servicePath}`, function () {
-  const id = {
-    doc: 'types.json'
+  const id = {}
+
+  const cleanup = async () => {
+    await coll.uploads.remove()
   }
+
+  before(async function () {
+    await cleanup()
+  })
+
+  after(async function () {
+    return cleanup()
+  })
 
   describe('#create()', function () {
     it('guest should create with error', function () {
       return helper.shouldCreateWithError(
         clients.guest,
         servicePath,
-        {},
-        'MethodNotAllowed'
+        dataFile,
+        'NotAuthenticated'
       )
     })
 
@@ -24,8 +34,8 @@ describe(`Service ${servicePath}`, function () {
       return helper.shouldCreateWithError(
         clients.user,
         servicePath,
-        {},
-        'MethodNotAllowed'
+        dataFile,
+        'Forbidden'
       )
     })
 
@@ -33,28 +43,37 @@ describe(`Service ${servicePath}`, function () {
       return helper.shouldCreateWithError(
         clients.sysAdmin,
         servicePath,
-        [{}, {}],
+        [dataFile, dataFile],
         'MethodNotAllowed'
       )
     })
 
-    it('sys admin should create with error', function () {
-      return helper.shouldCreateWithError(
-        clients.sysAdmin,
-        servicePath,
-        {},
-        'MethodNotAllowed'
-      )
+    it('sys admin should create without error', function () {
+      return helper
+        .shouldCreateWithoutError(clients.sysAdmin, servicePath, dataFile)
+        .then(({ retDoc }) => {
+          id.doc = retDoc._id
+        })
     })
   })
 
   describe('#get()', function () {
-    it('guest should get without error', function () {
-      return helper.shouldGetWithoutError(clients.guest, servicePath, id.doc)
+    it('guest should get with error', function () {
+      return helper.shouldGetWithError(
+        clients.guest,
+        servicePath,
+        id.doc,
+        'NotFound'
+      )
     })
 
-    it('user should get without error', function () {
-      return helper.shouldGetWithoutError(clients.user, servicePath, id.doc)
+    it('user should get with error', function () {
+      return helper.shouldGetWithError(
+        clients.user,
+        servicePath,
+        id.doc,
+        'NotFound'
+      )
     })
 
     it('sys admin should get without error', function () {
@@ -64,33 +83,15 @@ describe(`Service ${servicePath}`, function () {
 
   describe('#find()', function () {
     it('guest should find without error', function () {
-      return helper.shouldFindWithoutError(
-        clients.guest,
-        servicePath,
-        {},
-        findLength,
-        false
-      )
+      return helper.shouldFindWithoutError(clients.guest, servicePath, {}, 0)
     })
 
     it('user should find without error', function () {
-      return helper.shouldFindWithoutError(
-        clients.user,
-        servicePath,
-        {},
-        findLength,
-        false
-      )
+      return helper.shouldFindWithoutError(clients.user, servicePath, {}, 0)
     })
 
     it('sys admin should find without error', function () {
-      return helper.shouldFindWithoutError(
-        clients.sysAdmin,
-        servicePath,
-        {},
-        findLength,
-        false
-      )
+      return helper.shouldFindWithoutError(clients.sysAdmin, servicePath)
     })
   })
 
@@ -100,8 +101,8 @@ describe(`Service ${servicePath}`, function () {
         clients.guest,
         servicePath,
         id.doc,
-        {},
-        'MethodNotAllowed'
+        `${dataFile}.patch`,
+        'NotAuthenticated'
       )
     })
 
@@ -110,8 +111,8 @@ describe(`Service ${servicePath}`, function () {
         clients.user,
         servicePath,
         id.doc,
-        {},
-        'MethodNotAllowed'
+        `${dataFile}.patch`,
+        'Forbidden'
       )
     })
 
@@ -120,19 +121,32 @@ describe(`Service ${servicePath}`, function () {
         clients.sysAdmin,
         servicePath,
         { _id: id.doc },
-        {},
-        'MethodNotAllowed'
+        `${dataFile}.patch`,
+        'Forbidden'
       )
     })
 
-    it('sys admin should patch with error', function () {
+    it('sys admin should patch bad data with error', function () {
       return helper.shouldPatchWithError(
         clients.sysAdmin,
         servicePath,
         id.doc,
-        {},
-        'MethodNotAllowed'
+        'bad.patch',
+        'BadRequest'
       )
+    })
+
+    it('sys admin should patch without error', function () {
+      return helper
+        .shouldPatchWithoutError(
+          clients.sysAdmin,
+          servicePath,
+          id.doc,
+          `${dataFile}.patch`
+        )
+        .then(({ retDoc }) => {
+          expect(retDoc).to.have.nested.property('result.patched', 'Patched')
+        })
     })
   })
 
@@ -142,8 +156,8 @@ describe(`Service ${servicePath}`, function () {
         clients.guest,
         servicePath,
         id.doc,
-        {},
-        'MethodNotAllowed'
+        `${dataFile}.update`,
+        'NotAuthenticated'
       )
     })
 
@@ -152,8 +166,8 @@ describe(`Service ${servicePath}`, function () {
         clients.user,
         servicePath,
         id.doc,
-        {},
-        'MethodNotAllowed'
+        `${dataFile}.update`,
+        'Forbidden'
       )
     })
 
@@ -162,19 +176,25 @@ describe(`Service ${servicePath}`, function () {
         clients.sysAdmin,
         servicePath,
         { _id: id.doc },
-        {},
-        'MethodNotAllowed'
+        `${dataFile}.update`,
+        'BadRequest'
       )
     })
 
-    it('sys admin should update with error', function () {
-      return helper.shouldUpdateWithError(
-        clients.sysAdmin,
-        servicePath,
-        id.doc,
-        {},
-        'MethodNotAllowed'
-      )
+    it('sys admin should update without error', function () {
+      return helper
+        .shouldUpdateWithoutError(
+          clients.sysAdmin,
+          servicePath,
+          id.doc,
+          `${dataFile}.update`
+        )
+        .then(({ retDoc }) => {
+          expect(retDoc).to.have.nested.property(
+            'spec.comment',
+            'Demo Upload - Updated'
+          )
+        })
     })
   })
 
@@ -184,7 +204,7 @@ describe(`Service ${servicePath}`, function () {
         clients.guest,
         servicePath,
         id.doc,
-        'MethodNotAllowed'
+        'NotAuthenticated'
       )
     })
 
@@ -193,7 +213,7 @@ describe(`Service ${servicePath}`, function () {
         clients.user,
         servicePath,
         id.doc,
-        'MethodNotAllowed'
+        'Forbidden'
       )
     })
 
@@ -206,12 +226,11 @@ describe(`Service ${servicePath}`, function () {
       )
     })
 
-    it('sys admin should remove with error', function () {
-      return helper.shouldRemoveWithError(
+    it('sys admin should remove without error', function () {
+      return helper.shouldRemoveWithoutError(
         clients.sysAdmin,
         servicePath,
-        id.doc,
-        'MethodNotAllowed'
+        id.doc
       )
     })
   })

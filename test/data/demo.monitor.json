@@ -1,0 +1,12 @@
+{
+  "organization_id": "592f155746a1b867a114e030",
+  "result": {
+    "alive": true
+  },
+  "spec": {
+    "comment": "Demo Monitor",
+    "method": "eval"
+  },
+  "spec_type": "station/status",
+  "state": "pending"
+}

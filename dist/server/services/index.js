@@ -9,7 +9,7 @@ module.exports = function (app) {
   'annotation', 'company', // 'dashboard',
   // 'datapoint_lookup', // Route must precede datapoint
   'datapoint', // 'datastream_lookup', // Route must precede datastream
-  'datastream', 'dendra_datapoint', 'download', 'influx_select', 'legacy_datavalue', 'membership', 'organization', 'person', 'place', 'scheme', 'som', 'station', 'system_schema', 'system_time', 'system_timezone', // 'team',
+  'datastream', 'dendra_datapoint', 'download', 'influx_select', 'legacy_datavalue', 'membership', 'monitor', 'organization', 'person', 'place', 'scheme', 'som', 'station', 'system_schema', 'system_time', 'system_timezone', // 'team',
   // 'thing',
   'thing-type', 'uom', 'upload', 'user', 'vocabulary'];
   names.forEach(name => app.configure(require(path.join(__dirname, name))));

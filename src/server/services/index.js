@@ -19,6 +19,7 @@ module.exports = function (app) {
     'influx_select',
     'legacy_datavalue',
     'membership',
+    'monitor',
     'organization',
     'person',
     'place',

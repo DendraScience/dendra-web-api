@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "download.update.json",
+  "$id": "monitor.create.json",
   "$patch": {
-    "source": {"$ref": "download.json#"},
+    "source": {"$ref": "monitor.json#"},
     "with": [
       {
         "op": "replace",
@@ -10,14 +10,12 @@
         "value": {
           "_id": {"$ref": "#/definitions/_id"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
-          "requester_email": {"$ref": "#/definitions/requester_email"},
           "result": {"$ref": "types.json#/definitions/result"},
           "result_pre": {"$ref": "types.json#/definitions/result"},
           "result_post": {"$ref": "types.json#/definitions/result"},
           "spec": {"$ref": "types.json#/definitions/serviceSpec"},
           "spec_type": {"$ref": "#/definitions/spec_type"},
-          "state": {"$ref": "#/definitions/state"},
-          "storage": {"$ref": "types.json#/definitions/storageSpec"}
+          "state": {"$ref": "#/definitions/state"}
         }
       }
     ]

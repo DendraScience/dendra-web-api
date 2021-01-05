@@ -36,6 +36,7 @@ before(async function () {
     'datastreams',
     'downloads',
     'memberships',
+    'monitors',
     'organizations',
     'persons',
     'places',

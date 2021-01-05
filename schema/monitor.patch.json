@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "monitor.patch.json",
+  "$patch": {
+    "source": {"$ref": "monitor.json#"},
+    "with": [
+      {
+        "op": "remove",
+        "path": "/required"
+      },
+      {
+        "op": "replace",
+        "path": "/properties",
+        "value": {
+          "$set": {
+            "additionalProperties": false,
+            "properties": {
+              "result": {"$ref": "types.json#/definitions/result"},
+              "result_pre": {"$ref": "types.json#/definitions/result"},
+              "result_post": {"$ref": "types.json#/definitions/result"},
+              "state": {"$ref": "#/definitions/state"}
+            },
+            "type": "object"
+          },
+          "$unset": {
+            "additionalProperties": false,
+            "properties": {
+              "result": {"$ref": "types.json#/definitions/unset"},
+              "result_pre": {"$ref": "types.json#/definitions/unset"},
+              "result_post": {"$ref": "types.json#/definitions/unset"}
+            },
+            "type": "object"
+          }
+        }
+      }
+    ]
+  }
+}
