@@ -2,7 +2,7 @@
  * Tests for system/timezone service
  */
 
-const findLength = 594
+const findLength = 593
 const servicePath = 'system/timezones'
 
 describe(`Service ${servicePath}`, function () {

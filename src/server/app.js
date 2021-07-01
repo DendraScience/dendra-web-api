@@ -47,7 +47,7 @@ module.exports = async logger => {
   app.use(cors())
   app.use(helmet())
   app.use(compress())
-  app.use(express.json())
+  app.use(express.json({ limit: '500kb' }))
   app.use(express.urlencoded({ extended: true }))
 
   app.configure(express.rest())

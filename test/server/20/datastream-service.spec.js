@@ -146,6 +146,20 @@ describe(`Service ${servicePath}`, function () {
           expect(retDoc).to.have.property('name', 'Demo Datastream - Patched')
         })
     })
+
+    it('sys admin should patch large value without error', function () {
+      return helper
+        .shouldPatchWithoutError(
+          clients.sysAdmin,
+          servicePath,
+          id.doc,
+          `${dataFile}.patch.large`
+        )
+        .then(({ retDoc }) => {
+          expect(retDoc).to.have.property('datapoints_config_built')
+          expect(retDoc.datapoints_config_built).to.have.lengthOf(622)
+        })
+    })
   })
 
   describe('#update()', function () {
