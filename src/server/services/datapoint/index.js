@@ -40,6 +40,7 @@ class Service {
     }
 
     let config = []
+    let refd
 
     if (typeof datastream === 'object') {
       const hasConfig = Array.isArray(datastream.datapoints_config)
@@ -48,9 +49,13 @@ class Service {
       if (query.config === 0 && hasConfig) config = datastream.datapoints_config
       else if (hasBuilt) config = datastream.datapoints_config_built
       else if (hasConfig) config = datastream.datapoints_config
+
+      if (Array.isArray(datastream.datapoints_config_refd))
+        refd = datastream.datapoints_config_refd
     }
 
     config = mergeConfig(config, {
+      refd,
       reverse: filters.$sort.time === -1,
       service: this
     })

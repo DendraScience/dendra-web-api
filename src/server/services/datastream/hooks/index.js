@@ -20,7 +20,10 @@ const initDerivedDatastreamKeys = [
   'source_type'
 ]
 
-const processDatastreamKeys = ['datapoints_config_built']
+const processDatastreamKeys = [
+  'datapoints_config_built',
+  'datapoints_config_refd'
+]
 
 const defaultsMigrations = rec => {
   let terms = {}
@@ -275,6 +278,7 @@ exports.before = {
       stages.concat({
         $project: {
           datapoints_config_built: false,
+          datapoints_config_refd: false,
           organization: false,
           station: false
         }

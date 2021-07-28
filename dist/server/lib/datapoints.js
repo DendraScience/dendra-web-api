@@ -7,6 +7,7 @@ const MAX_TIME = Date.UTC(2200, 1, 2);
 const MIN_TIME = Date.UTC(1800, 1, 2);
 
 function mergeConfig(config = [], {
+  refd,
   reverse,
   service
 } = {}) {
@@ -23,19 +24,20 @@ function mergeConfig(config = [], {
    */
 
   config.filter(inst => {
-    return typeof inst.path === 'string' && !(inst.actions && inst.actions.exclude === true);
+    return !(inst.actions && inst.actions.exclude === true);
   }).map(inst => {
-    const isConn = typeof inst.connection === 'string' && service && service.connections[inst.connection];
+    const conf = typeof inst.ref === 'number' && refd && refd[inst.ref] || inst;
+    const conn = typeof conf.connection === 'string' && service && service.connections[conf.connection];
     return {
-      connection: isConn ? service.connections[inst.connection] : service,
+      connection: conn || service,
       beginsAt: inst.begins_at instanceof Date ? inst.begins_at.getTime() : MIN_TIME,
       endsBefore: inst.ends_before instanceof Date ? inst.ends_before.getTime() : MAX_TIME,
-      params1: inst.params,
-      params2: isConn ? null : {
+      params1: conf.params,
+      params2: conn ? null : {
         actions: inst.actions,
         annotationIds: inst.annotation_ids
       },
-      path: inst.path
+      path: conf.path || '/'
     };
   }).sort((a, b) => {
     if (a.beginsAt < b.beginsAt) return -1;

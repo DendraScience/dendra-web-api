@@ -21,7 +21,7 @@ const _ = require('lodash');
 
 const assembleDatapointsConfigKeys = ['attributes', 'datapoints_config', 'is_enabled', 'source_type', 'station_ids'];
 const initDerivedDatastreamKeys = ['derivation_method', 'derived_from_datastream_ids', 'is_enabled', 'source_type'];
-const processDatastreamKeys = ['datapoints_config_built'];
+const processDatastreamKeys = ['datapoints_config_built', 'datapoints_config_refd'];
 
 const defaultsMigrations = rec => {
   let terms = {}; // Convert 1.x tags array to 2.x terms object
@@ -231,6 +231,7 @@ exports.before = {
   find: [globalHooks.beforeFind(), globalHooks.accessFind(stages.concat({
     $project: {
       datapoints_config_built: false,
+      datapoints_config_refd: false,
       organization: false,
       station: false
     }

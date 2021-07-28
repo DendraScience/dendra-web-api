@@ -114,6 +114,15 @@
       "$ref": "#/definitions/objectId",
       "example": "592f155746a1b867a114e0a0"
     },
+    "builtDatapointsConfig": {
+      "description": "System generated service configuration for fetching datapoints",
+      "items": {
+        "type": "object",
+        "example": {}
+      },
+      "minItems": 1,
+      "type": "array"
+    },
     "companyId": {
       "$ref": "#/definitions/objectId",
       "example": "592f155746a1b867a114e100"
@@ -1004,7 +1013,7 @@
     },
     "serviceSpec": {
       "additionalProperties": false,
-      "description": "Specifications for file loading",
+      "description": "Specifications for downstream service processing",
       "properties": {
         "comment": {
           "$ref": "#/definitions/description"
@@ -1062,7 +1071,7 @@
     },
     "storageSpec": {
       "additionalProperties": false,
-      "description": "Storage specifications for file loading",
+      "description": "Specifications for service storage mechanisms to use",
       "properties": {
         "method": {
           "$ref": "#/definitions/storageMethod"

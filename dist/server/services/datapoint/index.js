@@ -51,14 +51,17 @@ class Service {
       time: typeof filters.$sort === 'object' && filters.$sort.time !== undefined ? filters.$sort.time : -1
     };
     let config = [];
+    let refd;
 
     if (typeof datastream === 'object') {
       const hasConfig = Array.isArray(datastream.datapoints_config);
       const hasBuilt = Array.isArray(datastream.datapoints_config_built);
       if (query.config === 0 && hasConfig) config = datastream.datapoints_config;else if (hasBuilt) config = datastream.datapoints_config_built;else if (hasConfig) config = datastream.datapoints_config;
+      if (Array.isArray(datastream.datapoints_config_refd)) refd = datastream.datapoints_config_refd;
     }
 
     config = mergeConfig(config, {
+      refd,
       reverse: filters.$sort.time === -1,
       service: this
     });
