@@ -44,6 +44,7 @@
     "full_name": {"$ref": "#/definitions/full_name"},
     "general_config": {"$ref": "types.json#/definitions/generalConfig"},
     "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+    "is_hidden": {"$ref": "types.json#/definitions/isHidden"},
     "name": {"$ref": "#/definitions/name"},
     "slug": {"$ref": "#/definitions/slug"},
     "sort_value": {"$ref": "types.json#/definitions/sortValue"},
@@ -54,6 +55,7 @@
   },
   "required": [
     "is_enabled",
+    "is_hidden",
     "name"
   ],
   "links": [
@@ -72,6 +74,7 @@
           "full_name": {"$ref": "#/definitions/full_name"},
           "general_config": {"$ref": "types.json#/definitions/generalConfig"},
           "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "is_hidden": {"$ref": "types.json#/definitions/isHidden"},
           "name": {"$ref": "#/definitions/name"},
           "slug": {"$ref": "#/definitions/slug"},
           "sort_value": {"$ref": "types.json#/definitions/sortValue"},
@@ -79,6 +82,7 @@
         },
         "required": [
           "is_enabled",
+          "is_hidden",
           "name"
         ]
       },
@@ -99,6 +103,7 @@
           "full_name": {"$ref": "#/definitions/full_name"},
           "general_config": {"$ref": "types.json#/definitions/generalConfig"},
           "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "is_hidden": {"$ref": "types.json#/definitions/isHidden"},
           "name": {"$ref": "#/definitions/name"},
           "slug": {"$ref": "#/definitions/slug"},
           "sort_value": {"$ref": "types.json#/definitions/sortValue"},
@@ -123,6 +128,7 @@
           "full_name": {"$ref": "#/definitions/full_name"},
           "general_config": {"$ref": "types.json#/definitions/generalConfig"},
           "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
+          "is_hidden": {"$ref": "types.json#/definitions/isHidden"},
           "name": {"$ref": "#/definitions/name"},
           "slug": {"$ref": "#/definitions/slug"},
           "sort_value": {"$ref": "types.json#/definitions/sortValue"},
@@ -130,6 +136,7 @@
         },
         "required": [
           "is_enabled",
+          "is_hidden",
           "name"
         ]
       },

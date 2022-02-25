@@ -10,6 +10,7 @@ const defaultsMigrations = rec => {
     },
     {
       is_enabled: true,
+      is_hidden: false,
       sort_value: 0
     }
   )
