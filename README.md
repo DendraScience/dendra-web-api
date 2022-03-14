@@ -6,7 +6,7 @@ The public facing REST API for Dendra. Built using [Feathers](https://feathersjs
 
 ## Instructions
 
-1. Be sure you have Node version 12.14.x. If you’re using nvm, you may need to `nvm use 12.14`.
+1. Be sure you have Node version 14.19.x. If you’re using nvm, you may need to `nvm use 14.19`.
 
 2. Clone this repo.
 

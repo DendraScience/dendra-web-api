@@ -58,5 +58,5 @@ require('./app')(logger).then(app => {
     });
   });
 }).catch(err => {
-  logger.error(err);
+  logger.error(`App start error\n  ${err}`);
 });

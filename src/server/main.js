@@ -67,5 +67,5 @@ require('./app')(logger)
     })
   })
   .catch(err => {
-    logger.error(err)
+    logger.error(`App start error\n  ${err}`)
   })

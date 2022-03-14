@@ -35,7 +35,8 @@ module.exports = function (app) {
     'uom',
     'upload',
     'user',
-    'vocabulary'
+    'vocabulary',
+    'wof_value'
   ]
 
   names.forEach(name => app.configure(require(path.join(__dirname, name))))
