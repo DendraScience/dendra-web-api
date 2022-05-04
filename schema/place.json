@@ -69,7 +69,6 @@
     "version_id": {"$ref": "types.json#/definitions/versionId"}
   },
   "required": [
-    "geo",
     "is_enabled",
     "name",
     "place_type"
@@ -96,7 +95,6 @@
           "url": {"$ref": "#/definitions/url"}
         },
         "required": [
-          "geo",
           "is_enabled",
           "name",
           "place_type"
@@ -149,7 +147,6 @@
           "url": {"$ref": "#/definitions/url"}
         },
         "required": [
-          "geo",
           "is_enabled",
           "name",
           "place_type"

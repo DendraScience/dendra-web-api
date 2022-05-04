@@ -1,6 +1,6 @@
 {
   "name": "dendra-web-api",
-  "version": "2.0.15",
+  "version": "2.0.16",
   "description": "Dendra public facing REST API.",
   "license": "BSD-2-Clause-FreeBSD",
   "author": "J. Scott Smith <scott@newleafsolutionsinc.com>",
@@ -51,7 +51,7 @@
     "ajv-merge-patch": "^4.1.0",
     "axios": "^0.26.1",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.19.2",
+    "body-parser": "^1.20.0",
     "casl": "^1.1.0",
     "compression": "^1.7.3",
     "cors": "^2.8.5",
@@ -70,22 +70,22 @@
     "sax": "^1.2.4",
     "sequelize": "^5.22.5",
     "sift": "^8.5.1",
-    "winston": "^3.6.0"
+    "winston": "^3.7.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.17.6",
-    "@babel/core": "^7.17.5",
-    "@babel/preset-env": "^7.16.11",
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.17.10",
+    "@babel/preset-env": "^7.17.10",
     "chai": "^4.3.6",
-    "eslint": "^8.11.0",
+    "eslint": "^8.14.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^6.0.0",
     "mocha": "^6.2.3",
-    "prettier": "^2.5.1",
+    "prettier": "^2.6.2",
     "request": "^2.88.2"
   },
   "optionalDependencies": {}

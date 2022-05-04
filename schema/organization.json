@@ -16,6 +16,15 @@
       "$ref": "types.json#/definitions/email",
       "example": "infomgr@ucnrs.org"
     },
+    "external_refs": {
+      "$ref": "types.json#/definitions/externalRefs",
+      "example": [
+        {
+          "identifier": "576",
+          "type": "odm.source.sourceid"
+        }
+      ]
+    },
     "full_name": {
       "type": "string",
       "example": "University of California Natural Reserve System"
@@ -23,6 +32,10 @@
     "name": {
       "type": "string",
       "example": "UC Natural Reserve System"
+    },
+    "place_id": {
+      "$ref": "types.json#/definitions/placeId",
+      "description": "The place to where an organization is generally located"
     },
     "slug": {
       "$ref": "types.json#/definitions/slug",
@@ -41,11 +54,14 @@
     "created_by": {"$ref": "types.json#/definitions/createdBy"},
     "description": {"$ref": "#/definitions/description"},
     "email": {"$ref": "#/definitions/email"},
+    "external_refs": {"$ref": "#/definitions/external_refs"},
     "full_name": {"$ref": "#/definitions/full_name"},
     "general_config": {"$ref": "types.json#/definitions/generalConfig"},
+    "involved_parties": {"$ref": "types.json#/definitions/involvedParties"},
     "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
     "is_hidden": {"$ref": "types.json#/definitions/isHidden"},
     "name": {"$ref": "#/definitions/name"},
+    "place_id": {"$ref": "#/definitions/place_id"},
     "slug": {"$ref": "#/definitions/slug"},
     "sort_value": {"$ref": "types.json#/definitions/sortValue"},
     "updated_at": {"$ref": "types.json#/definitions/updatedAt"},
@@ -71,11 +87,14 @@
           "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
           "description": {"$ref": "#/definitions/description"},
           "email": {"$ref": "#/definitions/email"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
           "full_name": {"$ref": "#/definitions/full_name"},
           "general_config": {"$ref": "types.json#/definitions/generalConfig"},
+          "involved_parties": {"$ref": "types.json#/definitions/involvedParties"},
           "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "is_hidden": {"$ref": "types.json#/definitions/isHidden"},
           "name": {"$ref": "#/definitions/name"},
+          "place_id": {"$ref": "#/definitions/place_id"},
           "slug": {"$ref": "#/definitions/slug"},
           "sort_value": {"$ref": "types.json#/definitions/sortValue"},
           "url": {"$ref": "#/definitions/url"}
@@ -100,11 +119,14 @@
           "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
           "description": {"$ref": "#/definitions/description"},
           "email": {"$ref": "#/definitions/email"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
           "full_name": {"$ref": "#/definitions/full_name"},
           "general_config": {"$ref": "types.json#/definitions/generalConfig"},
+          "involved_parties": {"$ref": "types.json#/definitions/involvedParties"},
           "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "is_hidden": {"$ref": "types.json#/definitions/isHidden"},
           "name": {"$ref": "#/definitions/name"},
+          "place_id": {"$ref": "#/definitions/place_id"},
           "slug": {"$ref": "#/definitions/slug"},
           "sort_value": {"$ref": "types.json#/definitions/sortValue"},
           "url": {"$ref": "#/definitions/url"}
@@ -125,11 +147,14 @@
           "access_levels": {"$ref": "types.json#/definitions/accessLevels"},
           "description": {"$ref": "#/definitions/description"},
           "email": {"$ref": "#/definitions/email"},
+          "external_refs": {"$ref": "#/definitions/external_refs"},
           "full_name": {"$ref": "#/definitions/full_name"},
           "general_config": {"$ref": "types.json#/definitions/generalConfig"},
+          "involved_parties": {"$ref": "types.json#/definitions/involvedParties"},
           "is_enabled": {"$ref": "types.json#/definitions/isEnabled"},
           "is_hidden": {"$ref": "types.json#/definitions/isHidden"},
           "name": {"$ref": "#/definitions/name"},
+          "place_id": {"$ref": "#/definitions/place_id"},
           "slug": {"$ref": "#/definitions/slug"},
           "sort_value": {"$ref": "types.json#/definitions/sortValue"},
           "url": {"$ref": "#/definitions/url"}

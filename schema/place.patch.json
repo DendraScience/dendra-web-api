@@ -36,6 +36,7 @@
               "country_code": {"$ref": "types.json#/definitions/unset"},
               "external_refs": {"$ref": "types.json#/definitions/unset"},
               "full_name": {"$ref": "types.json#/definitions/unset"},
+              "geo": {"$ref": "types.json#/definitions/unset"},
               "url": {"$ref": "types.json#/definitions/unset"}
             },
             "type": "object"
