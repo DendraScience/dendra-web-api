@@ -22,7 +22,7 @@ module.exports = event => {
 
     if (!event) return context
 
-    const { app, params } = context
+    const { app, data, params } = context
     const backend = app.get('backend')
 
     if (!(backend && backend.url)) return context
@@ -37,6 +37,12 @@ module.exports = event => {
     const message = {}
     if (params.before) message.before = params.before
     if (context.result) message.result = context.result
+    if (context.method === 'patch') {
+      message.patch = {}
+      if (data && data.$set) message.patch.set_keys = Object.keys(data.$set)
+      if (data && data.$unset)
+        message.patch.unset_keys = Object.keys(data.$unset)
+    }
 
     if (params.headers && params.headers.authorization) {
       /*
