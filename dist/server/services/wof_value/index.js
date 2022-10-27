@@ -1,17 +1,12 @@
 "use strict";
 
 const errors = require('@feathersjs/errors');
-
 const Agent = require('agentkeepalive');
-
 const {
   HttpsAgent
 } = require('agentkeepalive');
-
 const sax = require('sax');
-
 const axios = require('axios');
-
 const instance = axios.create({
   headers: {
     'Content-Type': 'text/xml; charset=utf-8'
@@ -30,35 +25,31 @@ const instance = axios.create({
   responseType: 'stream',
   timeout: 180000
 });
-
 const hooks = require('./hooks');
-
 const {
   MAX_TIME,
   MIN_TIME
 } = require('../../lib/datapoints');
+
 /**
- * Custom service that submits an InfluxDB SELECT using query parameters:
+ * Custom service that performs a WOF GetValuesObject using query parameters:
  *
- *   SELECT <sc> FROM <fc> WHERE <wc> GROUP BY <gbc> [ORDER BY time DESC] [LIMIT $limit]
- *
- *   sc - select clause (defaults to '*')
- *   fc - from clause (defaults to 'logger_data')
- *   wc - where clause (optional)
- *   gbc - group by clause (optional)
+ *   location - a site code to use in the parameters (required)
+ *   variable - a variable code to use in the parameters (required)
+ *   censor_code - filter on censor code (optional)
+ *   quality_control_level_code - filter on QC level code (optional)
+ *   fetch_interval - page size for fetching (in ms, defaults to 30d)
+ *   fetch_limit - max number of pages to fetch (defaults to 200)
+ *   time[$op] - casted time objects with operators $gt, $gte, $lt and $lte (optional)
  *   $sort[time] - pass (-1) to return the most recent timestamps first
  *   $limit - return the first N points
- *   api - config key pointing to an InfluxDB HTTP API (defaults to 'default')
- *   db - database name (required)
+ *   url - WOF service URL (requried)
  */
-
-
 class Service {
   setup(app) {
     this.app = app;
     this.logger = app.logger;
   }
-
   async find(params) {
     const query = params.query || {};
     const {
@@ -87,10 +78,10 @@ class Service {
     let fetchStartDate;
     let fetchEndDate;
     const queryStartDate = isTimeGt ? time.$gt : isTimeGte ? time.$gte : defaultStartDate;
-    let queryEndDate = isTimeLt ? time.$lt : isTimeLte ? time.$lte : defaultEndDate; // HACK: Support querying recent values with DESC
+    let queryEndDate = isTimeLt ? time.$lt : isTimeLte ? time.$lte : defaultEndDate;
 
+    // HACK: Support querying recent values with DESC
     if (queryEndDate > defaultEndDate) queryEndDate = defaultEndDate;
-
     if (isDesc) {
       fetchStartDate = new Date(queryEndDate.getTime() - fetchInterval);
       fetchEndDate = queryEndDate;
@@ -98,12 +89,10 @@ class Service {
       fetchStartDate = queryStartDate;
       fetchEndDate = new Date(queryStartDate.getTime() + fetchInterval);
     }
-
     while (isFetching) {
       const xml = '<?xml version="1.0" encoding="utf-8"?>' + '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"' + ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' + ' xmlns:tns="http://www.cuahsi.org/his/1.1/ws/"' + ' xmlns:s1="http://www.cuahsi.org/waterML/1.1/"' + ' xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/">' + '<soap:Body>' + '<GetValuesObject xmlns="http://www.cuahsi.org/his/1.1/ws/">' + '<authToken></authToken>' + `<location>${location}</location>` + `<variable>${variable}</variable>` + `<startDate>${fetchStartDate.toISOString().substring(0, 19)}</startDate>` + `<endDate>${fetchEndDate.toISOString().substring(0, 19)}</endDate>` + '</GetValuesObject></soap:Body></soap:Envelope>';
       this.logger.debug(`POST ${url}\n  ${xml}`);
       let response;
-
       try {
         response = await instance.post(url, xml);
       } catch (err) {
@@ -113,10 +102,8 @@ class Service {
           this.logger.warn(`ECONNRESET retrying POST ${url}`);
           response = await instance.post(url, xml);
         } else throw err;
-
         throw err;
       }
-
       if (response.status !== 200) throw new errors.BadRequest(`Non-success status code ${response.status}`);
       const body = response.data;
       if (!body) throw new errors.BadRequest('No body returned');
@@ -128,7 +115,6 @@ class Service {
       let value;
       saxStream.on('opentag', function (node) {
         value = null;
-
         if (node.name === 'value') {
           try {
             const {
@@ -156,7 +142,6 @@ class Service {
             dateTime
           } = value;
           const dateTimeInt = dateTime.getTime();
-
           if ((!isTimeLt || dateTime < time.$lt) && (!isTimeLte || dateTime <= time.$lte) && (!isTimeGt || dateTime > time.$gt) && (!isTimeGte || dateTime >= time.$gte) && (dateTimeInt > maxExtent || dateTimeInt < minExtent)) {
             // Maintain extents
             maxExtent = Math.max(maxExtent, dateTimeInt);
@@ -169,7 +154,6 @@ class Service {
         error = err;
         value = null;
         this._parser.error = null;
-
         this._parser.resume();
       });
       await new Promise(resolve => {
@@ -188,7 +172,6 @@ class Service {
       if (error) throw new errors.BadRequest('Error occurred', {
         error: error.message
       });
-
       if (isDesc) {
         values.reverse();
         fetchStartDate = new Date(fetchStartDate.getTime() - fetchInterval);
@@ -197,24 +180,24 @@ class Service {
         fetchStartDate = new Date(fetchStartDate.getTime() + fetchInterval);
         fetchEndDate = new Date(fetchEndDate.getTime() + fetchInterval);
       }
-
       result.push(...values);
       fetchCount++; // Prevent runaway fetching
 
       if (result.length >= limit || fetchCount >= fetchLimit || fetchEndDate < queryStartDate || fetchStartDate > queryEndDate) isFetching = false;
-    } // Trim to limit
+    }
 
-
+    // Trim to limit
     if (result.length > limit) result.length = limit;
     return result;
   }
-
 }
-
 module.exports = function (app) {
   // const services = app.get('services')
-  // if (!services.wof_value) return
-  app.use('/wof/values', new Service()); // Get the wrapped service object, bind hooks
 
+  // if (!services.wof_value) return
+
+  app.use('/wof/values', new Service());
+
+  // Get the wrapped service object, bind hooks
   app.service('wof/values').hooks(hooks);
 };

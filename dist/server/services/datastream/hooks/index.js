@@ -1,46 +1,37 @@
 "use strict";
 
 const errors = require('@feathersjs/errors');
-
 const globalHooks = require('../../../hooks');
-
 const {
   iff
 } = require('feathers-hooks-common');
-
 const {
   mergeConfig
 } = require('../../../lib/datapoints');
-
 const {
   idRandom,
   Visibility
 } = require('../../../lib/utils');
-
 const _ = require('lodash');
-
 const assembleDatapointsConfigKeys = ['attributes', 'datapoints_config', 'is_enabled', 'source_type', 'station_ids'];
 const initDerivedDatastreamKeys = ['derivation_method', 'derived_from_datastream_ids', 'is_enabled', 'source_type'];
 const processDatastreamKeys = ['datapoints_config_built', 'datapoints_config_refd'];
-
 const defaultsMigrations = rec => {
-  let terms = {}; // Convert 1.x tags array to 2.x terms object
+  let terms = {};
 
+  // Convert 1.x tags array to 2.x terms object
   if (Array.isArray(rec.tags)) {
     terms = rec.tags.reduce((obj, tag) => {
       const parts = tag.split('_');
       const value = parts.pop();
-
       if (parts.length) {
         _.set(obj, parts.join('.'), value);
       } else {
         obj[value] = true;
       }
-
       return obj;
     }, {});
   }
-
   _.defaults(rec, {
     is_enabled: rec.enabled,
     terms
@@ -50,7 +41,6 @@ const defaultsMigrations = rec => {
     is_hidden: false,
     state: 'ready'
   });
-
   delete rec.access_levels_resolved;
   delete rec.attributes_info;
   delete rec.convertible_to_uoms;
@@ -66,7 +56,6 @@ const defaultsMigrations = rec => {
   delete rec.uom;
   delete rec.urls;
 };
-
 const dispatchAnnotationBuild = method => {
   return async context => {
     context.app.logger.debug('dispatchAnnotationBuild');
@@ -91,7 +80,6 @@ const dispatchAnnotationBuild = method => {
     return context;
   };
 };
-
 const dispatchDerivedBuild = method => {
   return async context => {
     context.app.logger.debug('dispatchDerivedBuild');
@@ -116,7 +104,6 @@ const dispatchDerivedBuild = method => {
     return context;
   };
 };
-
 const setExtent = async context => {
   const data = context.method === 'patch' ? context.data.$set : context.data;
   if (!(data && data.datapoints_config_built)) return context;
@@ -127,7 +114,6 @@ const setExtent = async context => {
   };
   return context;
 };
-
 const setTermsInfo = async context => {
   const data = context.method === 'patch' ? context.data.$set : context.data;
   if (!(data && data.terms)) return context;
@@ -138,8 +124,9 @@ const setTermsInfo = async context => {
   const info = data.terms_info = {
     class_keys: [],
     class_tags: []
-  }; // TODO: Implement caching
+  };
 
+  // TODO: Implement caching
   const vocabularies = await context.app.service('vocabularies').find({
     paginate: false,
     provider: null,
@@ -161,13 +148,11 @@ const setTermsInfo = async context => {
       if (!term) throw new errors.BadRequest(`No vocabulary term found for '${schemeId}.${vLabel}.${tLabel}'.`);
       const key = `${vLabel}_${tLabel}`;
       const tag = `${schemeId}_${key}`;
-
       switch (vocabulary.vocabulary_type) {
         case 'class':
           info.class_tags.push(tag);
           keys.push(key);
           break;
-
         case 'unit':
           if (info.unit_tag) throw new errors.BadRequest(`You are not allowed to specify more than one unit term.`);
           info.unit_tag = tag;
@@ -178,7 +163,6 @@ const setTermsInfo = async context => {
   });
   return context;
 };
-
 const stages = [{
   $lookup: {
     from: 'organizations',
@@ -228,6 +212,7 @@ const stages = [{
 }];
 exports.before = {
   // all: [],
+
   find: [globalHooks.beforeFind(), globalHooks.accessFind(stages.concat({
     $project: {
       datapoints_config_built: false,
@@ -262,6 +247,7 @@ exports.after = {
   // all: [],
   // find: [],
   // get: [],
+
   create: [iff(context => context.result.source_type === 'sensor', dispatchAnnotationBuild('assembleDatapointsConfig')), iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('initDerivedDatastream')), globalHooks.signalBackend()],
   update: [iff(context => context.result.source_type === 'sensor', dispatchAnnotationBuild('assembleDatapointsConfig')), iff(context => context.result.source_type === 'sensor', dispatchDerivedBuild('processDatastream')), iff(context => context.result.source_type === 'deriver', dispatchDerivedBuild('initDerivedDatastream')), globalHooks.signalBackend()],
   patch: [iff(({

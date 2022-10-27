@@ -1,30 +1,23 @@
 "use strict";
 
 const bcrypt = require('bcryptjs');
-
 const errors = require('@feathersjs/errors');
-
 const globalHooks = require('../../../hooks');
-
 const local = require('@feathersjs/authentication-local');
-
 const _ = require('lodash');
-
 const PATCH_CURRENT_PASSWORD = '$set.current_password';
 const PATCH_PASSWORD = '$set.password';
-
 const defaultsMigrations = rec => {
   _.defaults(rec, {
     is_enabled: rec.enabled
   }, {
     is_enabled: true
   });
-
   delete rec.enabled;
 };
-
 exports.before = {
   // all: [],
+
   find: globalHooks.beforeFind(),
   get: globalHooks.beforeGet(),
   create: [local.hooks.hashPassword(), globalHooks.beforeCreate({
@@ -53,7 +46,6 @@ exports.before = {
     params
   }) => {
     const newPassword = _.get(data, PATCH_PASSWORD);
-
     if (newPassword && !(await bcrypt.compare(params.currentPassword, params.before.password))) {
       throw new errors.Forbidden('The current password is not valid.');
     }
@@ -61,11 +53,12 @@ exports.before = {
   remove: globalHooks.beforeRemove()
 };
 exports.after = {
-  all: local.hooks.protect('password') // find: [],
+  all: local.hooks.protect('password')
+
+  // find: [],
   // get: [],
   // create: [],
   // update: [],
   // patch: [],
   // remove: []
-
 };

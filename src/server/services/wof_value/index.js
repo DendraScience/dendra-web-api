@@ -25,18 +25,18 @@ const hooks = require('./hooks')
 const { MAX_TIME, MIN_TIME } = require('../../lib/datapoints')
 
 /**
- * Custom service that submits an InfluxDB SELECT using query parameters:
+ * Custom service that performs a WOF GetValuesObject using query parameters:
  *
- *   SELECT <sc> FROM <fc> WHERE <wc> GROUP BY <gbc> [ORDER BY time DESC] [LIMIT $limit]
- *
- *   sc - select clause (defaults to '*')
- *   fc - from clause (defaults to 'logger_data')
- *   wc - where clause (optional)
- *   gbc - group by clause (optional)
+ *   location - a site code to use in the parameters (required)
+ *   variable - a variable code to use in the parameters (required)
+ *   censor_code - filter on censor code (optional)
+ *   quality_control_level_code - filter on QC level code (optional)
+ *   fetch_interval - page size for fetching (in ms, defaults to 30d)
+ *   fetch_limit - max number of pages to fetch (defaults to 200)
+ *   time[$op] - casted time objects with operators $gt, $gte, $lt and $lte (optional)
  *   $sort[time] - pass (-1) to return the most recent timestamps first
  *   $limit - return the first N points
- *   api - config key pointing to an InfluxDB HTTP API (defaults to 'default')
- *   db - database name (required)
+ *   url - WOF service URL (requried)
  */
 class Service {
   setup(app) {

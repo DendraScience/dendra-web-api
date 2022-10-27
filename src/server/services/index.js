@@ -4,18 +4,13 @@ module.exports = function (app) {
   const names = [
     'ability',
     'authentication',
-    // 'aggregate',
-    // 'aggregate_request',
-    // 'aggregate_result',
     'annotation',
     'company',
-    // 'dashboard',
-    // 'datapoint_lookup', // Route must precede datapoint
     'datapoint',
-    // 'datastream_lookup', // Route must precede datastream
     'datastream',
     'dendra_datapoint',
     'download',
+    'influx_flux',
     'influx_select',
     'legacy_datavalue',
     'membership',
@@ -29,8 +24,6 @@ module.exports = function (app) {
     'system_schema',
     'system_time',
     'system_timezone',
-    // 'team',
-    // 'thing',
     'thing-type',
     'uom',
     'upload',

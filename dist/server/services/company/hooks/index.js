@@ -1,9 +1,9 @@
 "use strict";
 
 const globalHooks = require('../../../hooks');
-
 exports.before = {
   // all: [],
+
   find: globalHooks.beforeFind(),
   get: globalHooks.beforeGet(),
   create: globalHooks.beforeCreate({
@@ -20,7 +20,8 @@ exports.before = {
   }),
   remove: globalHooks.beforeRemove()
 };
-exports.after = {// all: [],
+exports.after = {
+  // all: [],
   // find: [],
   // get: [],
   // create: [],

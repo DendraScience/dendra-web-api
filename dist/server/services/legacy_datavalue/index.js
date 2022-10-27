@@ -1,9 +1,7 @@
 "use strict";
 
 const service = require('feathers-sequelize');
-
 const hooks = require('./hooks');
-
 module.exports = function (app) {
   const databases = app.get('databases');
   if (!(databases.mysql && databases.mysql.legacy)) return;
@@ -16,8 +14,9 @@ module.exports = function (app) {
   Object.keys(models).forEach(name => {
     app.use(`/legacy/${name}`, service({
       Model: models[name]
-    })); // Get the wrapped service object, bind hooks
+    }));
 
+    // Get the wrapped service object, bind hooks
     app.service(`legacy/${name}`).hooks(hooks);
   });
 };

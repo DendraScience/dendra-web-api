@@ -1,20 +1,15 @@
 "use strict";
 
 const globalHooks = require('../../../hooks');
-
 const {
   iff
 } = require('feathers-hooks-common');
-
 const {
   idRandom,
   Visibility
 } = require('../../../lib/utils');
-
 const _ = require('lodash');
-
 const processAnnotationKeys = ['actions', 'datastream_ids', 'intervals', 'is_enabled', 'state', 'station_ids'];
-
 const defaultsMigrations = rec => {
   _.defaults(rec, {
     is_enabled: rec.enabled
@@ -22,12 +17,10 @@ const defaultsMigrations = rec => {
     is_enabled: true,
     state: 'pending'
   });
-
   delete rec.access_levels_resolved;
   delete rec.affected_station_ids;
   delete rec.enabled;
 };
-
 const dispatchAnnotationBuild = method => {
   return async context => {
     context.app.logger.debug('dispatchAnnotationBuild');
@@ -54,7 +47,6 @@ const dispatchAnnotationBuild = method => {
     return context;
   };
 };
-
 const stages = [{
   $lookup: {
     from: 'organizations',
@@ -83,6 +75,7 @@ const stages = [{
 }];
 exports.before = {
   // all: [],
+
   find: [globalHooks.beforeFind(), globalHooks.accessFind(stages)],
   get: [globalHooks.beforeGet(), globalHooks.accessGet(stages)],
   create: globalHooks.beforeCreate({
@@ -105,6 +98,7 @@ exports.after = {
   // all: [],
   // find: [],
   // get: [],
+
   create: [dispatchAnnotationBuild('processAnnotation'), globalHooks.signalBackend()],
   update: [dispatchAnnotationBuild('processAnnotation'), globalHooks.signalBackend()],
   patch: [iff(({

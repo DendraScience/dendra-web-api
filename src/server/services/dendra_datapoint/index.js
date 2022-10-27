@@ -5,6 +5,11 @@ const hooks = require('./hooks')
  * Custom service that submits a Dendra datapoints find using query parameters:
  *
  *   datastream_ids - a list of datastream ids to fetch datapoints (required)
+ *   t_int - query parameter passed down to datapoints calls
+ *   t_local - query parameter passed down to datapoints calls
+ *   time[$op] - casted time object with operators $gt, $gte, $lt and $lte (optional)
+ *   $sort[time] - pass (-1) to return the most recent timestamps first
+ *   $limit - return the first N points
  */
 class Service {
   setup(app) {

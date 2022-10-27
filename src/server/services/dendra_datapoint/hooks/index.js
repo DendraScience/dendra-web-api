@@ -6,8 +6,8 @@ const _ = require('lodash')
 /**
  * Timeseries services must:
  *   Support the 'compact' query parameter
- *   Support the 'time[]' query parameter with operators $gt, $gte, $lt and $lte
- *   Support the 'time[]' query parameter in simplified extended ISO format (ISO 8601)
+ *   Support the 'time[$op]' query parameter with operators $gt, $gte, $lt and $lte
+ *   Support the 'time[$op]' query parameters in simplified extended ISO format (ISO 8601)
  *   Support the '$sort[time]' query parameter
  *   Support the 't_int' and 't_local' query parameters
  */

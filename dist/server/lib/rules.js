@@ -5,7 +5,6 @@ const {
   UserRole,
   Visibility
 } = require('./utils');
-
 const publicRules = ({
   can,
   cannot
@@ -16,22 +15,25 @@ const publicRules = ({
     'access_levels_resolved.public_level': {
       $gte: Visibility.METADATA
     }
-  }); // Annotations
+  });
 
+  // Annotations
   can('read', 'annotations');
   can('access', 'annotations', {
     'access_levels_resolved.public_level': {
       $gte: Visibility.METADATA
     }
-  }); // Stations
+  });
 
+  // Stations
   can('read', 'stations');
   can('access', 'stations', {
     'access_levels_resolved.public_level': {
       $gte: Visibility.METADATA
     }
-  }); // Datastreams
+  });
 
+  // Datastreams
   can('read', 'datastreams');
   can('access', 'datastreams', {
     'access_levels_resolved.public_level': {
@@ -47,28 +49,36 @@ const publicRules = ({
     'access_levels_resolved.public_level': {
       $gte: Visibility.DOWNLOAD
     }
-  }); // Monitors
+  });
 
-  can('read', 'monitors'); // Persons
+  // Monitors
+  can('read', 'monitors');
 
-  can('read', 'persons'); // Places
+  // Persons
+  can('read', 'persons');
 
-  can('read', 'places'); // Companies
+  // Places
+  can('read', 'places');
 
-  can('read', 'companies'); // Thing Types
+  // Companies
+  can('read', 'companies');
 
+  // Thing Types
   can('read', 'thing-types');
-  can('access', 'thing-types', {}); // Schemes
+  can('access', 'thing-types', {});
 
-  can('read', 'schemes'); // Vocabularies
+  // Schemes
+  can('read', 'schemes');
 
-  can('read', 'vocabularies'); // SOMs
+  // Vocabularies
+  can('read', 'vocabularies');
 
-  can('read', 'soms'); // UOMs
+  // SOMs
+  can('read', 'soms');
 
+  // UOMs
   can('read', 'uoms');
 };
-
 const membershipRulesByRole = {
   [MembershipRole.ADMIN]: ({
     can,
@@ -79,30 +89,36 @@ const membershipRulesByRole = {
     // Organizations
     can(['access', 'patch', 'graph', 'download'], 'organizations', {
       _id: membership.organization_id
-    }); // Annotations
+    });
 
+    // Annotations
     can(['access', 'create', 'patch', 'remove'], 'annotations', {
       organization_id: membership.organization_id
     });
-    can('assign', 'annotations'); // Stations
+    can('assign', 'annotations');
 
+    // Stations
     can(['access', 'create', 'patch', 'remove', 'graph', 'download'], 'stations', {
       organization_id: membership.organization_id
     });
-    can('assign', 'stations'); // Datastreams
+    can('assign', 'stations');
 
+    // Datastreams
     can(['access', 'create', 'patch', 'remove', 'graph', 'download'], 'datastreams', {
       organization_id: membership.organization_id
     });
-    can('assign', 'datastreams'); // Uploads
+    can('assign', 'datastreams');
 
+    // Uploads
     can('read', 'uploads', {
       organization_id: membership.organization_id
-    }); // Companies
+    });
 
+    // Companies
     can(['create', 'patch'], 'companies');
-    can('assign', 'companies'); // Thing Types
+    can('assign', 'companies');
 
+    // Thing Types
     can(['create', 'patch'], 'thing-types');
     can('assign', 'thing-types');
   },
@@ -115,23 +131,27 @@ const membershipRulesByRole = {
     // Organizations
     can(['access', 'graph', 'download'], 'organizations', {
       _id: membership.organization_id
-    }); // Annotations
+    });
 
+    // Annotations
     can(['access', 'create', 'patch'], 'annotations', {
       organization_id: membership.organization_id
     });
-    can('assign', 'annotations'); // Stations
+    can('assign', 'annotations');
 
+    // Stations
     can(['access', 'create', 'patch', 'graph', 'download'], 'stations', {
       organization_id: membership.organization_id
     });
-    can('assign', 'stations'); // Datastreams
+    can('assign', 'stations');
 
+    // Datastreams
     can(['access', 'create', 'patch', 'graph', 'download'], 'datastreams', {
       organization_id: membership.organization_id
     });
-    can('assign', 'datastreams'); // Uploads
+    can('assign', 'datastreams');
 
+    // Uploads
     can('read', 'uploads', {
       organization_id: membership.organization_id
     });
@@ -160,8 +180,9 @@ const membershipRulesByRole = {
         $gte: Visibility.DOWNLOAD
       },
       _id: membership.organization_id
-    }); // Annotations
+    });
 
+    // Annotations
     can('access', 'annotations', {
       'access_levels_resolved.member_level': {
         $gte: Visibility.METADATA
@@ -173,15 +194,17 @@ const membershipRulesByRole = {
       state: 'pending'
     });
     can('assign', 'annotations');
-    cannot('assign', 'annotations', ['$set.is_enabled', '$set.is_hidden', '$set.state']); // Stations
+    cannot('assign', 'annotations', ['$set.is_enabled', '$set.is_hidden', '$set.state']);
 
+    // Stations
     can('access', 'stations', {
       'access_levels_resolved.member_level': {
         $gte: Visibility.METADATA
       },
       organization_id: membership.organization_id
-    }); // Datastreams
+    });
 
+    // Datastreams
     can('access', 'datastreams', {
       'access_levels_resolved.member_level': {
         $gte: Visibility.METADATA
@@ -209,8 +232,9 @@ const userRulesByRole = {
   }, {
     user
   }) => {
-    can('manage', 'all'); // Users
+    can('manage', 'all');
 
+    // Users
     cannot(['create', 'patch', 'update'], 'users', {
       roles: 'sys-admin',
       person_id: {
@@ -239,19 +263,23 @@ const userRulesByRole = {
     const {
       can,
       cannot
-    } = extract; // Start with public rules
+    } = extract;
 
-    publicRules(extract); // Memberships
+    // Start with public rules
+    publicRules(extract);
 
-    can('read', 'memberships'); // Persons
+    // Memberships
+    can('read', 'memberships');
 
+    // Persons
     can('patch', 'persons', {
       _id: user.person_id,
       is_enabled: true
     });
     can('assign', 'persons');
-    cannot('assign', 'persons', ['$set.is_enabled']); // Downloads
+    cannot('assign', 'persons', ['$set.is_enabled']);
 
+    // Downloads
     can('create', 'downloads');
     can('read', 'downloads', {
       created_by: user._id
@@ -259,8 +287,9 @@ const userRulesByRole = {
     can('patch', 'downloads', {
       created_by: user._id
     });
-    can('assign', 'downloads'); // Users
+    can('assign', 'downloads');
 
+    // Users
     can('read', 'users');
     can('patch', 'users', {
       _id: user._id,

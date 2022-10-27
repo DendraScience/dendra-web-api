@@ -1,13 +1,10 @@
 "use strict";
 
 const globalHooks = require('../../../hooks');
-
 const {
   Visibility
 } = require('../../../lib/utils');
-
 const _ = require('lodash');
-
 const defaultsMigrations = rec => {
   _.defaults(rec, {
     is_enabled: rec.enabled
@@ -20,7 +17,6 @@ const defaultsMigrations = rec => {
     state: 'ready',
     station_type: 'weather'
   });
-
   delete rec.access_levels_resolved;
   delete rec.activated_at;
   delete rec.deactivated_at;
@@ -29,7 +25,6 @@ const defaultsMigrations = rec => {
   delete rec.members;
   delete rec.organization_lookup;
 };
-
 const stages = [{
   $lookup: {
     from: 'organizations',
@@ -65,6 +60,7 @@ const stages = [{
 }];
 exports.before = {
   // all: [],
+
   find: [globalHooks.beforeFind(), globalHooks.accessFind(stages)],
   get: [globalHooks.beforeGet(), globalHooks.accessGet(stages)],
   create: globalHooks.beforeCreate({
@@ -83,7 +79,8 @@ exports.before = {
   }),
   remove: globalHooks.beforeRemove()
 };
-exports.after = {// all: [],
+exports.after = {
+  // all: [],
   // find: [],
   // get: [],
   // create: [],

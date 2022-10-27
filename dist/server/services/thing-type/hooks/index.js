@@ -1,21 +1,17 @@
 "use strict";
 
 const globalHooks = require('../../../hooks');
-
 const _ = require('lodash');
-
 const defaultsMigrations = rec => {
   _.defaults(rec, {
     is_enabled: rec.enabled
   }, {
     is_enabled: true
   });
-
   delete rec.enabled;
   delete rec.oem_company_lookup;
   delete rec.reseller_company_lookup;
 };
-
 const stages = [{
   $lookup: {
     from: 'companies',
@@ -57,6 +53,7 @@ const stages = [{
 }];
 exports.before = {
   // all: [],
+
   find: [globalHooks.beforeFind(), globalHooks.accessFind(stages)],
   get: [globalHooks.beforeGet(), globalHooks.accessGet(stages)],
   create: globalHooks.beforeCreate({
@@ -75,7 +72,8 @@ exports.before = {
   }),
   remove: globalHooks.beforeRemove()
 };
-exports.after = {// all: [],
+exports.after = {
+  // all: [],
   // find: [],
   // get: [],
   // create: [],

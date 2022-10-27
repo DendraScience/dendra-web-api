@@ -5,13 +5,13 @@
 // NOTE: Revised to be within InfluxDB default dates
 const MAX_TIME = Date.UTC(2200, 1, 2);
 const MIN_TIME = Date.UTC(1800, 1, 2);
-
 function mergeConfig(config = [], {
   refd,
   reverse,
   service
 } = {}) {
   const stack = [];
+
   /*
     Efficiently merge config instances in a linear traversal by evaluating each
     instance's date/time interval [begins_at, ends_before).
@@ -44,15 +44,16 @@ function mergeConfig(config = [], {
     if (a.beginsAt > b.beginsAt) return 1;
     return 0;
   }).forEach(inst => {
-    if (inst.endsBefore <= inst.beginsAt) {// Exclude: inverted interval
+    if (inst.endsBefore <= inst.beginsAt) {
+      // Exclude: inverted interval
     } else if (stack.length === 0) {
       stack.push(inst); // Init stack
     } else {
       const top = stack[stack.length - 1];
-
       if (inst.beginsAt >= top.endsBefore) {
         stack.push(inst);
-      } else if (inst.endsBefore <= top.endsBefore) {// Exclude: instance interval is within top interval
+      } else if (inst.endsBefore <= top.endsBefore) {
+        // Exclude: instance interval is within top interval
       } else if (inst.beginsAt === top.beginsAt) {
         stack.pop();
         stack.push(inst);
@@ -64,7 +65,6 @@ function mergeConfig(config = [], {
   });
   return reverse ? stack.reverse() : stack;
 }
-
 module.exports = {
   mergeConfig,
   MAX_TIME,

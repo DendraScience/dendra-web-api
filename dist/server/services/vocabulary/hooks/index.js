@@ -1,9 +1,7 @@
 "use strict";
 
 const globalHooks = require('../../../hooks');
-
 const _ = require('lodash');
-
 const defaultsMigrations = rec => {
   _.defaults(rec, {
     is_enabled: rec.enabled,
@@ -12,12 +10,11 @@ const defaultsMigrations = rec => {
     is_enabled: true,
     is_hidden: false
   });
-
   delete rec.enabled;
 };
-
 exports.before = {
   // all: [],
+
   find: globalHooks.beforeFind(),
   get: globalHooks.beforeGet(),
   create: globalHooks.beforeCreate({
@@ -36,7 +33,8 @@ exports.before = {
   }),
   remove: globalHooks.beforeRemove()
 };
-exports.after = {// all: [],
+exports.after = {
+  // all: [],
   // find: [],
   // get: [],
   // create: [],

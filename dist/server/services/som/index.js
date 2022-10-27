@@ -1,9 +1,7 @@
 "use strict";
 
 const service = require('feathers-mongodb');
-
 const hooks = require('./hooks');
-
 module.exports = function (app) {
   const databases = app.get('databases');
   if (!(databases.mongodb && databases.mongodb.metadata)) return;
@@ -17,11 +15,12 @@ module.exports = function (app) {
     Model: db.collection('soms'),
     paginate: metadata.paginate,
     whitelist: metadata.whitelist
-  }); // HACK: Monkey-patch the service to allow for string IDs
+  });
 
+  // HACK: Monkey-patch the service to allow for string IDs
   mongoService._objectifyId = id => id;
+  app.use('/soms', mongoService);
 
-  app.use('/soms', mongoService); // Get the wrapped service object, bind hooks
-
+  // Get the wrapped service object, bind hooks
   app.service('soms').hooks(hooks);
 };

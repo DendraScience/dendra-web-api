@@ -118,6 +118,7 @@ class Service {
       q.compact = true
       if (datastream.derived_from_datastream_ids)
         q.datastream_ids = datastream.derived_from_datastream_ids
+      if (query.fn !== undefined) q.fn = query.fn
       if (query.lat !== undefined) q.lat = query.lat
       if (query.lon !== undefined) q.lon = query.lon
       if (query.lng !== undefined) q.lng = query.lng

@@ -27,6 +27,13 @@
   },
   "connections": {},
   "databases": {
+    "influxdb": {
+      "default": {
+        "org": "p-org",
+        "token": "DEFAULT_INFLUXDB2_TOKEN",
+        "url": "http://localhost:8086"
+      }
+    },
     "mongodb": {
       "defaultLogger": {
         "level": "info"
@@ -47,11 +54,6 @@
           "$search"
         ]
       }
-    },
-    "mysql": {
-      "legacy": {
-        "url": "mysql://root:R0otD3v3l0per@localhost:3306/odm_local"
-      }
     }
   },
   "host": "localhost",
@@ -63,9 +65,6 @@
         "default": 288,
         "max": 2016
       }
-    },
-    "datastream_lookup": {
-      "limit": 100
     },
     "influx_select": {
       "apis": {

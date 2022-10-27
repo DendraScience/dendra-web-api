@@ -3,8 +3,8 @@
 const {
   toMongoQuery
 } = require('@casl/mongoose');
-
 const _ = require('lodash');
+
 /**
  * Performs a service find method restricted by access ability rules.
  *
@@ -13,14 +13,11 @@ const _ = require('lodash');
  * https://github.com/feathersjs-ecosystem/feathers-mongodb/blob/master/lib/index.js
  * https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/
  */
-
-
 module.exports = (stages = []) => {
   return async context => {
     if (context.type !== 'before') {
       throw new Error("The 'accessFind' hook should only be used as a 'before' hook.");
     }
-
     if (!context.params.provider) return context;
     const {
       app,
@@ -31,11 +28,9 @@ module.exports = (stages = []) => {
     const {
       ability
     } = params;
-
     if (!ability) {
       throw new Error("The 'accessFind' hook requires params.ability.");
     }
-
     if (!params.query) params.query = {};
     const accessQuery = toMongoQuery(ability, serviceName, 'access');
     if (accessQuery === null) params.query.$limit = 0;
@@ -44,7 +39,6 @@ module.exports = (stages = []) => {
       query,
       paginate
     } = service.filterQuery(params);
-
     const shapeResult = r => {
       if (paginate && paginate.default) {
         return {
@@ -54,18 +48,16 @@ module.exports = (stages = []) => {
           data: _.get(r, '[0].data', [])
         };
       }
-
       return _.get(r, '[0].data', []);
     };
+
     /*
       Construct aggregation pipeline.
      */
 
-
     if (query[service.id]) {
       query[service.id] = service._objectifyId(query[service.id]);
     }
-
     const pipeline = [{
       $match: query
     }, ...stages];
@@ -75,7 +67,6 @@ module.exports = (stages = []) => {
     const total = [{
       $count: 'count'
     }];
-
     if (filters.$limit === 0) {
       pipeline.push({
         $facet: {
@@ -84,13 +75,11 @@ module.exports = (stages = []) => {
       });
     } else {
       const data = [];
-
       if (filters.$select) {
         data.push({
           $project: service._getSelect(filters.$select)
         });
       }
-
       if (filters.$sort) {
         data.push({
           $sort: filters.$sort
@@ -102,19 +91,16 @@ module.exports = (stages = []) => {
           }
         });
       }
-
       if (filters.$skip) {
         data.push({
           $skip: filters.$skip
         });
       }
-
       if (filters.$limit) {
         data.push({
           $limit: filters.$limit
         });
       }
-
       pipeline.push({
         $facet: {
           data,
@@ -122,7 +108,6 @@ module.exports = (stages = []) => {
         }
       });
     }
-
     const options = {
       allowDiskUse: true
     };

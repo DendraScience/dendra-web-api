@@ -1,15 +1,11 @@
 "use strict";
 
 const errors = require('@feathersjs/errors');
-
 const Agent = require('agentkeepalive');
-
 const {
   HttpsAgent
 } = require('agentkeepalive');
-
 const axios = require('axios');
-
 const instance = axios.create({
   httpAgent: new Agent({
     timeout: 60000,
@@ -22,8 +18,8 @@ const instance = axios.create({
   maxRedirects: 0,
   timeout: 180000
 });
-
 const hooks = require('./hooks');
+
 /**
  * Custom service that submits an InfluxDB SELECT using query parameters:
  *
@@ -38,18 +34,14 @@ const hooks = require('./hooks');
  *   api - config key pointing to an InfluxDB HTTP API (defaults to 'default')
  *   db - database name (required)
  */
-
-
 class Service {
   constructor(options) {
     this.apis = options.apis || {};
   }
-
   setup(app) {
     this.app = app;
     this.logger = app.logger;
   }
-
   async find(params) {
     const query = params.query || {};
     const {
@@ -70,8 +62,9 @@ class Service {
     if (typeof wc === 'string') parts.push(`WHERE ${wc}`);
     if (typeof gbc === 'string') parts.push(`GROUP BY ${gbc}`);
     if (sort && sort.time === -1) parts.push('ORDER BY time DESC');
-    if (limit !== undefined) parts.push(`LIMIT ${limit | 0}`); // Limited to only one series for now
+    if (limit !== undefined) parts.push(`LIMIT ${limit | 0}`);
 
+    // Limited to only one series for now
     parts.push('SLIMIT 1');
     const q = parts.join(' ');
     const queryConfig = {
@@ -83,7 +76,6 @@ class Service {
     const queryUrl = `${influxUrl}/query`;
     this.logger.debug(`GET ${influxUrl}/query?db=${db}&q=${q}`);
     let response;
-
     try {
       response = await instance.get(queryUrl, queryConfig);
     } catch (err) {
@@ -94,7 +86,6 @@ class Service {
         response = await instance.get(queryUrl, queryConfig);
       } else throw err;
     }
-
     if (response.status !== 200) throw new errors.BadRequest(`Non-success status code ${response.status}`);
     const body = response.data;
     if (!body) throw new errors.BadRequest('No body returned');
@@ -108,15 +99,14 @@ class Service {
     });
     return firstResult;
   }
-
 }
-
 module.exports = function (app) {
   const services = app.get('services');
   if (!services.influx_select) return;
   app.use('/influx/select', new Service({
     apis: services.influx_select.apis
-  })); // Get the wrapped service object, bind hooks
+  }));
 
+  // Get the wrapped service object, bind hooks
   app.service('influx/select').hooks(hooks);
 };

@@ -1,21 +1,18 @@
 "use strict";
 
 const globalHooks = require('../../../hooks');
-
 const _ = require('lodash');
-
 const defaultsMigrations = rec => {
   _.defaults(rec, {
     state: 'pending'
   });
-
   delete rec.result;
   delete rec.result_pre;
   delete rec.result_post;
 };
-
 exports.before = {
   // all: [],
+
   find: globalHooks.beforeFind(),
   get: globalHooks.beforeGet(),
   create: globalHooks.beforeCreate({
@@ -38,6 +35,7 @@ exports.after = {
   // all: [],
   // find: [],
   // get: [],
+
   create: globalHooks.signalBackend(),
   update: globalHooks.signalBackend(),
   patch: globalHooks.signalBackend(),

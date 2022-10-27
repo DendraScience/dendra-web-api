@@ -7,14 +7,13 @@
  * @license BSD-2-Clause-FreeBSD
  * @module server/main
  */
-const isProd = process.env.NODE_ENV === 'production';
 
+const isProd = process.env.NODE_ENV === 'production';
 const {
   createLogger,
   format,
   transports
 } = require('winston');
-
 const logger = createLogger({
   level: isProd ? 'info' : 'debug',
   format: isProd ? format.json() : format.combine(format.timestamp(), format.prettyPrint()),
@@ -32,16 +31,15 @@ process.on('unhandledRejection', err => {
   } else {
     logger.error(`An unexpected rejection occurred\n  ${err}`);
   }
-
   process.exit(1);
 });
-
 require('./app')(logger).then(app => {
   const port = app.get('port');
   const server = app.listen(port);
   process.on('SIGTERM', () => {
     // Handle SIGTERM gracefully for Docker
     // SEE: http://joseoncode.com/2014/07/21/graceful-shutdown-in-node-dot-js/
+
     new Promise(resolve => server.close(resolve)).then(() => {
       server.unref();
       const pools = app.get('pools');

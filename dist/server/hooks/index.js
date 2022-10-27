@@ -11,32 +11,20 @@
 //     console.log('My custom global hook ran. Feathers is awesome!')
 //   }
 // }
+
 const accessFind = require('./accessFind');
-
 const accessGet = require('./accessGet');
-
 const beforeCreate = require('./beforeCreate');
-
 const beforeFind = require('./beforeFind');
-
 const beforeGet = require('./beforeGet');
-
 const beforePatch = require('./beforePatch');
-
 const beforeRemove = require('./beforeRemove');
-
 const beforeUpdate = require('./beforeUpdate');
-
 const restrictQueryToAbility = require('./restrictQueryToAbility');
-
 const restrictToAbility = require('./restrictToAbility');
-
 const setAbility = require('./setAbility');
-
 const signalBackend = require('./signalBackend');
-
 const versionStamp = require('./versionStamp');
-
 module.exports = {
   accessFind,
   accessGet,

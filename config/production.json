@@ -6,26 +6,24 @@
     "url": "BACKEND_API_URL"
   },
   "connections": {
-    "aggregateDispatch": {
-      "url": "AGGREGATE_DISPATCH_API_URL"
-    },
-    "aggregateStore": {
-      "url": "AGGREGATE_JSON_API_URL"
-    },
     "annotationDispatch": {
       "url": "ANNOTATION_DISPATCH_API_URL"
     },
     "derivedDispatch": {
       "url": "DERIVED_DISPATCH_API_URL"
     },
-    "fileDispatch": {
-      "url": "FILE_DISPATCH_API_URL"
-    },
     "noaaNWS": {
       "url": "NOAA_NWS_API_URL"
     }
   },
   "databases": {
+    "influxdb": {
+      "default": {
+        "org": "DEFAULT_INFLUXDB2_ORG",
+        "token": "DEFAULT_INFLUXDB2_TOKEN",
+        "url": "DEFAULT_INFLUXDB2_URL"
+      }
+    },
     "mongodb": {
       "defaultLogger": {
         "level": "error"
@@ -49,17 +47,8 @@
   "services": {
     "influx_select": {
       "apis": {
-        "chi": {
-          "url": "CHI_INFLUXDB_API_URL"
-        },
         "default": {
           "url": "DEFAULT_INFLUXDB_API_URL"
-        },
-        "erczo": {
-          "url": "ERCZO_INFLUXDB_API_URL"
-        },
-        "ucnrs": {
-          "url": "UCNRS_INFLUXDB_API_URL"
         }
       }
     }
