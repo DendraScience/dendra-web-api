@@ -34,14 +34,14 @@ exports.before = {
     const {
       query
     } = params;
-    params.savedQuery = _.pick(query, ['coalesce', 'compact', 'local', 'fields', 'fn', 't_int', 't_local', 'utc_offset', 'v_field']);
+    params.savedQuery = _.pick(query, ['coalesce', 'compact', 'local', 'fields', 'fn', 'shift', 't_int', 't_local', 'utc_offset', 'v_field']);
     const newQuery = _.pick(query, ['bucket', 'custom', 'database', 'fields', 'fn', 'measurement', 'tag_set', '$limit', '$sort']);
 
     // Eval 'time' query field
     if (typeof query.time === 'object') {
       newQuery.time = treeMap(query.time, obj => {
         // Only map values that were coerced, i.e. in the correct format
-        if (obj instanceof Date) return new Date(obj.getTime() + (query.time_adjust | 0) * 1000);
+        if (obj instanceof Date) return new Date(obj.getTime() + (query.shift | 0) * 1000);
         return null;
       });
     }

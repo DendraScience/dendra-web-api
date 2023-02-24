@@ -236,9 +236,15 @@ const userRulesByRole = {
 
     // Users
     cannot(['create', 'patch', 'update'], 'users', {
-      roles: 'sys-admin',
+      roles: UserRole.SYS_ADMIN,
       person_id: {
         $exists: true
+      }
+    });
+    cannot(['create', 'patch', 'update'], 'users', {
+      roles: UserRole.MANAGER,
+      person_id: {
+        $exists: false
       }
     });
     cannot(['create', 'patch', 'update'], 'users', {
@@ -251,6 +257,40 @@ const userRulesByRole = {
       _id: user._id,
       roles: {
         $ne: UserRole.SYS_ADMIN
+      }
+    });
+    cannot('remove', 'users', {
+      _id: user._id
+    });
+  },
+  [UserRole.MANAGER]: ({
+    can,
+    cannot
+  }, {
+    user
+  }) => {
+    can('manage', 'all');
+
+    // Users
+    cannot(['create', 'patch', 'remove', 'update'], 'users', {
+      roles: UserRole.SYS_ADMIN
+    });
+    cannot(['create', 'patch', 'update'], 'users', {
+      roles: UserRole.MANAGER,
+      person_id: {
+        $exists: false
+      }
+    });
+    cannot(['create', 'patch', 'update'], 'users', {
+      roles: UserRole.USER,
+      person_id: {
+        $exists: false
+      }
+    });
+    cannot(['create', 'patch', 'update'], 'users', {
+      _id: user._id,
+      roles: {
+        $ne: UserRole.MANAGER
       }
     });
     cannot('remove', 'users', {

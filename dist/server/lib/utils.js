@@ -18,6 +18,7 @@ const MembershipRole = {
   MEMBER: 'member'
 };
 const UserRole = {
+  MANAGER: 'manager',
   SYS_ADMIN: 'sys-admin',
   USER: 'user'
 };
@@ -85,14 +86,15 @@ function timeHelpers({
     local,
     t_int: tInt
   } = savedQuery;
+  const shift = (savedQuery.shift | 0) * 1000;
   let lt;
   let t;
   if (local) {
-    lt = tInt ? ldt => ldt.getTime() : ldt => ldt.toISOString().substring(0, 23);
-    t = tInt ? (ldt, ms) => ldt.getTime() - ms : (ldt, ms) => new Date(ldt.getTime() - ms);
+    lt = tInt ? ldt => ldt.getTime() - shift : ldt => new Date(ldt.getTime() - shift).toISOString().substring(0, 23);
+    t = tInt ? (ldt, ms) => ldt.getTime() - shift - ms : (ldt, ms) => new Date(ldt.getTime() - shift - ms);
   } else {
-    lt = tInt ? (udt, ms) => udt.getTime() + ms : (udt, ms) => new Date(udt.getTime() + ms).toISOString().substring(0, 23);
-    t = tInt ? udt => udt.getTime() : udt => udt;
+    lt = tInt ? (udt, ms) => udt.getTime() - shift + ms : (udt, ms) => new Date(udt.getTime() - shift + ms).toISOString().substring(0, 23);
+    t = tInt ? udt => udt.getTime() - shift : udt => new Date(udt.getTime() - shift);
   }
   return {
     lt,

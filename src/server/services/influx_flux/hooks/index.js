@@ -31,6 +31,7 @@ exports.before = {
         'local',
         'fields',
         'fn',
+        'shift',
         't_int',
         't_local',
         'utc_offset',
@@ -54,7 +55,7 @@ exports.before = {
         newQuery.time = treeMap(query.time, obj => {
           // Only map values that were coerced, i.e. in the correct format
           if (obj instanceof Date)
-            return new Date(obj.getTime() + (query.time_adjust | 0) * 1000)
+            return new Date(obj.getTime() + (query.shift | 0) * 1000)
           return null
         })
       }

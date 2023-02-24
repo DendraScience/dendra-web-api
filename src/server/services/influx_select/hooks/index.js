@@ -28,6 +28,7 @@ exports.before = {
         'coalesce',
         'compact',
         'local',
+        'shift',
         't_int',
         't_local',
         'utc_offset'
@@ -38,7 +39,7 @@ exports.before = {
         const queryTime = treeMap(query.time, obj => {
           // Only map values that were coerced, i.e. in the correct format
           if (obj instanceof Date)
-            return new Date(obj.getTime() + (query.time_adjust | 0) * 1000)
+            return new Date(obj.getTime() + (query.shift | 0) * 1000)
           return null
         })
 

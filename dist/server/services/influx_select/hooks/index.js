@@ -33,13 +33,13 @@ exports.before = {
     const {
       query
     } = params;
-    params.savedQuery = _.pick(query, ['coalesce', 'compact', 'local', 't_int', 't_local', 'utc_offset']);
+    params.savedQuery = _.pick(query, ['coalesce', 'compact', 'local', 'shift', 't_int', 't_local', 'utc_offset']);
 
     // Eval 'time' query field
     if (typeof query.time === 'object') {
       const queryTime = treeMap(query.time, obj => {
         // Only map values that were coerced, i.e. in the correct format
-        if (obj instanceof Date) return new Date(obj.getTime() + (query.time_adjust | 0) * 1000);
+        if (obj instanceof Date) return new Date(obj.getTime() + (query.shift | 0) * 1000);
         return null;
       });
       const parts = [];
