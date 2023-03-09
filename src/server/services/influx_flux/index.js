@@ -139,8 +139,9 @@ class Service {
         )
       } else {
         if (limit !== undefined) {
-          if (sort && sort.time === -1) parts.push(`tail(n: ${limit | 0})`)
-          else parts.push(`limit(n: ${limit | 0})`)
+          if (sort && sort.time === -1)
+            parts.push(`tail(n: ${parseInt(limit) || 0})`)
+          else parts.push(`limit(n: ${parseInt(limit) || 0})`)
         }
 
         if (sort && sort.time === -1)

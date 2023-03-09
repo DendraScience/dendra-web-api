@@ -70,8 +70,8 @@ class Service {
     const nowDate = new Date();
     const defaultStartDate = new Date(nowDate.getTime() - 365 * 24 * 60 * 60 * 1000);
     const defaultEndDate = new Date(nowDate.getTime() + 24 * 60 * 60 * 1000);
-    const fetchInterval = query.fetch_interval !== undefined ? query.fetch_interval | 0 : 30 * 24 * 60 * 60 * 1000;
-    const fetchLimit = query.fetch_limit !== undefined ? query.fetch_limit | 0 : 200;
+    const fetchInterval = query.fetch_interval !== undefined ? parseInt(query.fetch_interval) || 0 : 30 * 24 * 60 * 60 * 1000;
+    const fetchLimit = query.fetch_limit !== undefined ? parseInt(query.fetch_limit) || 0 : 200;
     const result = [];
     let isFetching = true;
     let fetchCount = 0;
@@ -126,7 +126,7 @@ class Service {
             value = Object.assign({}, attributes, {
               dateTime: attributes.dateTime && new Date(attributes.dateTime + 'Z'),
               dateTimeUTC: attributes.dateTimeUTC && new Date(attributes.dateTimeUTC + 'Z'),
-              timeOffset: timeOffset > '' && timeOffset.length === 6 ? (timeOffset.substring(4) | 0) + (timeOffset.substring(1, 3) | 0) * 60 * (timeOffset.substring(0, 1) === '-' ? -1 : 1) : 0
+              timeOffset: timeOffset > '' && timeOffset.length === 6 ? (parseInt(timeOffset.substring(4)) || 0) + (parseInt(timeOffset.substring(1, 3)) || 0) * 60 * (timeOffset.substring(0, 1) === '-' ? -1 : 1) : 0
             });
           } catch (err) {
             error = err;

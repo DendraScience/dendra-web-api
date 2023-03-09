@@ -91,7 +91,7 @@ class Service {
         parts.push(`drop(columns: ${toFluxValue(['_measurement', '_stop', ...(typeof tagSet === 'object' ? Object.keys(tagSet) : [])])})`);
       } else {
         if (limit !== undefined) {
-          if (sort && sort.time === -1) parts.push(`tail(n: ${limit | 0})`);else parts.push(`limit(n: ${limit | 0})`);
+          if (sort && sort.time === -1) parts.push(`tail(n: ${parseInt(limit) || 0})`);else parts.push(`limit(n: ${parseInt(limit) || 0})`);
         }
         if (sort && sort.time === -1) parts.push('sort(columns: ["_time"], desc: true)');
         parts.push('pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")');

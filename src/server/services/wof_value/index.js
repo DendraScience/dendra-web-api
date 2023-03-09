@@ -65,10 +65,10 @@ class Service {
     const defaultEndDate = new Date(nowDate.getTime() + 24 * 60 * 60 * 1000)
     const fetchInterval =
       query.fetch_interval !== undefined
-        ? query.fetch_interval | 0
+        ? parseInt(query.fetch_interval) || 0
         : 30 * 24 * 60 * 60 * 1000
     const fetchLimit =
-      query.fetch_limit !== undefined ? query.fetch_limit | 0 : 200
+      query.fetch_limit !== undefined ? parseInt(query.fetch_limit) || 0 : 200
     const result = []
 
     let isFetching = true
@@ -167,8 +167,8 @@ class Service {
                 new Date(attributes.dateTimeUTC + 'Z'),
               timeOffset:
                 timeOffset > '' && timeOffset.length === 6
-                  ? (timeOffset.substring(4) | 0) +
-                    (timeOffset.substring(1, 3) | 0) *
+                  ? (parseInt(timeOffset.substring(4)) || 0) +
+                    (parseInt(timeOffset.substring(1, 3)) || 0) *
                       60 *
                       (timeOffset.substring(0, 1) === '-' ? -1 : 1)
                   : 0

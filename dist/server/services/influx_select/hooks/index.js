@@ -39,7 +39,7 @@ exports.before = {
     if (typeof query.time === 'object') {
       const queryTime = treeMap(query.time, obj => {
         // Only map values that were coerced, i.e. in the correct format
-        if (obj instanceof Date) return new Date(obj.getTime() + (query.shift | 0) * 1000);
+        if (obj instanceof Date) return new Date(obj.getTime() + (parseInt(query.shift) || 0) * 1000);
         return null;
       });
       const parts = [];
@@ -99,7 +99,7 @@ exports.after = {
     const utcOffsetIndex = colsMap.get('utc_offset');
     colsMap.delete('time');
     colsMap.delete('utc_offset');
-    const utcOffset = savedQuery.utc_offset | 0;
+    const utcOffset = parseInt(savedQuery.utc_offset) || 0;
     const getOffset = utcOffsetIndex === undefined ? () => utcOffset : value => value[utcOffsetIndex] || utcOffset;
     const setData = coalesce || colsMap.size === 1 // TODO: Revisit this
     ? (item, value) => {

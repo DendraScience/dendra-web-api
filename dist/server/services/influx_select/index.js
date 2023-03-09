@@ -62,7 +62,7 @@ class Service {
     if (typeof wc === 'string') parts.push(`WHERE ${wc}`);
     if (typeof gbc === 'string') parts.push(`GROUP BY ${gbc}`);
     if (sort && sort.time === -1) parts.push('ORDER BY time DESC');
-    if (limit !== undefined) parts.push(`LIMIT ${limit | 0}`);
+    if (limit !== undefined) parts.push(`LIMIT ${parseInt(limit) || 0}`);
 
     // Limited to only one series for now
     parts.push('SLIMIT 1');

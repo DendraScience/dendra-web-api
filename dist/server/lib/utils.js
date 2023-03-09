@@ -86,7 +86,7 @@ function timeHelpers({
     local,
     t_int: tInt
   } = savedQuery;
-  const shift = (savedQuery.shift | 0) * 1000;
+  const shift = (parseInt(savedQuery.shift) || 0) * 1000;
   let lt;
   let t;
   if (local) {

@@ -73,7 +73,7 @@ exports.before = {
         }
 
         // Convert local time to UTC for downstream use
-        const ms = (station.utc_offset | 0) * 1000;
+        const ms = (parseInt(station.utc_offset) || 0) * 1000;
         query.time = treeMap(query.time, obj => {
           // Only permit date strings that were coerced
           if (typeof obj === 'string') throw new errors.BadRequest('Invalid local time format.');

@@ -55,7 +55,7 @@ exports.before = {
         newQuery.time = treeMap(query.time, obj => {
           // Only map values that were coerced, i.e. in the correct format
           if (obj instanceof Date)
-            return new Date(obj.getTime() + (query.shift | 0) * 1000)
+            return new Date(obj.getTime() + (parseInt(query.shift) || 0) * 1000)
           return null
         })
       }
@@ -90,7 +90,7 @@ exports.after = {
     const { lt, t } = timeHelpers(params)
     const { code, q } = annotHelpers(params)
 
-    const offset = savedQuery.utc_offset | 0
+    const offset = parseInt(savedQuery.utc_offset) || 0
     const ms = offset * 1000
 
     const setData =
