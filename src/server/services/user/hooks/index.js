@@ -61,14 +61,22 @@ exports.before = {
       versionStamp: true
     }),
 
-    async ({ data, params }) => {
+    async ({ data, id, params }) => {
       const newPassword = _.get(data, PATCH_PASSWORD)
+      const { currentPassword } = params
 
       if (
         newPassword &&
-        !(await bcrypt.compare(params.currentPassword, params.before.password))
+        params.user &&
+        params.user._id &&
+        id === `${params.user._id}`
       ) {
-        throw new errors.Forbidden('The current password is not valid.')
+        if (!currentPassword)
+          throw new errors.BadRequest('The current password is required.')
+        else if (
+          !(await bcrypt.compare(currentPassword, params.before.password))
+        )
+          throw new errors.Forbidden('The current password is not valid.')
       }
     }
   ],

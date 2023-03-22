@@ -43,11 +43,15 @@ exports.before = {
     versionStamp: true
   }), async ({
     data,
+    id,
     params
   }) => {
     const newPassword = _.get(data, PATCH_PASSWORD);
-    if (newPassword && !(await bcrypt.compare(params.currentPassword, params.before.password))) {
-      throw new errors.Forbidden('The current password is not valid.');
+    const {
+      currentPassword
+    } = params;
+    if (newPassword && params.user && params.user._id && id === `${params.user._id}`) {
+      if (!currentPassword) throw new errors.BadRequest('The current password is required.');else if (!(await bcrypt.compare(currentPassword, params.before.password))) throw new errors.Forbidden('The current password is not valid.');
     }
   }],
   remove: globalHooks.beforeRemove()
