@@ -53,26 +53,22 @@ function idRandom() {
  * Returns annotation helpers for 'compact' JSON timeseries data.
  */
 function annotHelpers({ actions, annotationIds }) {
+  const q = {}
   let code
-  let q
 
-  if (actions && actions.evaluate) {
-    try {
-      code = math.compile(actions.evaluate)
-    } catch (_) {}
-  }
+  if (annotationIds) q.annotation_ids = annotationIds
 
-  if (annotationIds) {
-    q = {
-      annotation_ids: annotationIds
+  if (actions) {
+    if (actions.attrib) q.attrib = actions.attrib
+    if (actions.flag) q.flag = actions.flag
+    if (actions.evaluate) {
+      try {
+        code = math.compile(actions.evaluate)
+      } catch (_) {}
     }
   }
-  if (actions && actions.flag) {
-    if (!q) q = {}
-    q.flag = actions.flag
-  }
 
-  return { code, q }
+  return { code, q: Object.keys(q).length ? q : undefined }
 }
 
 /**
