@@ -291,6 +291,7 @@ const userRulesByRole = {
   }, {
     user
   }) => {
+    can(['access', 'read'], 'all');
     can(['assign', 'create', 'patch', 'remove', 'update'], ['annotations', 'companies', 'datastreams', 'memberships', 'organizations', 'stations', 'thing-types']);
     can(['assign', 'create', 'patch'], ['persons', 'users']);
 

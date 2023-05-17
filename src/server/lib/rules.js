@@ -237,6 +237,7 @@ const userRulesByRole = {
   },
 
   [UserRole.MANAGER]: ({ can, cannot }, { user }) => {
+    can(['access', 'read'], 'all')
     can(
       ['assign', 'create', 'patch', 'remove', 'update'],
       [
