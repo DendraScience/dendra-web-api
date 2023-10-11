@@ -93,19 +93,19 @@ const membershipRulesByRole = {
     can('assign', 'organizations');
 
     // Annotations
-    can(['access', 'create', 'patch', 'remove'], 'annotations', {
+    can(['access', 'create', 'patch', 'remove', 'update'], 'annotations', {
       organization_id: membership.organization_id
     });
     can('assign', 'annotations');
 
     // Stations
-    can(['access', 'create', 'patch', 'remove', 'graph', 'download'], 'stations', {
+    can(['access', 'create', 'patch', 'remove', 'update', 'graph', 'download'], 'stations', {
       organization_id: membership.organization_id
     });
     can('assign', 'stations');
 
     // Datastreams
-    can(['access', 'create', 'patch', 'remove', 'graph', 'download'], 'datastreams', {
+    can(['access', 'create', 'patch', 'remove', 'update', 'graph', 'download'], 'datastreams', {
       organization_id: membership.organization_id
     });
     can('assign', 'datastreams');
@@ -292,6 +292,7 @@ const userRulesByRole = {
     user
   }) => {
     can(['access', 'read'], 'all');
+    can(['graph', 'download'], ['organizations', 'stations', 'datastreams']);
     can(['assign', 'create', 'patch', 'remove', 'update'], ['annotations', 'companies', 'datastreams', 'memberships', 'organizations', 'stations', 'thing-types']);
     can(['assign', 'create', 'patch'], ['persons', 'users']);
 

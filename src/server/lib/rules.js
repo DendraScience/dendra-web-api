@@ -70,14 +70,14 @@ const membershipRulesByRole = {
     can('assign', 'organizations')
 
     // Annotations
-    can(['access', 'create', 'patch', 'remove'], 'annotations', {
+    can(['access', 'create', 'patch', 'remove', 'update'], 'annotations', {
       organization_id: membership.organization_id
     })
     can('assign', 'annotations')
 
     // Stations
     can(
-      ['access', 'create', 'patch', 'remove', 'graph', 'download'],
+      ['access', 'create', 'patch', 'remove', 'update', 'graph', 'download'],
       'stations',
       {
         organization_id: membership.organization_id
@@ -87,7 +87,7 @@ const membershipRulesByRole = {
 
     // Datastreams
     can(
-      ['access', 'create', 'patch', 'remove', 'graph', 'download'],
+      ['access', 'create', 'patch', 'remove', 'update', 'graph', 'download'],
       'datastreams',
       {
         organization_id: membership.organization_id
@@ -238,6 +238,7 @@ const userRulesByRole = {
 
   [UserRole.MANAGER]: ({ can, cannot }, { user }) => {
     can(['access', 'read'], 'all')
+    can(['graph', 'download'], ['organizations', 'stations', 'datastreams'])
     can(
       ['assign', 'create', 'patch', 'remove', 'update'],
       [
