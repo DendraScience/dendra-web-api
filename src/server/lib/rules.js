@@ -67,16 +67,17 @@ const membershipRulesByRole = {
     can(['access', 'patch', 'graph', 'download'], 'organizations', {
       _id: membership.organization_id
     })
+    can('assign', 'organizations')
 
     // Annotations
-    can(['access', 'create', 'patch', 'remove'], 'annotations', {
+    can(['access', 'create', 'patch', 'remove', 'update'], 'annotations', {
       organization_id: membership.organization_id
     })
     can('assign', 'annotations')
 
     // Stations
     can(
-      ['access', 'create', 'patch', 'remove', 'graph', 'download'],
+      ['access', 'create', 'patch', 'remove', 'update', 'graph', 'download'],
       'stations',
       {
         organization_id: membership.organization_id
@@ -86,13 +87,28 @@ const membershipRulesByRole = {
 
     // Datastreams
     can(
-      ['access', 'create', 'patch', 'remove', 'graph', 'download'],
+      ['access', 'create', 'patch', 'remove', 'update', 'graph', 'download'],
       'datastreams',
       {
         organization_id: membership.organization_id
       }
     )
     can('assign', 'datastreams')
+
+    // Memberships
+    can(['create', 'patch', 'remove'], 'memberships', {
+      organization_id: membership.organization_id
+    })
+    can('assign', 'memberships')
+    cannot('create', 'remove', 'memberships', {
+      organization_id: membership.organization_id,
+      person_id: membership.person_id
+    })
+    cannot('patch', 'memberships', {
+      organization_id: membership.organization_id,
+      person_id: membership.person_id,
+      roles: { $ne: MembershipRole.ADMIN }
+    })
 
     // Uploads
     can('read', 'uploads', {
@@ -221,29 +237,42 @@ const userRulesByRole = {
   },
 
   [UserRole.MANAGER]: ({ can, cannot }, { user }) => {
-    can('manage', 'all')
-    cannot('remove', 'all')
+    can(['access', 'read'], 'all')
+    can(['graph', 'download'], ['organizations', 'stations', 'datastreams'])
+    can(
+      ['assign', 'create', 'patch', 'remove', 'update'],
+      [
+        'annotations',
+        'companies',
+        'datastreams',
+        'memberships',
+        'organizations',
+        'stations',
+        'thing-types'
+      ]
+    )
+    can(['assign', 'create', 'patch'], ['persons', 'users'])
 
     // Users
     cannot('read', 'users', {
       roles: UserRole.SYS_ADMIN
     })
-    cannot(['create', 'patch', 'update'], 'users', {
+    cannot(['create', 'patch'], 'users', {
       roles: UserRole.SYS_ADMIN
     })
-    cannot(['create', 'patch', 'update'], 'users', {
+    cannot(['create', 'patch'], 'users', {
       roles: UserRole.MANAGER,
       person_id: { $exists: false }
     })
-    cannot(['create', 'patch', 'update'], 'users', {
+    cannot(['create', 'patch'], 'users', {
       roles: UserRole.USER,
       person_id: { $exists: false }
     })
-    cannot(['create', 'patch', 'update'], 'users', {
+    cannot(['create', 'patch'], 'users', {
       _id: user._id,
       roles: { $ne: UserRole.MANAGER }
     })
-    cannot(['create', 'patch', 'update'], 'users', {
+    cannot(['create', 'patch'], 'users', {
       _id: user._id,
       is_enabled: false
     })
