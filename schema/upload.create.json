@@ -9,6 +9,8 @@
         "path": "/properties",
         "value": {
           "_id": {"$ref": "#/definitions/_id"},
+          "is_active": {"$ref": "#/definitions/is_active"},
+          "is_cancel_requested": {"$ref": "#/definitions/is_cancel_requested"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
           "result": {"$ref": "types.json#/definitions/result"},
           "result_pre": {"$ref": "types.json#/definitions/result"},

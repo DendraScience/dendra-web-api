@@ -34,12 +34,13 @@ async function defineAbilityForContext(context) {
         paginate: false,
         query: {
           person_id: user.person_id,
-          $select: ['_id', 'organization_id', 'roles']
+          $select: ['_id', 'organization_id', 'person_id', 'roles']
         }
       });
       memberships.forEach(membership => {
         membership.roles.forEach(role => membershipRulesByRole[role](extract, {
-          membership
+          membership,
+          user
         }));
       });
     }

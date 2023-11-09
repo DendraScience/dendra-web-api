@@ -84,7 +84,8 @@ const membershipRulesByRole = {
     can,
     cannot
   }, {
-    membership
+    membership,
+    user
   }) => {
     // Organizations
     can(['access', 'patch', 'graph', 'download'], 'organizations', {
@@ -93,29 +94,29 @@ const membershipRulesByRole = {
     can('assign', 'organizations');
 
     // Annotations
-    can(['access', 'create', 'patch', 'remove', 'update'], 'annotations', {
+    can(['access', 'create', 'patch', 'delete', 'update'], 'annotations', {
       organization_id: membership.organization_id
     });
     can('assign', 'annotations');
 
     // Stations
-    can(['access', 'create', 'patch', 'remove', 'update', 'graph', 'download'], 'stations', {
+    can(['access', 'create', 'patch', 'delete', 'update', 'graph', 'download'], 'stations', {
       organization_id: membership.organization_id
     });
     can('assign', 'stations');
 
     // Datastreams
-    can(['access', 'create', 'patch', 'remove', 'update', 'graph', 'download'], 'datastreams', {
+    can(['access', 'create', 'patch', 'delete', 'update', 'graph', 'download'], 'datastreams', {
       organization_id: membership.organization_id
     });
     can('assign', 'datastreams');
 
     // Memberships
-    can(['create', 'patch', 'remove'], 'memberships', {
+    can(['create', 'patch', 'delete'], 'memberships', {
       organization_id: membership.organization_id
     });
     can('assign', 'memberships');
-    cannot('create', 'remove', 'memberships', {
+    cannot(['create', 'delete'], 'memberships', {
       organization_id: membership.organization_id,
       person_id: membership.person_id
     });
@@ -128,8 +129,28 @@ const membershipRulesByRole = {
     });
 
     // Uploads
-    can('read', 'uploads', {
+    can(['read'], 'uploads', {
       organization_id: membership.organization_id
+    });
+    can(['create'], 'uploads', {
+      is_active: false,
+      is_cancel_requested: false,
+      organization_id: membership.organization_id,
+      state: 'pending'
+    });
+    can(['patch'], 'uploads', {
+      created_by: user._id,
+      organization_id: membership.organization_id
+    });
+    can('assign', 'uploads', ['$set.version_id']);
+    can('assign', 'uploads', ['$set.is_cancel_requested'], {
+      state: 'running'
+    });
+    can('assign', 'uploads', ['$set.is_active', '$set.spec'], {
+      is_active: false,
+      state: {
+        $in: ['completed', 'error', 'pending']
+      }
     });
 
     // Companies
@@ -281,7 +302,7 @@ const userRulesByRole = {
       _id: user._id,
       is_enabled: false
     });
-    cannot('remove', 'users', {
+    cannot('delete', 'users', {
       _id: user._id
     });
   },
@@ -293,13 +314,10 @@ const userRulesByRole = {
   }) => {
     can(['access', 'read'], 'all');
     can(['graph', 'download'], ['organizations', 'stations', 'datastreams']);
-    can(['assign', 'create', 'patch', 'remove', 'update'], ['annotations', 'companies', 'datastreams', 'memberships', 'organizations', 'stations', 'thing-types']);
+    can(['assign', 'create', 'patch', 'delete', 'update'], ['annotations', 'companies', 'datastreams', 'memberships', 'organizations', 'stations', 'thing-types']);
     can(['assign', 'create', 'patch'], ['persons', 'users']);
 
     // Users
-    cannot('read', 'users', {
-      roles: UserRole.SYS_ADMIN
-    });
     cannot(['create', 'patch'], 'users', {
       roles: UserRole.SYS_ADMIN
     });

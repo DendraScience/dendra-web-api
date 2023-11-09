@@ -8,6 +8,16 @@
     "_id": {
       "$ref": "types.json#/definitions/uploadId"
     },
+    "is_active": {
+      "type": "boolean",
+      "description": "Whether to flag this upload for processing",
+      "example": true
+    },
+    "is_cancel_requested": {
+      "type": "boolean",
+      "description": "Whether to flag this upload for termination",
+      "example": true
+    },
     "organization_id": {
       "$ref": "types.json#/definitions/organizationId",
       "description": "The organization to which this upload belongs"
@@ -32,6 +42,8 @@
     "_id": {"$ref": "#/definitions/_id"},
     "created_at": {"$ref": "types.json#/definitions/createdAt"},
     "created_by": {"$ref": "types.json#/definitions/createdBy"},
+    "is_active": {"$ref": "#/definitions/is_active"},
+    "is_cancel_requested": {"$ref": "#/definitions/is_cancel_requested"},
     "organization_id": {"$ref": "#/definitions/organization_id"},
     "result": {"$ref": "types.json#/definitions/result"},
     "result_pre": {"$ref": "types.json#/definitions/result"},
@@ -46,6 +58,8 @@
     "version_id": {"$ref": "types.json#/definitions/versionId"}
   },
   "required": [
+    "is_active",
+    "is_cancel_requested",
     "organization_id",
     "spec",
     "spec_type",
@@ -62,6 +76,8 @@
       "schema": {
         "type": "object",
         "properties": {
+          "is_active": {"$ref": "#/definitions/is_active"},
+          "is_cancel_requested": {"$ref": "#/definitions/is_cancel_requested"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
           "result": {"$ref": "types.json#/definitions/result"},
           "result_pre": {"$ref": "types.json#/definitions/result"},
@@ -91,9 +107,12 @@
       "schema": {
         "type": "object",
         "properties": {
+          "is_active": {"$ref": "#/definitions/is_active"},
+          "is_cancel_requested": {"$ref": "#/definitions/is_cancel_requested"},
           "result": {"$ref": "types.json#/definitions/result"},
           "result_pre": {"$ref": "types.json#/definitions/result"},
           "result_post": {"$ref": "types.json#/definitions/result"},
+          "spec": {"$ref": "types.json#/definitions/serviceSpec"},
           "state": {"$ref": "#/definitions/state"}
         }
       },
@@ -109,6 +128,8 @@
         "type": "object",
         "properties": {
           "_id": {"$ref": "#/definitions/_id"},
+          "is_active": {"$ref": "#/definitions/is_active"},
+          "is_cancel_requested": {"$ref": "#/definitions/is_cancel_requested"},
           "organization_id": {"$ref": "#/definitions/organization_id"},
           "result": {"$ref": "types.json#/definitions/result"},
           "result_pre": {"$ref": "types.json#/definitions/result"},

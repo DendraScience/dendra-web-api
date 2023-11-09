@@ -1,4 +1,6 @@
 {
+  "is_active": false,
+  "is_cancel_requested": false,
   "organization_id": "592f155746a1b867a114e030",
   "result": {
     "records": 10000

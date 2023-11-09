@@ -4,6 +4,8 @@ const globalHooks = require('../../../hooks');
 const _ = require('lodash');
 const defaultsMigrations = rec => {
   _.defaults(rec, {
+    is_active: false,
+    is_cancel_requested: false,
     state: 'pending'
   });
   delete rec.result;

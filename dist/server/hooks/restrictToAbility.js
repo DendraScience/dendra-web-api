@@ -26,7 +26,7 @@ module.exports = () => {
     if (!ability) {
       throw new Error("The 'restrictToAbility' hook requires params.ability.");
     }
-    if (context.data && action !== 'patch') {
+    if (context.data && (action === 'create' || action === 'update')) {
       context.data[TYPE_KEY] = serviceName;
       if (ability.cannot(action, context.data)) {
         throw new errors.Forbidden(`You are not allowed to ${action} ${serviceName} using the data.`);
@@ -50,7 +50,7 @@ module.exports = () => {
       const setFields = Object.keys(data.$set || {}).map(f => '$set.' + f);
       const unsetFields = Object.keys(data.$unset || {}).map(f => '$unset.' + f);
       const allFields = Array.prototype.concat(setFields, unsetFields);
-      const allowedFields = permittedFieldsOf(ability, 'assign', serviceName, {
+      const allowedFields = permittedFieldsOf(ability, 'assign', before, {
         fieldsFrom: rule => rule.fields || allFields
       });
       const allowedData = _.pick(data, allowedFields);
