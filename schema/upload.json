@@ -113,7 +113,8 @@
           "result_pre": {"$ref": "types.json#/definitions/result"},
           "result_post": {"$ref": "types.json#/definitions/result"},
           "spec": {"$ref": "types.json#/definitions/serviceSpec"},
-          "state": {"$ref": "#/definitions/state"}
+          "state": {"$ref": "#/definitions/state"},
+          "storage": {"$ref": "types.json#/definitions/storageSpec"}
         }
       },
       "targetSchema": {"rel": "self"}
