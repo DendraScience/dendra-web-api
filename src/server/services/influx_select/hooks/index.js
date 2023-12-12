@@ -39,7 +39,11 @@ exports.before = {
         const queryTime = treeMap(query.time, obj => {
           // Only map values that were coerced, i.e. in the correct format
           if (obj instanceof Date)
-            return new Date(obj.getTime() + (parseInt(query.shift) || 0) * 1000)
+            return new Date(
+              obj.getTime() +
+                (parseInt(query.time_adjust) || 0) * 1000 +
+                (parseInt(query.shift) || 0) * 1000
+            )
           return null
         })
 
