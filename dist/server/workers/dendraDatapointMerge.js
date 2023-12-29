@@ -45,7 +45,8 @@ function dendraDatapointMerge({
   }
   const query = params.query || {};
   const {
-    $sort: sort
+    $sort: sort,
+    $limit: limit
   } = query;
   const {
     code,
@@ -57,6 +58,8 @@ function dendraDatapointMerge({
   if (sort && sort.time === -1) {
     // DESC
     for (let i = keys.length - 1; i > -1; i--) {
+      // Trim to limit
+      if (newResult.length >= limit) break;
       const item = map.get(keys[i]);
       if (code) {
         try {
@@ -69,6 +72,8 @@ function dendraDatapointMerge({
   } else {
     // ASC
     for (let i = 0; i < keys.length; i++) {
+      // Trim to limit
+      if (newResult.length >= limit) break;
       const item = map.get(keys[i]);
       if (code) {
         try {
