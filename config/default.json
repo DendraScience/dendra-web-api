@@ -72,6 +72,9 @@
           "url": "http://localhost:8086"
         }
       }
+    },
+    "r3_datapoint": {
+      "url": "http://localhost:8080/internal/feathers"
     }
   }
 }

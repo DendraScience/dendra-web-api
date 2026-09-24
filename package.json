@@ -25,6 +25,7 @@
     "start:prod": "NODE_ENV=production npm start",
     "debug": "DEBUG=express:* npm start",
     "test": "npm run test-server",
+    "test-unit": "mocha test/unit --recursive --use_strict",
     "test-server": "npm run lint-test-server && NODE_ENV=test mocha test/server --recursive --use_strict",
     "test-server:build": "npm run build-server && npm run test-server",
     "test-server:watch": "chokidar --debounce 2000 --initial 'src/server/**/*.js' 'test/server/**/*.js' -c 'npm run test-server:build'"

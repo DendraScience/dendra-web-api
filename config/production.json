@@ -51,6 +51,9 @@
           "url": "DEFAULT_INFLUXDB_API_URL"
         }
       }
+    },
+    "r3_datapoint": {
+      "url": "R3_DATAPOINTS_URL"
     }
   }
 }

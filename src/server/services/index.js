@@ -13,6 +13,7 @@ module.exports = function (app) {
     'influx_flux',
     'influx_select',
     'legacy_datavalue',
+    'r3_datapoint',
     'membership',
     'monitor',
     'organization',
