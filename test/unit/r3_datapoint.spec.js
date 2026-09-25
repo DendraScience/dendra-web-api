@@ -4,6 +4,7 @@
 
 const { expect } = require('chai')
 const errors = require('@feathersjs/errors')
+const { ObjectID } = require('mongodb')
 const qs = require('qs')
 const configure = require('../../src/server/services/r3_datapoint')
 const hooks = require('../../src/server/services/r3_datapoint/hooks')
@@ -184,6 +185,36 @@ describe('r3_datapoint Service', function () {
     }
   })
 
+  it('stringifies ObjectId organization_id and table_id as hex', async function () {
+    let captured
+    const http = {
+      get: async function (url, config) {
+        captured = config.paramsSerializer(config.params)
+        return { status: 200, data: [] }
+      }
+    }
+    const svc = new Service({
+      url: 'http://r3.example/internal/feathers',
+      http: http
+    })
+    const organizationId = '69ea70aaeb4fbf529c3d0483'
+    const tableId = '6a7ddc73ed388179dec08396'
+
+    await svc.find({
+      query: {
+        organization_id: new ObjectID(organizationId),
+        table_id: new ObjectID(tableId),
+        mappings: [{ input_name: 'Battery_21474772_S_CURRENT_V' }]
+      }
+    })
+
+    const parsed = qs.parse(captured)
+    expect(parsed.organization_id).to.equal(organizationId)
+    expect(parsed.table_id).to.equal(tableId)
+    expect(captured).to.not.contain('organization_id[id]')
+    expect(captured).to.not.contain('table_id[id]')
+  })
+
   it('qs.stringify of mappings matches Feathers bracket keys', function () {
     const raw = qs.stringify(
       {
@@ -194,6 +225,29 @@ describe('r3_datapoint Service', function () {
       { encodeValuesOnly: true }
     )
     expect(raw).to.contain('mappings[0][input_name]=AirTemp_Avg')
+  })
+})
+
+describe('r3_datapoint before find coerceQuery', function () {
+  it('leaves organization_id and table_id as hex and still parses UTC time', function () {
+    const coerce = hooks.before.find[1]
+    const context = {
+      params: {
+        query: {
+          organization_id: '69ea70aaeb4fbf529c3d0483',
+          table_id: '6a7ddc73ed388179dec08396',
+          time: { $gte: '2015-09-02T23:50:00.000Z' }
+        }
+      }
+    }
+
+    coerce(context)
+
+    expect(context.params.query.organization_id).to.equal(
+      '69ea70aaeb4fbf529c3d0483'
+    )
+    expect(context.params.query.table_id).to.equal('6a7ddc73ed388179dec08396')
+    expect(context.params.query.time.$gte).to.be.instanceOf(Date)
   })
 })
 

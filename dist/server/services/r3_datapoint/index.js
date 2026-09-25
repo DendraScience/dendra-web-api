@@ -60,6 +60,8 @@ class Service {
     if (!mappings.length) throw new errors.BadRequest('R3 datapoints requires at least one mapping.');
     const isoQuery = treeMap(query, obj => {
       if (obj instanceof Date) return obj.toISOString();
+      // Parent hooks may already have coerced *_id hex strings.
+      if (obj && obj._bsontype === 'ObjectID') return obj.toString();
       return obj;
     });
     const queryUrl = `${this.url}/datapoints`;

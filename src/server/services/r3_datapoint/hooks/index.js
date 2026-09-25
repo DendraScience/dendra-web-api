@@ -16,7 +16,18 @@ const { annotHelpers, isProd } = require('../../../lib/utils')
 exports.before = {
   // all: [],
 
-  find: [iff(() => isProd, disallow('external')), apiHooks.coerceQuery()],
+  find: [
+    iff(() => isProd, disallow('external')),
+    // id stays off. organization_id and table_id are hex strings for R3.
+    // Default id coercion makes ObjectIds, and qs then emits organization_id[id]=...
+    apiHooks.coerceQuery({
+      bool: true,
+      id: false,
+      num: true,
+      text: true,
+      utc: true
+    })
+  ],
 
   get: disallow(),
   create: disallow(),
